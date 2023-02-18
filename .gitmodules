@@ -1,4 +1,4 @@
 [submodule "eMondrianUtils/SOAPInBrowser"]
 	path = eMondrianUtils/SOAPInBrowser
-	url = git@github.com:eMondrian/SOAPInBrowser.git
+	url = https://github.com/eMondrian/SOAPInBrowser.git
 	branch = main
