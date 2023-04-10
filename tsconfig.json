@@ -2,7 +2,7 @@
   "files": [],
   "compilerOptions": {
     "typeRoots": ["src/@types", "node_modules/@types"],
-    "moduleResolution": "classic",
+    "moduleResolution": "node",
     "outDir": "lib",
     "sourceMap": true,
     "declaration": true,

@@ -9,7 +9,7 @@
     "build-only": "vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
+    "type-check": "vue-tsc --noEmit --composite false"
   },
   "dependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
