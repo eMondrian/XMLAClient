@@ -4,7 +4,17 @@
     "@vue/tsconfig/tsconfig.json"],
   "include": ["vite.config.*", "vitest.config.*", "cypress.config.*", "playwright.config.*"],
   "compilerOptions": {
-    "composite": true,
-    "types": ["node"]
-  }
+    "typeRoots": ["src/@types", "node_modules/@types"],
+    "moduleResolution": "node",
+    "outDir": "lib",
+    "sourceMap": true,
+    "declaration": true,
+    "stripInternal": true,
+    "target": "esnext",
+
+    //"target": "node",
+    "module": "esnext",
+    "strict": false,
+  },
+  
 }
