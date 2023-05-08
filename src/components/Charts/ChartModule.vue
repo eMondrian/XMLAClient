@@ -30,6 +30,7 @@ import { useAppSettingsStore } from "@/stores/AppSettings";
 import { HierarchicalScale } from "chartjs-plugin-hierarchical";
 import { useChartStore } from "@/stores/Chart";
 import { usePivotTableStore } from "@/stores/PivotTable";
+import { debounce } from "lodash";
 
 ChartJS.register(
   Title,
@@ -83,7 +84,7 @@ export default defineComponent({
       }, 100);
     };
 
-    const getData = async () => {
+    const getData = debounce(async () => {
       shouldBeHidden = [];
       expandedIndexes = [];
       notExpandableIndexes = [];
@@ -141,8 +142,10 @@ export default defineComponent({
 
       datasets.value = rows.value.map((col, ind) => {
         const data = columns.value.map((e, i) => {
-          if (typeof cells.value[ind][i].FmtValue === "object") return 0;
-          return parseFloat(cells.value[ind][i].FmtValue.replaceAll(",", ""));
+          const formatedValue =
+            cells.value[ind][i].FmtValue || cells.value[ind][i].Value || "";
+          if (formatedValue === "object") return 0;
+          return parseFloat(formatedValue.replaceAll(",", ""));
         });
 
         return {
@@ -217,7 +220,7 @@ export default defineComponent({
 
       updateChartData();
       appSettings.removeLoadingState(loadingId);
-    };
+    }, 100);
 
     function parseCells(cells: any[], columns: any[], rows: any[]) {
       if (!cells.length) return [];
@@ -276,13 +279,27 @@ export default defineComponent({
 
     const chartOptions = {
       responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: "right",
+          labels: {
+            usePointStyle: true,
+            font: {
+              size: 9,
+            },
+          },
+        },
+      },
       scales: {
         x: {
           type: "hierarchical",
+          padding: 5,
         },
       },
       layout: {
-        padding: 100,
+        padding: 50,
       },
     };
 

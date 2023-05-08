@@ -26,6 +26,8 @@ const props = defineProps([
   "totalContentSize",
 ]);
 
+const emit = defineEmits(["drillthrough"]);
+
 const DEFAULT_COLUMN_WIDTH = 150;
 const DEFAULT_ROW_HEIGHT = 30;
 const DEFAULT_ROW_HEIGHT_CSS = `${DEFAULT_ROW_HEIGHT}px`;
@@ -47,6 +49,13 @@ const handleScroll = (e: any) => {
 };
 
 const getCellStyle = (i: number, j: number) => {
+  const cellValues = props.cells[j][i];
+
+  const foreColor = parseInt(cellValues.FORE_COLOR).toString(16);
+  const backColor = parseInt(cellValues.BACK_COLOR).toString(16);
+  const fontStyles = getFontStyles(parseInt(cellValues.FONT_FLAGS));
+  const fontSize = `${parseInt(cellValues.FONT_SIZE)}px`;
+
   return {
     "text-align": state.value.settings.alignContent as
       | "center"
@@ -54,6 +63,10 @@ const getCellStyle = (i: number, j: number) => {
       | "left",
     width: `${props.colsStyles[i] || DEFAULT_COLUMN_WIDTH}px`,
     height: `${props.rowsStyles[j] || DEFAULT_ROW_HEIGHT}px`,
+    color: `#${foreColor}`,
+    "background-color": `#${backColor}`,
+    ...fontStyles,
+    "font-size": fontSize,
   };
 };
 
@@ -64,8 +77,12 @@ const getCellValue = (cell: any) => {
 
 const computedContainerStyles = computed(() => {
   return {
-    width: `${props.totalContentSize.xAxis.totalWidth}px`,
-    height: `${props.totalContentSize.yAxis.totalWidth}px`,
+    width: `${
+      props.totalContentSize.xAxis.totalWidth || DEFAULT_COLUMN_WIDTH
+    }px`,
+    height: `${
+      props.totalContentSize.yAxis.totalWidth || DEFAULT_ROW_HEIGHT
+    }px`,
   };
 });
 
@@ -157,6 +174,25 @@ const cellPropertiesModal = ref(null) as Ref<any>;
 const openCellProperties = async (cell) => {
   await cellPropertiesModal.value?.run({ cell });
 };
+
+const drillthrough = (cell) => {
+  emit("drillthrough", cell);
+};
+
+function getFontStyles(fontStyle) {
+  const result = {
+    "text-decoration": "",
+  };
+
+  if (fontStyle && 1) result["font-weight"] = 800;
+  if (fontStyle && 2) result["fontStyle"] = "italic";
+  if (fontStyle && 4)
+    result["text-decoration"] = result["text-decoration"] + " underline";
+  if (fontStyle && 8)
+    result["text-decoration"] = result["text-decoration"] + " line-through";
+
+  return result;
+}
 </script>
 <template>
   <div class="cells_container" @scroll="handleScroll" ref="container">
@@ -176,6 +212,7 @@ const openCellProperties = async (cell) => {
           :style="getCellStyle(cell.i, cell.j)"
           class="cell"
           @openCellProperties="openCellProperties(cell)"
+          @drillthrough="drillthrough(cell)"
         >
           <template v-slot="{}">
             <div>

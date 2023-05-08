@@ -42,6 +42,10 @@ export default {
     const opened = async () => {
       const api = store.getApi();
       catalogs.value = (await api.getCatalogs()).catalogs;
+
+      if (catalogs.value.length === 1) {
+        selectedCatalog.value = catalogs.value[0].CATALOG_NAME;
+      }
       fetchingCatalogs.value = false;
     };
 
@@ -59,12 +63,38 @@ export default {
       try {
         const cubesRes = await api.getCubes(catalogName);
         cubes.value = [...cubesRes.cubes];
+
+        if (cubes.value.length === 1) {
+          selectedCube.value = cubes.value[0].CUBE_NAME;
+        }
       } catch (e) {
         error.value = "Error occured while loading cubes.";
       } finally {
         fetchingCubes.value = false;
       }
     };
+
+    const ok = () => {
+      if (!selectedCube.value) return;
+      close({
+        cube: selectedCube.value,
+        catalog: selectedCatalog.value,
+      });
+    };
+
+    const onKeyPress = (e) => {
+      if (e.key === "Enter") {
+        ok();
+      }
+    };
+
+    watch(isOpened, () => {
+      if (isOpened.value) {
+        window.addEventListener("keypress", onKeyPress);
+      } else {
+        window.removeEventListener("keypress", onKeyPress);
+      }
+    });
 
     return {
       store,
@@ -78,16 +108,8 @@ export default {
       catalogs,
       fetchingCatalogs,
       error,
+      ok
     };
-  },
-  methods: {
-    ok() {
-      if (!this.selectedCube) return;
-      this.close({
-        cube: this.selectedCube,
-        catalog: this.selectedCatalog,
-      });
-    },
   },
 };
 </script>

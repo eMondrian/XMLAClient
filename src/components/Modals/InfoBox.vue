@@ -12,67 +12,65 @@ Contributors: Smart City Jena
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts">
 import { usePromisifiedModal } from "@/composables/promisifiedModal";
-import { ref, watch } from "vue";
+import { watch } from "vue";
 
 export default {
-  name: "ServerSelectionModal",
+  name: "InfoBox",
   setup() {
-    const serverUrl = ref("");
-    const reset = () => {
-      serverUrl.value = "";
-    };
 
-    const { isOpened, run, close } = usePromisifiedModal(reset);
+    const { isOpened, run, close } = usePromisifiedModal(null);
 
     const ok = () => {
-      if (!serverUrl.value) return;
-      close(serverUrl.value);
+      close(null);
     };
 
     const onKeyPress = (e) => {
-      if (e.key === "Enter") {
-        ok();
+      if (e.key === "Enter" || e.key==='Escape') {
+        close(null);
       }
     };
 
     watch(isOpened, () => {
       if (isOpened.value) {
-        window.addEventListener("keypress", onKeyPress);
+        window.addEventListener("keyup", onKeyPress);
       } else {
-        window.removeEventListener("keypress", onKeyPress);
+        window.removeEventListener("keyup", onKeyPress);
       }
     });
-
+    isOpened.value = true;
     return {
-      serverUrl,
       isOpened,
       run,
       close,
-      reset,
       ok,
     };
   },
+  props:{
+    infoUri: String,
+  }
 };
 </script>
 <template>
-  <va-modal :modelValue="isOpened" no-padding class="server-url-modal" @ok="ok">
+  <va-modal :modelValue="isOpened" no-padding class="infobox" @ok="ok">
     <template #content="{ ok }">
-      <va-card-title class="va-h6">Enter server url:</va-card-title>
+      <va-button
+          preset="secondary"
+          class="mr-1 mb-1 close"
+          @click="close"
+      >
+        x
+      </va-button>
       <va-card-content>
-        <va-input
-          class="mb-2 server-url-input"
-          v-model="serverUrl"
-          placeholder="Server url"
-        />
+
+        <iframe v-if="infoUri" :src="infoUri"  name="myiFrame"  height="400px" width="600px" title="infobox"></iframe>
       </va-card-content>
-      <va-card-actions>
-        <va-button @click="ok">Ok!</va-button>
-      </va-card-actions>
+
+
     </template>
   </va-modal>
 </template>
 <style lang="scss">
-.server-url-modal {
+.infobox {
   .va-modal__container {
     width: 100%;
   }
@@ -83,6 +81,14 @@ export default {
 
   .va-modal__dialog {
     margin: auto;
+  }
+  .close{
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    z-index: 5;
+    top: 3px;
   }
 }
 </style>
