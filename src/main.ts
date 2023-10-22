@@ -42,7 +42,7 @@ import {
   VaButtonGroup,
   VaDivider,
   VaDataTable,
-    VaToast
+  VaToast,
 } from "vuestic-ui";
 
 import "vuestic-ui/styles/essential.css";

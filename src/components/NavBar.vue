@@ -112,7 +112,7 @@ export default {
   },
   components: {
     ServerSelectionModal,
-    CatalogSelectionModal
+    CatalogSelectionModal,
   },
   mounted() {
     if (this.uri) {
@@ -146,14 +146,11 @@ export default {
             :options="optionsSwitchoptions"
         />
       </va-navbar-item>
-
-
+      <Teleport to="body">
+        <ServerSelectionModal ref="serverSelectionModal" />
+        <CatalogSelectionModal ref="catalogSelectionModal" />
+      </Teleport>
     </template>
-
-    <Teleport to="body">
-      <ServerSelectionModal ref="serverSelectionModal" />
-      <CatalogSelectionModal ref="catalogSelectionModal" />
-    </Teleport>
   </va-navbar>
 </template>
 
