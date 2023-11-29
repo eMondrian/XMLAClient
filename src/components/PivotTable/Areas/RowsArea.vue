@@ -14,7 +14,7 @@ import type { TinyEmitter } from "tiny-emitter";
 import { computed, inject, ref, watch, type Ref } from "vue";
 import MemberDropdown from "./MemberDropdown.vue";
 import MemberPropertiesModal from "@/components/Modals/MemberPropertiesModal.vue";
-import { useTreeViewDataStore } from "@/stores/TreeView";
+import { useMetadataStorage } from "@/composables/metadataStorage";
 
 const { state } = usePivotTableStore();
 
@@ -26,7 +26,7 @@ const props = defineProps(["rows", "rowsStyles", "totalContentSize"]);
 const eventBus = inject("eventBus") as TinyEmitter;
 const setParentStylesValue = inject("setRowsStyles") as (
   index: number,
-  styles: number
+  styles: number,
 ) => {};
 
 const scrollPosition = ref(0);
@@ -65,7 +65,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 watch(
@@ -80,7 +80,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 const getRowMemberStyle = (i: number, j: number) => {
@@ -91,7 +91,7 @@ const getRowMemberStyle = (i: number, j: number) => {
 
   const levelCount = minLevels[j] === 0 ? maxLevels[j] + 1 : maxLevels[j];
 
-  styles["width"] = `${150 * levelCount}px`;
+  styles["width"] = `${50 * (levelCount - 1) + 150}px`;
   if (!currentMember || !nextMember) return styles;
 
   if (currentMember.UName === nextMember.UName) {
@@ -130,7 +130,7 @@ const hasChildrenDisplayed = (i: number, j: number) => {
 
   if (
     currentHierarchyMembers.some(
-      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName
+      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName,
     )
   ) {
     return true;
@@ -184,6 +184,7 @@ const drillup = (member: any) => {
 
 const expandFn = inject("expand") as Function;
 const expand = (member: any) => {
+  console.log("expand", member);
   expandFn(member, "rows");
 };
 
@@ -201,10 +202,10 @@ eventBus.on("scroll", ({ top }: { top: number }) => {
 
 const memberPropertiesModal = ref(null) as Ref<any>;
 const openMemberProperties = async (member) => {
-  const treeStore = useTreeViewDataStore();
-  const level = treeStore.levels.find(
-    (e) => e.LEVEL_UNIQUE_NAME === member.LName
-  );
+  const metadataStorage = useMetadataStorage();
+  const levels = (await metadataStorage.getMetadataStorage()).levels;
+
+  const level = levels.find((e) => e.LEVEL_UNIQUE_NAME === member.LName);
   await memberPropertiesModal.value?.run({ level, member });
 };
 
@@ -267,7 +268,7 @@ const showMemberProperties = (member) => {
 
 const hideMemberProperties = (member) => {
   const indexToRemove = state.membersWithProps.indexOf(
-    (e) => e === member.HIERARCHY_UNIQUE_NAME
+    (e) => e === member.HIERARCHY_UNIQUE_NAME,
   );
   state.membersWithProps.splice(indexToRemove, 1);
 };
@@ -280,7 +281,7 @@ watch(
   () => currentlyDisplayedValues.value,
   () => {
     translate.value = currentlyDisplayedValues.value.translate;
-  }
+  },
 );
 </script>
 <template>
@@ -318,7 +319,10 @@ watch(
           <div class="d-flex">
             <div class="rowMember" :style="getRowMemberStyle(member.i, j)">
               <div class="rowMemberContentWrapper">
-                <div v-html="getRowMemberOffsetItems(member.i, j)"></div>
+                <div
+                  class="rowMemberOffsetContainer"
+                  v-html="getRowMemberOffsetItems(member.i, j)"
+                ></div>
                 <div class="rowMemberContent">
                   <template v-if="!sameAsPrevious(member.i, j)">
                     <div
@@ -327,25 +331,19 @@ watch(
                         !hasChildrenDisplayed(member.i, j)
                       "
                       class="expandIcon"
+                      @click.stop.prevent="expand(member)"
                     >
-                      <va-icon
-                        name="chevron_right"
-                        size="small"
-                        @click="expand(member)"
-                      />
+                      <va-icon name="chevron_right" size="small" />
                     </div>
                     <div
                       v-else-if="
                         getRowChildCount(member.i, j) &&
                         rowIsExpanded(member.i, j)
                       "
+                      @click.stop.prevent="collapse(member)"
                       class="expandIcon"
                     >
-                      <va-icon
-                        name="expand_more"
-                        size="small"
-                        @click="collapse(member)"
-                      />
+                      <va-icon name="expand_more" size="small" />
                     </div>
                   </template>
                   <div class="rowMemberCaption">
@@ -392,12 +390,18 @@ watch(
 }
 
 .rowMemberOffset {
-  width: 150px;
+  width: 50px;
   height: 100%;
   border-right: 1px dashed lightgrey;
 }
 
 .rowMemberContentWrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.rowMemberOffsetContainer {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -445,6 +449,7 @@ watch(
 
 .expandIcon {
   flex-grow: 0;
+  cursor: pointer;
 }
 
 .propertyRow {

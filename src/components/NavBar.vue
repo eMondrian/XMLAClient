@@ -9,28 +9,70 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts">
-import { useAppSettingsStore } from "@/stores/AppSettings";
+import {OptionalSelects, useAppSettingsStore, ViewOptions} from "@/stores/AppSettings";
 import ServerSelectionModal from "@/components/Modals/ServerSelectionModal.vue";
 import CatalogSelectionModal from "@/components/Modals/CatalogSelectionModal.vue";
-import PivotTableSettingsButton from "@/components/PivotTable/PivotTableSettingsButton.vue";
+import { useLocationManager } from "@/composables/locationManager";
+import {ref} from "vue";
 
 // const url = "https://ssemenkoff.dev/emondrian/xmla";
+const locationManager = useLocationManager();
 
 export default {
   setup() {
     const store = useAppSettingsStore();
-    let windowUri = window.location.search.substring(1);
-    let params = new URLSearchParams(windowUri);
-    const uri = params.get("uri");
-    const cube = params.get("cube");
-    const catalog = params.get("catalog");
+
+    const uri = locationManager.queryState.value.datasourceUrl;
+    const cube = locationManager.queryState.value.cube;
+    const catalog = locationManager.queryState.value.catalog;
+
+    const viewOption = store.viewOption;
+    const optionsSwitch = store.optionalSelect;
+
+    const optionsSwitchoptions = ref([
+      { icon: 'insert_chart', value: OptionalSelects.CHART },
+      { icon: 'map', value: OptionalSelects.MAP },
+
+    ]);
 
     return {
       store,
       uri,
       cube,
       catalog,
+      viewOption,
+      optionsSwitch,
+      optionsSwitchoptions
     };
+  },
+  computed:{
+    viewOptionoptions(){
+
+      if(this.store.optionalSelect == OptionalSelects.MAP){
+        return [
+          { icon: 'table_chart', value: ViewOptions.TABLE },
+          { "icon":'table_chart',"iconRight":'map',label:'/', value:  ViewOptions.SPLIT},
+          { icon: 'map', value: ViewOptions.OPTIONAL },
+
+        ];
+      }
+      else{
+        return [
+          { icon: 'table_chart', value: ViewOptions.TABLE },
+          { "icon":'table_chart',"iconRight":'insert_chart',label:'/', value: ViewOptions.SPLIT},
+          { icon: 'insert_chart', value: ViewOptions.OPTIONAL },
+
+        ];
+      }
+    }
+  },
+  watch:{
+    viewOption(val){
+      this.store.switchViewOption(val)
+    },
+    optionsSwitch(val){
+      this.store.switchOptional(val)
+    }
   },
   methods: {
     async connect() {
@@ -38,11 +80,13 @@ export default {
       const catalogSelectionModal: any = this.$refs.catalogSelectionModal;
 
       let url = null as string | null;
+
       if (this.uri) {
         url = this.uri;
       } else {
-        url = await serverSelectionModal.run();
+        url = (await serverSelectionModal.run()) as string;
       }
+      locationManager.queryState.value.datasourceUrl = url;
       await this.store.initXmlaApi(url);
 
       let cube = null as string | null,
@@ -52,18 +96,28 @@ export default {
         cube = this.cube;
         catalog = this.catalog;
       } else {
-        const catalogSelectionResult = await catalogSelectionModal.run();
+        const catalogSelectionResult = (await catalogSelectionModal.run()) as {
+          cube: string;
+          catalog: string;
+        };
+
         cube = catalogSelectionResult.cube;
         catalog = catalogSelectionResult.catalog;
       }
+      locationManager.queryState.value.cube = cube;
+      locationManager.queryState.value.catalog = catalog;
 
       await this.store.openCube(catalog, cube);
     },
   },
   components: {
     ServerSelectionModal,
-    CatalogSelectionModal,
-    PivotTableSettingsButton,
+    CatalogSelectionModal
+  },
+  mounted() {
+    if (this.uri) {
+      this.connect();
+    }
   },
 };
 </script>
@@ -80,16 +134,24 @@ export default {
       <va-navbar-item v-if="!store.xmlaApiInited">
         <va-button @click="connect">Connect</va-button>
       </va-navbar-item>
-      <va-navbar-item>
-        <PivotTableSettingsButton />
+      <va-navbar-item v-if="store.xmlaApiInited">
+        <va-button-toggle
+            v-model="store.viewOption"
+            :options="viewOptionoptions"
+        />
+      </va-navbar-item>
+      <va-navbar-item v-if="store.xmlaApiInited">
+        <va-button-toggle
+            v-model="store.optionalSelect"
+            :options="optionsSwitchoptions"
+        />
       </va-navbar-item>
     </template>
-
-    <Teleport to="body">
+  </va-navbar>
+  <Teleport to="body">
       <ServerSelectionModal ref="serverSelectionModal" />
       <CatalogSelectionModal ref="catalogSelectionModal" />
     </Teleport>
-  </va-navbar>
 </template>
 
 <style lang="scss" scoped>

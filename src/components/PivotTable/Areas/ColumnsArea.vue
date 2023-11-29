@@ -14,7 +14,7 @@ import type { TinyEmitter } from "tiny-emitter";
 import { computed, inject, ref, watch, type Ref } from "vue";
 import MemberDropdown from "./MemberDropdown.vue";
 import MemberPropertiesModal from "@/components/Modals/MemberPropertiesModal.vue";
-import { useTreeViewDataStore } from "@/stores/TreeView";
+import { useMetadataStorage } from "@/composables/metadataStorage";
 
 const { state } = usePivotTableStore();
 
@@ -31,7 +31,7 @@ const props = defineProps([
 const eventBus = inject("eventBus") as TinyEmitter;
 const setParentStylesValue = inject("setColumnsStyles") as (
   index: number,
-  styles: number
+  styles: number,
 ) => {};
 
 const scrollPosition = ref(0);
@@ -65,7 +65,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 watch(
@@ -80,7 +80,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 const getColumnMemberStyle = (i: number, j: number) => {
@@ -138,7 +138,7 @@ const hasChildrenDisplayed = (i: number, j: number) => {
 
   if (
     currentHierarchyMembers.some(
-      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName
+      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName,
     )
   ) {
     return true;
@@ -150,7 +150,7 @@ const colIsExpanded = (i: number, j: number) => {
   const currentMember = props.columns?.[i]?.[j];
 
   return state.columnsExpandedMembers.some(
-    (e) => e.UName === currentMember.UName
+    (e) => e.UName === currentMember.UName,
   );
 };
 
@@ -215,10 +215,10 @@ eventBus.on("scroll", ({ left }: { left: number }) => {
 
 const memberPropertiesModal = ref(null) as Ref<any>;
 const openMemberProperties = async (member) => {
-  const treeStore = useTreeViewDataStore();
-  const level = treeStore.levels.find(
-    (e) => e.LEVEL_UNIQUE_NAME === member.LName
-  );
+  const metadataStorage = useMetadataStorage();
+
+  const levels = (await metadataStorage.getMetadataStorage()).levels;
+  const level = levels.find((e) => e.LEVEL_UNIQUE_NAME === member.LName);
   await memberPropertiesModal.value?.run({ level, member });
 };
 
@@ -279,7 +279,7 @@ const showMemberProperties = (member) => {
 
 const hideMemberProperties = (member) => {
   const indexToRemove = state.membersWithProps.indexOf(
-    (e) => e === member.HIERARCHY_UNIQUE_NAME
+    (e) => e === member.HIERARCHY_UNIQUE_NAME,
   );
   state.membersWithProps.splice(indexToRemove, 1);
 };
@@ -292,7 +292,7 @@ watch(
   () => currentlyDisplayedValues.value,
   () => {
     translate.value = currentlyDisplayedValues.value.translate;
-  }
+  },
 );
 </script>
 <template>
@@ -349,12 +349,9 @@ watch(
                           !hasChildrenDisplayed(member.i, j)
                         "
                         class="expandIcon"
+                        @click="expand(member)"
                       >
-                        <va-icon
-                          name="chevron_right"
-                          size="small"
-                          @click="expand(member)"
-                        />
+                        <va-icon name="chevron_right" size="small" />
                       </div>
                       <div
                         v-else-if="
@@ -362,12 +359,9 @@ watch(
                           colIsExpanded(member.i, j)
                         "
                         class="expandIcon"
+                        @click="collapse(member)"
                       >
-                        <va-icon
-                          name="expand_more"
-                          size="small"
-                          @click="collapse(member)"
-                        />
+                        <va-icon name="expand_more" size="small" />
                       </div>
                     </template>
                     <div class="columnMemberHeader">
@@ -475,5 +469,9 @@ watch(
   font-style: italic;
   height: 100%;
   font-weight: 500;
+}
+
+.expandIcon {
+  cursor: pointer;
 }
 </style>

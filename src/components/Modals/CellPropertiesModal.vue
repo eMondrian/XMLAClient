@@ -19,7 +19,10 @@ export default {
     const memberProperties = ref(null) as Ref<any>;
 
     const getMemberProperties = async (member) => {
-      delete member.__attrs;
+      if (member.__attrs) {
+        delete member.__attrs;
+      }
+
       return member;
     };
 

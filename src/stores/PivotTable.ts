@@ -12,13 +12,12 @@ import { defineStore } from "pinia";
 import { useAppSettingsStore } from "./AppSettings";
 import { useQueryDesignerStore } from "@/stores/QueryDesigner";
 import { ref, watch } from "vue";
-import { useTreeViewDataStore } from "./TreeView";
 import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
+import { useMetadataStorage } from "@/composables/metadataStorage";
 
 export const usePivotTableStore = defineStore("PivotTable", () => {
   const queryDesignerStore = useQueryDesignerStore();
   const appSettings = useAppSettingsStore();
-  const treeViewStore = useTreeViewDataStore();
 
   const state = ref({
     settings: ref({
@@ -39,13 +38,18 @@ export const usePivotTableStore = defineStore("PivotTable", () => {
 
   const mdx = ref("");
 
-  function getMDX() {
+  async function getMDX() {
     const rows = queryDesignerStore.rows;
     const columns = queryDesignerStore.columns;
     const measures = queryDesignerStore.measures;
+    const filters = queryDesignerStore.filters;
     const pivotTableSettings = state.value.settings;
+    const metadataStorage = useMetadataStorage();
+    const metadata = await metadataStorage.getMetadataStorage();
 
-    const mdxRequest = getMdxRequest(
+    console.log(rows);
+
+    const mdxRequest = await getMdxRequest(
       appSettings.selectedCube,
       state.value.rowsDrilldownMembers,
       state.value.columnsDrilldownMembers,
@@ -55,7 +59,8 @@ export const usePivotTableStore = defineStore("PivotTable", () => {
       columns,
       measures,
       pivotTableSettings,
-      treeViewStore.properties
+      metadata.properties,
+      filters
     );
 
     mdx.value = mdxRequest;
@@ -88,14 +93,11 @@ export const usePivotTableStore = defineStore("PivotTable", () => {
     }
   };
   const drilldownOnColumns = (member: any) => {
-    console.log(member, state.value.columnsExpandedMembers);
     const expandedIndex = state.value.columnsExpandedMembers.findIndex(
       (e: any) => e.UName === member.UName
     );
-    console.log(expandedIndex);
     if (expandedIndex >= 0)
       state.value.columnsExpandedMembers.splice(expandedIndex, 1);
-    console.log(state.value.columnsExpandedMembers);
 
     const sameHierarchyIndex = state.value.columnsDrilldownMembers.findIndex(
       (e: any) => {
@@ -103,7 +105,6 @@ export const usePivotTableStore = defineStore("PivotTable", () => {
       }
     );
     if (member.LNum === "0") {
-      console.log("flushed");
       state.value.columnsDrilldownMembers.splice(sameHierarchyIndex, 1);
     } else {
       if (sameHierarchyIndex >= 0) {

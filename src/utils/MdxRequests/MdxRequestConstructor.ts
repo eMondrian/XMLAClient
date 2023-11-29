@@ -8,12 +8,15 @@
   Contributors: Smart City Jena
 
 */
+import { useMetadataStorage } from "@/composables/metadataStorage";
 import {
   getRowsDrilldownRequestString,
   getColsDrilldownRequestString,
 } from "./Drilldown";
+import { useAppSettingsStore } from "@/stores/AppSettings";
+import { v4 } from "uuid";
 
-export function getMdxRequest(
+export async function getMdxRequest(
   cubename: string,
   rowsDrilldownMembers: any,
   columnsDrilldownMembers: any,
@@ -23,8 +26,12 @@ export function getMdxRequest(
   columns: any[],
   measures: any[],
   pivotTableSettings: any,
-  properties: any[]
+  properties: any[],
+  filters: any[]
 ) {
+  console.log(rowsExpandedMembers);
+  const filtersRequest = getFiltersRequest(filters);
+
   if (!rows.length || !columns.length) {
     return getSingleHierarchyRequest(
       rows,
@@ -36,19 +43,18 @@ export function getMdxRequest(
       rowsExpandedMembers,
       columnsExpandedMembers,
       pivotTableSettings,
-      properties
+      properties,
+      filtersRequest
     );
   } else {
     let withSection = "WITH";
     let selectSection = "SELECT";
-    const cellPropertiesSection =
-      " CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS";
-    const fromSection = `FROM ${cubename}`;
+    const fromSection = getFromPart(measures, cubename, filtersRequest.where);
 
     if (!pivotTableSettings.showEmpty) selectSection += " NON EMPTY";
 
     const rowsProperties = getRowsProperies(rows, properties);
-    const rowsRequest = getRowsRequest(
+    const rowsRequest = await getRowsRequest(
       rows,
       rowsDrilldownMembers,
       rowsExpandedMembers,
@@ -62,7 +68,7 @@ export function getMdxRequest(
     if (!pivotTableSettings.showEmpty) selectSection += " NON EMPTY";
 
     const colsProperties = getColumnsProperies(columns, properties);
-    const colsRequest = getColumnsRequest(
+    const colsRequest = await getColumnsRequest(
       columns,
       columnsDrilldownMembers,
       columnsExpandedMembers,
@@ -75,19 +81,22 @@ export function getMdxRequest(
 
     let resultString = "";
 
+    if (filtersRequest.with) {
+      withSection += filtersRequest.with;
+    }
+
     if (withSection.length > 4) {
       resultString += withSection;
     }
+
     resultString += "\n";
     resultString += selectSection;
     resultString += fromSection;
-    resultString += cellPropertiesSection;
-
     return resultString;
   }
 }
 
-function getColumnsRequest(
+async function getColumnsRequest(
   columns: any,
   columnsDrilldownMembers: any[],
   colsExpandedMembers: any[],
@@ -97,13 +106,15 @@ function getColumnsRequest(
   let columnsWhere = "";
 
   if (columns.length >= 1) {
-    columns.forEach((e: any, i: number) => {
-      const columnsRequest = getSingleColumnRequest(
+    for (let i = 0; i < columns.length; i++) {
+      const e = columns[i];
+      const columnsRequest = await getSingleColumnRequest(
         e,
         columnsDrilldownMembers,
         colsExpandedMembers,
         measures
       );
+
       if (i === 0) {
         columnsSelect = columnsRequest.select;
         columnsWhere = columnsRequest.with;
@@ -116,14 +127,7 @@ function getColumnsRequest(
             ${columnsRequest.select}
           )`;
       }
-    });
-  } else if (columns.length === 1) {
-    columnsSelect = getSingleColumnRequest(
-      columns[0],
-      columnsDrilldownMembers,
-      colsExpandedMembers,
-      measures
-    ).select;
+    }
   } else {
     columnsSelect = "";
   }
@@ -134,7 +138,7 @@ function getColumnsRequest(
   };
 }
 
-function getSingleColumnRequest(
+async function getSingleColumnRequest(
   e: any,
   columnsDrilldownMembers: any[],
   colsExpandedMembers: any[],
@@ -149,6 +153,8 @@ function getSingleColumnRequest(
       with: "",
     };
   }
+
+  const filteredRequest = await getAxisFilterRequest(e);
 
   const drilledDownMember = columnsDrilldownMembers.find(
     (drilldownedMembers) => {
@@ -165,8 +171,10 @@ function getSingleColumnRequest(
     );
   });
 
-  if (drilledDownMember || expandedMembers.length) {
-    const request = getColsDrilldownRequestString(
+  const rootExpanded = expandedMembers.some((member) => member.LNum === "0");
+  if (drilledDownMember || (expandedMembers.length && rootExpanded)) {
+    const request = await getColsDrilldownRequestString(
+      e,
       drilledDownMember,
       colsExpandedMembers
     );
@@ -176,13 +184,30 @@ function getSingleColumnRequest(
       select: request.select,
     };
   }
+
+  if (filteredRequest) {
+    return {
+      select: filteredRequest.select,
+      with: filteredRequest.with,
+    };
+  }
+
+  // Default request with no drilldowns and filters
+  const metadataStorage = useMetadataStorage();
+  const metadata = await metadataStorage.getMetadataStorage();
+
+  const rootLevel = metadata.levels.find(
+    (l) =>
+      l.HIERARCHY_UNIQUE_NAME === e.originalItem.HIERARCHY_UNIQUE_NAME &&
+      l.LEVEL_NUMBER === "0"
+  );
   return {
-    select: `Hierarchize({DrilldownLevel({${e.originalItem.HIERARCHY_UNIQUE_NAME}},,,INCLUDE_CALC_MEMBERS)})`,
+    select: `Hierarchize(AddCalculatedMembers({${rootLevel?.LEVEL_UNIQUE_NAME}.members}))`,
     with: "",
   };
 }
 
-function getRowsRequest(
+async function getRowsRequest(
   rows: any,
   rowsDrilldownMembers: any[],
   rowsExpandedMembers: any[],
@@ -192,8 +217,10 @@ function getRowsRequest(
   let rowsWhere = "";
 
   if (rows.length >= 1) {
-    rows.forEach((e: any, i: number) => {
-      const rowsRequest = getSingleRowRequest(
+    for (let i = 0; i < rows.length; i++) {
+      const e = rows[i];
+
+      const rowsRequest = await getSingleRowRequest(
         e,
         rowsDrilldownMembers,
         rowsExpandedMembers,
@@ -211,7 +238,7 @@ function getRowsRequest(
             ${rowsRequest.select}
           )`;
       }
-    });
+    }
   } else if (rows.length === 1) {
     rowsSelect = `{ ${rows[0].originalItem.HIERARCHY_UNIQUE_NAME}.Members }`;
   } else {
@@ -224,7 +251,7 @@ function getRowsRequest(
   };
 }
 
-function getSingleRowRequest(
+async function getSingleRowRequest(
   e: any,
   rowsDrilldownMembers: any[],
   rowsExpandedMembers: any[],
@@ -240,20 +267,27 @@ function getSingleRowRequest(
     };
   }
 
+  const filteredRequest = await getAxisFilterRequest(e);
+
   const drilledDownMember = rowsDrilldownMembers.find((drilldownedMembers) => {
     return (
       drilldownedMembers.HIERARCHY_UNIQUE_NAME ===
       e.originalItem.HIERARCHY_UNIQUE_NAME
     );
   });
+  console.log(rowsExpandedMembers);
   const expandedMembers = rowsExpandedMembers.filter((drilldownedMembers) => {
     return (
       drilldownedMembers.HIERARCHY_UNIQUE_NAME ===
       e.originalItem.HIERARCHY_UNIQUE_NAME
     );
   });
-  if (drilledDownMember || expandedMembers.length) {
-    const request = getRowsDrilldownRequestString(
+
+  const rootExpanded = expandedMembers.some((member) => member.LNum === "0");
+  if (drilledDownMember || (expandedMembers.length && rootExpanded)) {
+    console.log(expandedMembers);
+    const request = await getRowsDrilldownRequestString(
+      e,
       drilledDownMember,
       expandedMembers
     );
@@ -263,8 +297,25 @@ function getSingleRowRequest(
       select: request.select,
     };
   }
+  if (filteredRequest) {
+    return {
+      select: filteredRequest.select,
+      with: filteredRequest.with,
+    };
+  }
+
+  // Default request with no drilldowns and filters
+  const metadataStorage = useMetadataStorage();
+  const metadata = await metadataStorage.getMetadataStorage();
+
+  const rootLevel = metadata.levels.find(
+    (l) =>
+      l.HIERARCHY_UNIQUE_NAME === e.originalItem.HIERARCHY_UNIQUE_NAME &&
+      l.LEVEL_NUMBER === "0"
+  );
+
   return {
-    select: `Hierarchize({DrilldownLevel({${e.originalItem.HIERARCHY_UNIQUE_NAME}},,,INCLUDE_CALC_MEMBERS)})`,
+    select: `Hierarchize(AddCalculatedMembers({${rootLevel?.LEVEL_UNIQUE_NAME}.members}))`,
     with: "",
   };
 }
@@ -312,7 +363,7 @@ function getColumnsProperies(columns: any, properties: any[]) {
   return columnsPropertiesList;
 }
 
-function getSingleHierarchyRequest(
+async function getSingleHierarchyRequest(
   rows: any[],
   columns: any[],
   measures: any[],
@@ -322,13 +373,14 @@ function getSingleHierarchyRequest(
   rowsExpandedMembers: any,
   columnsExpandedMembers: any,
   pivotTableSettings: any,
-  properties: any[]
+  properties: any[],
+  filtersRequest: any
 ) {
   const selectPart = getSelectWithOptions(pivotTableSettings);
-  const fromPart = getFromPart(measures, cubename);
+  const fromPart = getFromPart(measures, cubename, filtersRequest.where);
 
   if (rows.length) {
-    const request = getRowsRequest(
+    const request = await getRowsRequest(
       rows,
       rowsDrilldownMembers,
       rowsExpandedMembers,
@@ -336,7 +388,13 @@ function getSingleHierarchyRequest(
     );
 
     const rowsSelect = request.select;
-    const rowsWith = request.with ? `WITH ${request.with}` : "";
+    let rowsWith = request.with ? `WITH ${request.with}` : "";
+
+    if (filtersRequest.with) {
+      if (rowsWith) rowsWith += filtersRequest.with;
+      else rowsWith = `WITH ${filtersRequest.with}`;
+    }
+
     const rowsProperties = getRowsProperies(rows, properties);
 
     return `
@@ -347,7 +405,7 @@ function getSingleHierarchyRequest(
       ${fromPart}
     `;
   } else if (columns.length) {
-    const request = getColumnsRequest(
+    const request = await getColumnsRequest(
       columns,
       columnsDrilldownMembers,
       columnsExpandedMembers,
@@ -355,7 +413,13 @@ function getSingleHierarchyRequest(
     );
 
     const colsSelect = request.select;
-    const colsWith = request.with ? `WITH ${request.with}` : "";
+    let colsWith = request.with ? `WITH ${request.with}` : "";
+
+    if (filtersRequest.with) {
+      if (colsWith) colsWith += filtersRequest.with;
+      else colsWith = `WITH ${filtersRequest.with}`;
+    }
+
     const colsProperties = getColumnsProperies(columns, properties);
 
     return `
@@ -364,6 +428,10 @@ function getSingleHierarchyRequest(
       ${colsSelect}
       DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME${colsProperties} ON 0
       ${fromPart}
+    `;
+  } else if (measures.length) {
+    return `
+      SELECT ${fromPart}
     `;
   }
   return "";
@@ -375,11 +443,191 @@ function getSelectWithOptions(pivotTableSettings) {
   return result;
 }
 
-function getFromPart(measures, cubename) {
+function getFromPart(measures, cubename, filtersWhere) {
   let measuresPart = "";
   if (measures.length === 1) {
-    measuresPart = `WHERE(${measures[0].originalItem.MEASURE_UNIQUE_NAME})`;
+    measuresPart = `${measures[0].originalItem.MEASURE_UNIQUE_NAME}`;
   }
-  const result = `FROM [${cubename}] ${measuresPart} CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`;
+
+  let result = "";
+  if (filtersWhere) {
+    if (measuresPart) {
+      result = `FROM [${cubename}] WHERE (${filtersWhere},${measuresPart}) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`;
+    } else {
+      result = `FROM [${cubename}] WHERE (${filtersWhere}) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`;
+    }
+  } else if (measuresPart) {
+    result = `FROM [${cubename}] WHERE ${measuresPart} CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`;
+  } else {
+    result = `FROM [${cubename}] CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`;
+  }
   return result;
+}
+
+function getFiltersRequest(filters) {
+  let withSection = "";
+  let whereSection = "";
+  if (!filters) {
+    return {
+      where: null,
+      with: null,
+    };
+  }
+
+  const filtersArray = filters.map((e) => e.filters);
+
+  filtersArray.forEach((filter) => {
+    if (!filter.enabled) return;
+
+    if (filter.multipleChoise) {
+      const uid = "id" + v4();
+      const filterSetName = `${filter.originalItem.DIMENSION_UNIQUE_NAME}.[FILTER_${uid}]`;
+
+      const selectedItems = filter.selectedItems.map((e) => e.UName).join(",");
+      withSection += ` MEMBER ${filterSetName} AS 'Aggregate({${selectedItems}})'`;
+
+      if (whereSection.length) whereSection += ",";
+      whereSection += filterSetName;
+      // TODO
+    } else {
+      if (whereSection.length) whereSection += ",";
+      whereSection += filter.selectedItem.UName;
+    }
+  });
+
+  return {
+    where: whereSection,
+    with: withSection,
+  };
+}
+
+async function getAxisFilterRequest(e) {
+  // const appSettings = useAppSettingsStore();
+  // const api = appSettings.getApi();
+  const filter = e.filters;
+  let withSection = "";
+  let selectSection = "";
+
+  if (!filter.enabled) return null;
+
+  const selectedFilters = [] as any[];
+  if (filter.multipleChoise) {
+    selectedFilters.push(...filter.selectedItems);
+  } else {
+    selectedFilters.push(filter.selectedItem);
+  }
+
+  const filtersLevels = [] as any[][];
+  selectedFilters.forEach((e) => {
+    const levelNum = e.LNum;
+    if (filtersLevels[levelNum]) {
+      filtersLevels[levelNum].push(e);
+    } else {
+      filtersLevels[levelNum] = [e];
+    }
+  });
+
+  const deseclectedFiltersLevels = [] as any[][];
+  if (filter.deselectedItems) {
+    filter.deselectedItems.forEach((e) => {
+      const levelNum = e.LNum;
+      if (deseclectedFiltersLevels[levelNum]) {
+        deseclectedFiltersLevels[levelNum].push(e);
+      } else {
+        deseclectedFiltersLevels[levelNum] = [e];
+      }
+    });
+  }
+
+  const filtersDepth = Math.max(
+    filtersLevels.length,
+    deseclectedFiltersLevels.length
+  );
+
+  const metadataStorage = useMetadataStorage();
+  const metadata = await metadataStorage.getMetadataStorage();
+
+  if (filter.selectAll && !deseclectedFiltersLevels.length) {
+    const uid = "id" + v4();
+    const filterSetName = `[FILTER_${uid}]`;
+
+    const rootLevel = metadata.levels.find(
+      (l) =>
+        l.HIERARCHY_UNIQUE_NAME === e.originalItem.HIERARCHY_UNIQUE_NAME &&
+        l.LEVEL_NUMBER === "0"
+    );
+
+    withSection = `SET ${filterSetName} AS 'VisualTotals(Distinct(Hierarchize(AddCalculatedMembers({${rootLevel?.LEVEL_UNIQUE_NAME}.members}))))' `;
+    selectSection = `Hierarchize(AddCalculatedMembers({${rootLevel?.LEVEL_UNIQUE_NAME}.members}))`;
+  } else {
+    const rowsLevels = metadata.levels.filter((l) => {
+      return l.HIERARCHY_UNIQUE_NAME === e.originalItem.HIERARCHY_UNIQUE_NAME;
+    });
+
+    const rootLevel = rowsLevels.find((e) => e.LEVEL_NUMBER === "0");
+    if (filter.selectAll) {
+      const appSettings = useAppSettingsStore();
+      const members = await appSettings.api?.getLevelMembers(
+        rootLevel as MDSchemaLevel,
+        100,
+        0
+      );
+
+      const req =
+        members
+          ?.map(
+            (e) =>
+              `Ascendants(${e.Member.UName}), Descendants(${e.Member.UName})`
+          )
+          .join(",") || "";
+
+      withSection = `{${req}}`;
+    }
+
+    if (!rootLevel) return null;
+
+    const uid = "id" + v4();
+    const filterSetName = `[FILTER_${uid}]`;
+
+    const set = selectedFilters
+      .map((e) => `Ascendants(${e.UName}), Descendants(${e.UName})`)
+      .join(",");
+
+    for (let i = 0; i < filtersDepth; i++) {
+      if (filtersLevels[i]) {
+        const aggregatedFiltersForLevel = filtersLevels[i]
+          .map((e) => `Ascendants(${e.UName}), Descendants(${e.UName})`)
+          .join(",");
+
+        if (withSection.length) {
+          withSection = `Union({${aggregatedFiltersForLevel}}, {${withSection}})`;
+        } else {
+          withSection = `{${aggregatedFiltersForLevel}}`;
+        }
+      }
+      if (deseclectedFiltersLevels[i]) {
+        const aggregatedFiltersForLevel = deseclectedFiltersLevels[i]
+          .map((e) => `Descendants(${e.UName})`)
+          .join(",");
+
+        if (withSection.length) {
+          withSection = `Except({${withSection}}, {${aggregatedFiltersForLevel}})`;
+        } else {
+          withSection = `{${aggregatedFiltersForLevel}}`;
+        }
+      }
+    }
+
+    if (filter.selectAll) {
+      withSection = `SET ${filterSetName} AS 'VisualTotals(Distinct(Hierarchize(${withSection})))' `;
+    } else {
+      withSection = `SET ${filterSetName} AS 'VisualTotals(Distinct(Hierarchize(Intersect({${set}}, ${withSection}))))' `;
+    }
+    selectSection = `Hierarchize(Intersect(AddCalculatedMembers({${rootLevel.LEVEL_UNIQUE_NAME}.members}), ${filterSetName}))`;
+  }
+
+  return {
+    with: withSection,
+    select: selectSection,
+  };
 }

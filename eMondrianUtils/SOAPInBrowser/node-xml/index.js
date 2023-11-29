@@ -978,7 +978,7 @@ SaxParser.prototype._fireEvent = function (iEvt) {
   }
 };
 
-SaxParser.prototype._parseLoop = function () {
+SaxParser.prototype._parseLoop = function () { //NOSONAR
   let iEvent, parser;
 
   parser = this.m_parser;
@@ -1272,17 +1272,16 @@ function __escapeString(str) {
 }
 
 function __unescapeString(str) {
-  const escAmpRegEx = /&amp;/g;
   const escLtRegEx = /&lt;/g;
   const escGtRegEx = /&gt;/g;
   const quotRegEx = /&quot;/g;
   const aposRegEx = /&apos;/g;
 
-  str = str.replace(escAmpRegEx, "&");
   str = str.replace(escLtRegEx, "<");
   str = str.replace(escGtRegEx, ">");
   str = str.replace(quotRegEx, '"');
   str = str.replace(aposRegEx, "'");
+  str = str.replace(/&amp;/g, "&");
 
   return str;
 }

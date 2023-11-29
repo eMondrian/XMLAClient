@@ -10,9 +10,20 @@
 */
 import { XMLAApi } from "../api/xml";
 import { defineStore } from "pinia";
-import { useTreeViewDataStore } from "./TreeView";
 import { usePivotTableStore } from "./PivotTable";
 import { findIndex } from "lodash";
+import { v4 } from "uuid";
+import { useMetadataStorage } from "@/composables/metadataStorage";
+
+export enum ViewOptions{
+  'TABLE',
+  'SPLIT',
+  'OPTIONAL'
+}
+export enum OptionalSelects{
+  'CHART',
+  'MAP',
+}
 
 export const useAppSettingsStore = defineStore("appSettingsStore", {
   state: () => ({
@@ -22,6 +33,8 @@ export const useAppSettingsStore = defineStore("appSettingsStore", {
     selectedCube: "",
     cubeOpened: false,
     loadingUids: [] as string[],
+    viewOption: ViewOptions.SPLIT as ViewOptions,
+    optionalSelect: OptionalSelects.CHART as OptionalSelects
   }),
   actions: {
     async initXmlaApi(url: string) {
@@ -44,15 +57,16 @@ export const useAppSettingsStore = defineStore("appSettingsStore", {
       this.cubeOpened = true;
       const loadingId = this.setLoadingState();
 
-      const treeViewDataStore = useTreeViewDataStore();
-      await treeViewDataStore.fetchCubeData(catalogName, cube);
+      const metadataStorage = useMetadataStorage();
+      await metadataStorage.initMetadataStorage(this.api, catalogName, cube);
+
       const pivotTableStore = usePivotTableStore();
       pivotTableStore.fetchPivotTableData();
 
       this.removeLoadingState(loadingId);
     },
     setLoadingState() {
-      const uid = "id" + Math.random().toString(16).slice(2);
+      const uid = "id" + v4();
       this.loadingUids.push(uid);
       return uid;
     },
@@ -61,11 +75,17 @@ export const useAppSettingsStore = defineStore("appSettingsStore", {
       if (loadingIdIndex >= 0) {
         this.loadingUids.splice(loadingIdIndex, 1);
       }
+    },
+    switchViewOption(option:ViewOptions){
+      this.viewOption = option;
+    },
+    switchOptional(selection:OptionalSelects){
+      this.optionalSelect = selection;
     }
   },
   getters: {
     loading(state) {
       return !!state.loadingUids.length;
-    }
-  }
+    },
+  },
 });

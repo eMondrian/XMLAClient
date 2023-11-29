@@ -74,6 +74,14 @@ const getCellValue = (cell: any) => {
   if (typeof cell.FmtValue === "string") return cell.FmtValue;
   return cell.Value;
 };
+const toLocalString = (value: number | string) => {
+  try {
+    if (typeof value == "string") value = Number(value);
+    return value.toLocaleString("de-DE");
+  } catch (e) {
+    return value;
+  }
+};
 
 const computedContainerStyles = computed(() => {
   return {
@@ -167,12 +175,16 @@ watch(
   () => {
     xTranslate.value = currentlyDisplayedValues.value.xTranslate;
     yTranslate.value = currentlyDisplayedValues.value.yTranslate;
-  }
+  },
 );
 
 const cellPropertiesModal = ref(null) as Ref<any>;
 const openCellProperties = async (cell) => {
-  await cellPropertiesModal.value?.run({ cell });
+  const cellToDispay = { ...cell };
+  delete cellToDispay.i;
+  delete cellToDispay.j;
+
+  await cellPropertiesModal.value?.run({ cell: cellToDispay });
 };
 
 const drillthrough = (cell) => {
@@ -216,7 +228,7 @@ function getFontStyles(fontStyle) {
         >
           <template v-slot="{}">
             <div>
-              {{ getCellValue(cell) }}
+              {{ toLocalString(getCellValue(cell)) }}
             </div>
           </template>
         </CellDropdown>
