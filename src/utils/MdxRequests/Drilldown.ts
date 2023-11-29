@@ -174,7 +174,7 @@ export async function getRowsDrilldownRequestString(
         .join(",");
 
       const deseclectedFiltersLevels = [] as any[][];
-      filter.deselectedItems.forEach((e) => {
+      filter.deselectedItems?.forEach((e) => {
         const levelNum = e.LNum;
         if (deseclectedFiltersLevels[levelNum]) {
           deseclectedFiltersLevels[levelNum].push(e);
@@ -439,7 +439,7 @@ export async function getColsDrilldownRequestString(
         .join(",");
 
       const deseclectedFiltersLevels = [] as any[][];
-      filter.deselectedItems.forEach((e) => {
+      filter.deselectedItems?.forEach((e) => {
         const levelNum = e.LNum;
         if (deseclectedFiltersLevels[levelNum]) {
           deseclectedFiltersLevels[levelNum].push(e);
