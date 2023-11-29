@@ -169,21 +169,22 @@ export default {
       //   );
       // }
 
-      console.log(axis1);
-
-      console.log(queryDesignerState.measures);
       if (queryDesignerState.measures.length === 1) {
         const mes = queryDesignerState.measures[0];
-        if (axis1.length === 0) {
-          axis1.push({
+        if (axis0.length === 0) {
+          axis0.push({
             Member: {
               Caption: mes.originalItem.MEASURE_CAPTION,
               UName: mes.originalItem.MEASURE_UNIQUE_NAME,
             },
           });
         }
-        if (axis0.length === 0) {
-          axis0.push({
+
+        if (
+          axis1.length === 0 &&
+          axis0[0].Member.UName !== mes.originalItem.MEASURE_UNIQUE_NAME
+        ) {
+          axis1.push({
             Member: {
               Caption: mes.originalItem.MEASURE_CAPTION,
               UName: mes.originalItem.MEASURE_UNIQUE_NAME,

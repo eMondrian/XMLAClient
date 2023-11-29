@@ -146,15 +146,12 @@ export default {
             :options="optionsSwitchoptions"
         />
       </va-navbar-item>
-
-
     </template>
-
-    <Teleport to="body">
+  </va-navbar>
+  <Teleport to="body">
       <ServerSelectionModal ref="serverSelectionModal" />
       <CatalogSelectionModal ref="catalogSelectionModal" />
     </Teleport>
-  </va-navbar>
 </template>
 
 <style lang="scss" scoped>

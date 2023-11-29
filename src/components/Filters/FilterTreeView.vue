@@ -88,7 +88,7 @@ watch(
     if (searchValue.value.length > 1) {
       search();
     }
-  }, 500)
+  }, 500),
 );
 
 treeData.value = {
@@ -104,9 +104,13 @@ treeData.value = {
 const multipleChoise = ref(
   props.rootHierarchy.filters
     ? props.rootHierarchy.filters.multipleChoise
-    : false
+    : false,
 );
-const singleSelection = ref({ id: null });
+
+console.log(props.rootHierarchy.filters);
+const singleSelection = ref({
+  id: props.rootHierarchy.filters.selectedItem?.id || null,
+});
 
 const emitSelectFunc = () => {
   if (searchValue.value) {

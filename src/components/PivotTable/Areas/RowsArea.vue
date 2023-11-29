@@ -26,7 +26,7 @@ const props = defineProps(["rows", "rowsStyles", "totalContentSize"]);
 const eventBus = inject("eventBus") as TinyEmitter;
 const setParentStylesValue = inject("setRowsStyles") as (
   index: number,
-  styles: number
+  styles: number,
 ) => {};
 
 const scrollPosition = ref(0);
@@ -65,7 +65,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 watch(
@@ -80,7 +80,7 @@ watch(
         }
       }
     }
-  }
+  },
 );
 
 const getRowMemberStyle = (i: number, j: number) => {
@@ -130,7 +130,7 @@ const hasChildrenDisplayed = (i: number, j: number) => {
 
   if (
     currentHierarchyMembers.some(
-      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName
+      (e) => e && e.PARENT_UNIQUE_NAME === currentMember.UName,
     )
   ) {
     return true;
@@ -184,6 +184,7 @@ const drillup = (member: any) => {
 
 const expandFn = inject("expand") as Function;
 const expand = (member: any) => {
+  console.log("expand", member);
   expandFn(member, "rows");
 };
 
@@ -267,7 +268,7 @@ const showMemberProperties = (member) => {
 
 const hideMemberProperties = (member) => {
   const indexToRemove = state.membersWithProps.indexOf(
-    (e) => e === member.HIERARCHY_UNIQUE_NAME
+    (e) => e === member.HIERARCHY_UNIQUE_NAME,
   );
   state.membersWithProps.splice(indexToRemove, 1);
 };
@@ -280,7 +281,7 @@ watch(
   () => currentlyDisplayedValues.value,
   () => {
     translate.value = currentlyDisplayedValues.value.translate;
-  }
+  },
 );
 </script>
 <template>
@@ -330,25 +331,19 @@ watch(
                         !hasChildrenDisplayed(member.i, j)
                       "
                       class="expandIcon"
+                      @click.stop.prevent="expand(member)"
                     >
-                      <va-icon
-                        name="chevron_right"
-                        size="small"
-                        @click="expand(member)"
-                      />
+                      <va-icon name="chevron_right" size="small" />
                     </div>
                     <div
                       v-else-if="
                         getRowChildCount(member.i, j) &&
                         rowIsExpanded(member.i, j)
                       "
+                      @click.stop.prevent="collapse(member)"
                       class="expandIcon"
                     >
-                      <va-icon
-                        name="expand_more"
-                        size="small"
-                        @click="collapse(member)"
-                      />
+                      <va-icon name="expand_more" size="small" />
                     </div>
                   </template>
                   <div class="rowMemberCaption">
@@ -454,6 +449,7 @@ watch(
 
 .expandIcon {
   flex-grow: 0;
+  cursor: pointer;
 }
 
 .propertyRow {

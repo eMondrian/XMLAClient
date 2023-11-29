@@ -29,6 +29,7 @@ export async function getMdxRequest(
   properties: any[],
   filters: any[]
 ) {
+  console.log(rowsExpandedMembers);
   const filtersRequest = getFiltersRequest(filters);
 
   if (!rows.length || !columns.length) {
@@ -274,6 +275,7 @@ async function getSingleRowRequest(
       e.originalItem.HIERARCHY_UNIQUE_NAME
     );
   });
+  console.log(rowsExpandedMembers);
   const expandedMembers = rowsExpandedMembers.filter((drilldownedMembers) => {
     return (
       drilldownedMembers.HIERARCHY_UNIQUE_NAME ===

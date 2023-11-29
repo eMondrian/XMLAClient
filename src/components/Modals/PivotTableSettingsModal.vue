@@ -21,15 +21,18 @@ export default {
     const pivotTableStore = usePivotTableStore();
     const { isOpened, run, close } = usePromisifiedModal(() => {});
 
-    const showEmpty = ref(pivotTableStore.state.settings.showEmpty);
-    const alignContent = ref(pivotTableStore.state.settings.alignContent);
-    alignContent.value = alignContent.value.charAt(0).toUpperCase() + alignContent.value.slice(1);
+    const initialState = {
+      showEmpty: pivotTableStore.state.settings.showEmpty,
+      alignContent: pivotTableStore.state.settings.alignContent,
+    };
 
-    const textAlignOptions = [
-      "Center",
-      "Left",
-      "Right",
-    ]
+    const showEmpty = ref(initialState.showEmpty);
+    const alignContent = ref(initialState.alignContent);
+
+    alignContent.value =
+      alignContent.value.charAt(0).toUpperCase() + alignContent.value.slice(1);
+
+    const textAlignOptions = ["Center", "Left", "Right"];
 
     return {
       isOpened,
@@ -38,6 +41,7 @@ export default {
       showEmpty,
       alignContent,
       textAlignOptions,
+      initialState,
     };
   },
   methods: {
@@ -45,6 +49,12 @@ export default {
       this.close({
         showEmpty: this.showEmpty,
         alignContent: this.alignContent.toLowerCase(),
+      });
+    },
+    cancel() {
+      this.close({
+        showEmpty: this.initialState.showEmpty,
+        alignContent: this.initialState.alignContent,
       });
     },
   },
@@ -57,10 +67,7 @@ export default {
       <va-card-content>
         <div class="mt-3">
           <div class="va-title mb-3">Pivot Table data</div>
-          <va-checkbox
-            v-model="showEmpty"
-            label="Show empty rows/columns"
-          />
+          <va-checkbox v-model="showEmpty" label="Show empty rows/columns" />
           <va-divider class="pt-3" />
         </div>
         <div class="mt-5 mb-3">
@@ -74,7 +81,8 @@ export default {
         </div>
       </va-card-content>
       <va-card-actions>
-        <va-button @click="ok" >Save</va-button>
+        <va-button @click="ok">Save</va-button>
+        <va-button @click="cancel" preset="secondary">Cancel</va-button>
       </va-card-actions>
     </template>
   </va-modal>

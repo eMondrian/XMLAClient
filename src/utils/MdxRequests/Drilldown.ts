@@ -99,6 +99,7 @@ export async function getRowsDrilldownRequestString(
       });
 
       for (let i = 0; i < expandedMembers.length; i++) {
+        console.log(expandedMembers, i);
         if (i === 0) {
           if (expandedMembers[i].LNum === "0") {
             hierarchizeString = `
