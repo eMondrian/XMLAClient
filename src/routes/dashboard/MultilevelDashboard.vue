@@ -34,7 +34,13 @@
           Add SVG
         </va-button>
         <va-button preset="primary" class="ml-2" @click="addRepeatableSvgWidget">
-          Add Repeatable SVG
+          Add repeatable SVG
+        </va-button>
+        <va-button preset="primary" class="ml-2" @click="addProgressWidget">
+          Add progress
+        </va-button>
+        <va-button preset="primary" class="ml-2" @click="addVideoWidget">
+          Add video
         </va-button>
         <va-button preset="primary" class="ml-2" @click="loadDemo">
           Load demo
@@ -567,6 +573,8 @@ import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
 import ListWidget from "@/components/Widgets/List/ListWidget.vue";
 import SvgWidget from "@/components/Widgets/Svg/SvgWidget.vue";
 import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
+import ProgressWidget from "@/components/Widgets/Progress/ProgressWidget.vue";
+import VideoWidget from "@/components/Widgets/Video/VideoWidget.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
@@ -623,6 +631,8 @@ const enabledWidgets = {
   PlainTextWidget,
   SvgWidget,
   RepeatableSvgWidget,
+  ProgressWidget,
+  VideoWidget,
 };
 
 let layout = {
@@ -1036,6 +1046,40 @@ const addRepeatableSvgWidget = () => {
   customWidgets.value.push({
     id: id,
     component: "RepeatableSvgWidget",
+    caption: "Test",
+  });
+};
+
+const addProgressWidget = () => {
+  const id = `id_${Date.now()}`;
+  layout[id] = {
+    x: 0,
+    y: 700,
+    width: 200,
+    height: 200,
+    z: 3005,
+  };
+
+  customWidgets.value.push({
+    id: id,
+    component: "ProgressWidget",
+    caption: "Test",
+  });
+};
+
+const addVideoWidget = () => {
+  const id = `id_${Date.now()}`;
+  layout[id] = {
+    x: 0,
+    y: 700,
+    width: 300,
+    height: 200,
+    z: 3005,
+  };
+
+  customWidgets.value.push({
+    id: id,
+    component: "VideoWidget",
     caption: "Test",
   });
 };
