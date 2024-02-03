@@ -13,6 +13,13 @@ const opened = ref({
   <va-collapse v-model="opened.textSection" header="Video widget settings">
     <div class="settings-container">
       <va-input v-model="props.component.videoUrl" label="Video url" />
+      <va-select
+        class="mt-2"
+        v-model="props.component.videoSettings.fit"
+        label="Fit"
+        :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
+      >
+      </va-select>
     </div>
   </va-collapse>
   <va-collapse v-model="opened.storeSection" header="Store settings">

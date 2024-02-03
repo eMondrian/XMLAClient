@@ -17,9 +17,13 @@ const props = defineProps({
 });
 
 const innerVideoUrl = ref(props.videoUrl || "");
+const videoSettings = ref({
+  fit: "None",
+})
 
 defineExpose({
   videoUrl: innerVideoUrl,
+  videoSettings,
   settings,
 });
 </script>
@@ -43,7 +47,8 @@ defineExpose({
 
 .container video {
   width: 100%;
-  height: auto;
+  height: 100%;
   border-radius: 3px;
+  object-fit: v-bind(videoSettings.fit);
 }
 </style>

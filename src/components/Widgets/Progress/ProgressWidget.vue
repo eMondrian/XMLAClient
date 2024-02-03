@@ -12,12 +12,15 @@ const props = defineProps({
   progress: {
     type: Number,
     required: false,
-    default: 0,
+    default: 50,
   },
   fillColor: {
-    type: String,
+    type: Object,
     required: false,
-    default: "#00FF00",
+    default: () => ({
+      backgroundColor: '#00FF00',
+      backgroundGradient: '#00FF00 0, #FAFAFA 70%'
+    }),
   },
   backgroundColor: {
     type: String,
@@ -33,17 +36,48 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false,
+  },
+  rotation: {
+    type: Number,
+    required: false,
+    default: 90,
   }
 });
 
-const innerProgress = ref(props.progress || 0);
-const innerFillColor = ref(props.fillColor || '#00FF00');
+const innerProgress = ref(props.progress || 50);
+const innerFillColor = ref({
+  backgroundColor: props.fillColor.backgroundColor || '#00FF00',
+  backgroundGradient: props.fillColor.backgroundGradient || '#00FF00 0, #FAFAFA 100%',
+});
 const innerBackgroundColor = ref(props.backgroundColor || '#d3d3d3');
 const innerIsGradient = ref(props.isGradient || false);
 const innerIsVertical = ref(props.isVertical || false);
+const innerRotation = ref(props.rotation || 90)
 
-const gradient = computed(() => {
-  return `linear-gradient(40deg, #0000FF, ${innerFillColor.value}, #FF0000)`;
+const backgroundProgressColor = computed(() => {
+  return innerIsGradient.value
+    ? `linear-gradient(${innerRotation.value}deg, ${innerFillColor.value.backgroundGradient})`
+    : `${innerFillColor.value.backgroundColor}`;
+})
+
+const transition = computed(() => {
+  return innerIsVertical.value ? 'height .7s ease' : 'width .7s ease';
+})
+
+const verticalPositionFiller = computed(() => {
+  return innerIsVertical.value ? `${innerProgress.value}%` : '35px';
+})
+
+const horizontalPositionFiller = computed(() => {
+  return !innerIsVertical.value ? `${innerProgress.value}%` : '35px';
+})
+
+const verticalPositionBackground = computed(() => {
+  return innerIsVertical.value ? '35px' : '100%';
+})
+
+const horizontalPositionBackground = computed(() => {
+  return !innerIsVertical.value ? '35px' : '100%';
 })
 
 defineExpose({
@@ -52,6 +86,7 @@ defineExpose({
   isGradient: innerIsGradient,
   isVertical: innerIsVertical,
   backgroundColor: innerBackgroundColor,
+  rotation: innerRotation,
   settings,
 });
 </script>
@@ -75,8 +110,8 @@ defineExpose({
 }
 
 .progress {
-  width: v-bind(innerIsVertical ? `35px` : `100%`);
-  height: v-bind(!innerIsVertical ? `35px` : `100%`);
+  width: v-bind(verticalPositionBackground);
+  height: v-bind(horizontalPositionBackground);
   background: v-bind(innerBackgroundColor);
   border-radius: 10px;
   display: flex;
@@ -85,10 +120,10 @@ defineExpose({
 }
 
 .progress-percent {
-  height: v-bind(innerIsVertical ? `${innerProgress}%` : `35px`);
-  width: v-bind(!innerIsVertical ? `${innerProgress}%` : `35px`);
-  background: v-bind(innerIsGradient ? gradient : innerFillColor);
-  transition: v-bind(innerIsVertical ? `height .7s ease` : `width .7s ease`);
+  height: v-bind(verticalPositionFiller);
+  width: v-bind(horizontalPositionFiller);
+  background: v-bind(backgroundProgressColor);
+  transition: v-bind(transition);
   display: flex;
   align-items: center;
   justify-content: center;
