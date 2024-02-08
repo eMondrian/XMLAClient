@@ -45,6 +45,9 @@
         <va-button preset="primary" class="ml-2" @click="loadDemo">
           Load demo
         </va-button>
+        <va-button preset="primary" class="ml-2" @click="openAppSettings">
+          Open App settings
+        </va-button>
       </div>
       <div class="main-section">
         <!-- <div class="dashboard-container">
@@ -547,6 +550,7 @@
     <SidebarSettings
       v-model="showSidebar"
       :settingsSection="settingsSection"
+      @updateBackgroundColor="updateBackgroundColor"
       class="sidebar"
     ></SidebarSettings>
   </div>
@@ -622,7 +626,7 @@ const showSidebar = ref(false);
 const settingsSection = ref(null as any);
 const test = ref(null);
 const test1 = ref(null);
-
+const settingsBackground = ref('#fefefe');
 const EventBus = inject("customEventBus") as any;
 
 const enabledWidgets = {
@@ -950,6 +954,15 @@ const loadLayout = async () => {
 const openStoreList = () => {
   settingsSection.value = { type: "Stores" };
   showSidebar.value = true;
+};
+
+const openAppSettings = () => {
+  settingsSection.value = { type: "App" };
+  showSidebar.value = true;
+};
+
+const updateBackgroundColor = (newColor) => {
+  settingsBackground.value = newColor;
 };
 
 const openSettings = (id, wrapperId, type = "Control") => {
@@ -1433,6 +1446,7 @@ body.no-overflow[data-v-059e0ffc] {
   flex-grow: 1;
   padding-left: 65px;
   gap: 1rem;
+  background: v-bind(settingsBackground);
 }
 
 .main-section {

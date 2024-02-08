@@ -21,7 +21,7 @@ export const Primary: Story = {
     progress: 50,
     fillColor: {
       backgroundColor: '#00FF00',
-      backgroundGradient: '#00FF00 0, #FAFAFA 70%'
+      backgroundGradient: '#00FF00 0, #FAFAFA 85%'
     },
     backgroundColor: "#d3d3d3",
     isGradient: false,

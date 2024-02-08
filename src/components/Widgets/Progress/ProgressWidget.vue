@@ -19,7 +19,7 @@ const props = defineProps({
     required: false,
     default: () => ({
       backgroundColor: '#00FF00',
-      backgroundGradient: '#00FF00 0, #FAFAFA 70%'
+      backgroundGradient: '#00FF00 0, #FAFAFA 85%'
     }),
   },
   backgroundColor: {

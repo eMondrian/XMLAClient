@@ -17,11 +17,13 @@ const addItem = () => {
 };
 
 watch(
-  fields,
-  () => {
-    props.component.fillColor.backgroundGradient = fields.value.length === 0
-      ? '#00FF00 0, #FAFAFA 70%'
-      : fields.value.map(v => `${v.color} ${v.location}%`).join(', ');
+  [() => props.component.fillColor.backgroundColor, () => fields.value],
+  ([backgroundColor, fields]) => {
+    props.component.fillColor.backgroundColor = backgroundColor;
+
+    props.component.fillColor.backgroundGradient = fields.length === 0
+      ? `${backgroundColor} 0, #FAFAFA 85%`
+      : fields.map(v => `${v.color} ${v.location}%`).join(', ');
   },
   { deep: true }
 );
