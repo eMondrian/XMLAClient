@@ -569,6 +569,7 @@ import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSv
 import ProgressWidget from "@/components/Widgets/Progress/ProgressWidget.vue";
 import VideoWidget from "@/components/Widgets/Video/VideoWidget.vue";
 import IconWidget from "@/components/Widgets/Icon/IconWidget.vue";
+import RichTextWidget from "@/components/Widgets/RichText/RichTextWidget.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
@@ -629,6 +630,7 @@ const enabledWidgets = {
   ProgressWidget,
   VideoWidget,
   IconWidget,
+  RichTextWidget,
 };
 
 const widgetOptions = [
@@ -641,6 +643,7 @@ const widgetOptions = [
   'Progress Widget',
   'Video Widget',
   'Icon Widget',
+  'Rich Text Widget',
 ];
 
 const addSelectedWidget = () => {
@@ -671,6 +674,9 @@ const addSelectedWidget = () => {
       break;
     case 'Icon Widget':
       addIconWidget();
+      break;
+    case 'Rich Text Widget':
+      addRichTextWidget();
       break;
     default:
       break;
@@ -1148,6 +1154,23 @@ const addIconWidget = () => {
   customWidgets.value.push({
     id: id,
     component: "IconWidget",
+    caption: "Test",
+  });
+};
+
+const addRichTextWidget = () => {
+  const id = `id_${Date.now()}`;
+  layout[id] = {
+    x: 0,
+    y: 700,
+    width: 300,
+    height: 200,
+    z: 3005,
+  };
+
+  customWidgets.value.push({
+    id: id,
+    component: "RichTextWidget",
     caption: "Test",
   });
 };
