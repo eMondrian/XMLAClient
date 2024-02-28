@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, Ref } from "vue";
+import { useStoreManager } from "@/composables/storeManager";
+import type { Store } from "@/stores/Widgets/Store";
 
 const props = defineProps(["component"]) as any;
 const opened = ref({
@@ -7,7 +9,39 @@ const opened = ref({
   storeSection: false,
 });
 
+const storeManager = useStoreManager();
+let stores = ref([]) as Ref<any[]>;
+const requestResult = ref("");
+const storeId = ref(props.component.storeId);
 const fields = ref([]);
+
+const getStores = () => {
+  const storeList = storeManager.getStoreList();
+
+  stores.value = Array.from(storeList.value, function (entry) {
+    return { ...entry[1] };
+  });
+};
+
+const getData = async () => {
+  const store = storeManager.getStore(storeId.value) as Store;
+
+  const data = await store.getData();
+  requestResult.value = JSON.stringify(data, null, 2);
+};
+
+const updateStore = (store) => {
+  storeId.value = store;
+  props.component.storeId = store;
+  getData();
+};
+
+onMounted(() => {
+  getStores();
+  if (storeId.value) {
+    getData();
+  }
+});
 
 const addItem = () => {
   return fields.value.push({
@@ -35,9 +69,14 @@ const deleteField = (id) => {
 const progress = computed({
   get: () => props.component.progress,
   set: (value) => {
-    const editedProgress = Math.max(0, Math.min(100, value));
-    if (editedProgress >= 0) {
-      props.component.progress = editedProgress;
+    if (typeof value === 'string') {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        const editedProgress = Math.max(0, Math.min(100, numericValue));
+        props.component.progress = editedProgress;
+      } else {
+        props.component.progress = value;
+      }
     }
   }
 });
@@ -100,6 +139,19 @@ const progress = computed({
     <div class="settings-container">
       <div>
         <h3 class="mb-2">Select store</h3>
+        <div class="mb-2" v-for="store in stores" :key="store.id">
+          <va-radio
+            :model-value="storeId"
+            @update:model-value="updateStore"
+            :option="{
+              text: `${store.caption} ${store.id}`,
+              id: store.id,
+            }"
+            value-by="id"
+            name="store-radio-group"
+          />
+        </div>
+        <pre class="response">{{ requestResult }}</pre>
       </div>
     </div>
   </va-collapse>
