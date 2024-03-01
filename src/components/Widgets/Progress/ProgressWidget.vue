@@ -20,7 +20,7 @@ const props = defineProps({
   progress: {
     type: [Number, String],
     required: false,
-    default: () => 50,
+    default: () => 0.5,
     validator: (value) => {
       return typeof value === 'string' || typeof value === 'number';
     },
@@ -138,14 +138,13 @@ const updateFn = async () => {
 };
 
 const parsedProgress = computed(() => {
-  if (!isNaN(innerProgress.value)) return innerProgress.value;
+  if (!isNaN(innerProgress.value)) return `${(innerProgress.value * 100).toFixed(2)}%`;
+  
   let processedString = innerProgress.value;
   const regex = /{(.*?)}/g;
   const parts = processedString.match(regex);
 
-  if (!parts || !data.value) {
-    return processedString;
-  }
+  if (!parts || !data.value) return processedString;
 
   parts.forEach((element: string) => {
     const trimmedString = element.replace("{", "").replace("}", "");
@@ -157,7 +156,9 @@ const parsedProgress = computed(() => {
 
     processedString = processedString.replace(element, res);
   });
-  return processedString;
+  return !isNaN(parseFloat(processedString))
+    ? `${(Math.max(0, Math.min(1, parseFloat(processedString)) * 100).toFixed(2))}%`
+    : `${processedString}%`;
 });
 
 const backgroundProgressColor = computed(() => {
@@ -171,11 +172,11 @@ const transition = computed(() => {
 });
 
 const verticalPositionFiller = computed(() => {
-  return innerIsVertical.value ? `${parsedProgress.value}%` : '35px';
+  return innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
 const horizontalPositionFiller = computed(() => {
-  return !innerIsVertical.value ? `${parsedProgress.value}%` : '35px';
+  return !innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
 const verticalPositionBackground = computed(() => {
@@ -190,7 +191,7 @@ const horizontalPositionBackground = computed(() => {
 <template>
   <div class="container">
     <div class="progress">
-      <span>{{ !isNaN(parseFloat(parsedProgress)) ? `${Math.max(0, Math.min(100, parseFloat(parsedProgress)))}%` : parsedProgress }}</span>
+      <span>{{ parsedProgress }}</span>
       <div class="progress-percent"></div>
     </div>
   </div>

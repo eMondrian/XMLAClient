@@ -14,6 +14,7 @@ let stores = ref([]) as Ref<any[]>;
 const requestResult = ref("");
 const storeId = ref(props.component.storeId);
 const fields = ref([]);
+const progress = ref(props.component.progress);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -66,20 +67,24 @@ const deleteField = (id) => {
   fields.value = fields.value.filter((_,i) => i !== id)
 }
 
-const progress = computed({
-  get: () => props.component.progress,
-  set: (value) => {
-    if (typeof value === 'string') {
-      const numericValue = parseFloat(value);
-      if (!isNaN(numericValue)) {
-        const editedProgress = Math.max(0, Math.min(100, numericValue));
-        props.component.progress = editedProgress;
+watch(
+  () => progress.value,
+  (newValue) => {
+    if (typeof newValue === 'string') {
+      const allowDot = !newValue.includes('.');
+      const sanitizedValue = newValue.replace(/,/g, '.');
+      const numericValue = parseFloat(sanitizedValue);
+
+      if (!isNaN(numericValue) && allowDot) {
+        const clampedValue = Math.max(0, Math.min(1, numericValue));
+        progress.value = clampedValue;
+        props.component.progress = clampedValue;
       } else {
-        props.component.progress = value;
+        props.component.progress = newValue;
       }
     }
   }
-});
+);
 
 </script>
 
