@@ -156,9 +156,7 @@ const parsedProgress = computed(() => {
 
     processedString = processedString.replace(element, res);
   });
-  return !isNaN(parseFloat(processedString))
-    ? `${(Math.max(0, Math.min(1, parseFloat(processedString)) * 100).toFixed(2))}%`
-    : `${processedString}%`;
+  return `${processedString}%`;
 });
 
 const backgroundProgressColor = computed(() => {
