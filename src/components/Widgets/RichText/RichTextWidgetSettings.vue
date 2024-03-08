@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, Ref, onMounted, watch, inject } from "vue";
+import { useStoreManager } from "@/composables/storeManager";
+import type { Store } from "@/stores/Widgets/Store";
+
 import StarterKit from '@tiptap/starter-kit';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import Bold from '@tiptap/extension-bold';
@@ -18,6 +21,45 @@ const props = defineProps(["component"]) as any;
 const opened = ref({
   textSection: false,
   storeSection: false,
+});
+
+const EventBus = inject("customEventBus") as any;
+const storeManager = useStoreManager();
+
+let store = null as unknown as Store;
+let stores = ref([]) as Ref<any[]>;
+
+const requestResult = ref("");
+const storeId = ref(props.component.storeId);
+const externalData = ref(null as unknown);
+
+const getStores = () => {
+  const storeList = storeManager.getStoreList();
+
+  stores.value = Array.from(storeList.value, function (entry) {
+    return { ...entry[1] };
+  });
+};
+
+const getData = async () => {
+  const store = storeManager.getStore(storeId.value) as Store;
+
+  const data = await store.getData();
+  externalData.value = data;
+  requestResult.value = JSON.stringify(data, null, 2);
+};
+
+const updateStore = (store) => {
+  storeId.value = store;
+  props.component.storeId = store;
+  getData();
+};
+
+onMounted(() => {
+  getStores();
+  if (storeId.value) {
+    getData();
+  }
 });
 
 const editor = useEditor({
@@ -82,6 +124,54 @@ const editor = useEditor({
     props.component.editor = html;
   },
 });
+
+const updateFn = async () => {
+  externalData.value = await store?.getData();
+  console.log(externalData);
+};
+
+watch(
+  storeId, 
+  (newVal, oldVal) => {
+  console.log("store changed", storeId);
+  store = storeManager.getStore(storeId.value);
+
+  console.log(oldVal, newVal);
+
+  EventBus.off(`UPDATE:${oldVal}`, updateFn);
+  EventBus.on(`UPDATE:${storeId.value}`, updateFn);
+
+  getData();
+});
+
+watch(
+  () => editor.value?.getText(), 
+  (newText) => {
+    let processedString = newText;
+    const regex = /{(.*?)}/g;
+    const parts = processedString.match(regex) || [];
+
+    if (!parts || !externalData.value) {
+      editor.value?.commands.setContent(processedString);
+      props.component.editor = processedString;
+      return;
+    };
+
+    parts.forEach((element: string) => {
+      const trimmedString = element.replace("{", "").replace("}", "");
+      const dataField = trimmedString.split(".");
+
+      const res = dataField.reduce((acc: any, field) => {
+        return acc[field];
+      }, externalData.value);
+
+      processedString = processedString.replace(element, res);
+    });
+    editor.value?.commands.setContent(processedString);
+    props.component.editor = processedString;
+  }
+);
+
 </script>
 
 <template>
@@ -162,9 +252,24 @@ const editor = useEditor({
   </va-collapse>
   <va-collapse v-model="opened.storeSection" header="Store settings">
     <div class="settings-container">
+      <div class="settings-container">
       <div>
         <h3 class="mb-2">Select store</h3>
+        <div class="mb-2" v-for="store in stores" :key="store.id">
+          <va-radio
+            :model-value="storeId"
+            @update:model-value="updateStore"
+            :option="{
+              text: `${store.caption} ${store.id}`,
+              id: store.id,
+            }"
+            value-by="id"
+            name="store-radio-group"
+          />
+        </div>
+        <pre class="response">{{ requestResult }}</pre>
       </div>
+    </div>
     </div>
   </va-collapse>
 </template>

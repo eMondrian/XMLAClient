@@ -1,8 +1,16 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, inject, computed } from "vue";
 import RepeatableSvgWidgetSettings from "./RepeatableSvgWidgetSettings.vue";
-
+import { useStoreManager } from "@/composables/storeManager";
+import type { Store } from "@/stores/Widgets/Store";
 const settings = RepeatableSvgWidgetSettings;
+
+const EventBus = inject("customEventBus") as any;
+const storeManager = useStoreManager();
+const storeId = ref("");
+const data = ref(null as unknown);
+
+let store = null as unknown as Store;
 
 const props = defineProps({
   initialState: {
@@ -31,14 +39,14 @@ const props = defineProps({
     }),
   },
   repeations: {
-    type: Number,
+    type: String,
     required: false,
-    default: 4,
+    default: '4',
   },
   progress: {
-    type: Number,
+    type: String,
     required: false,
-    default: 0.5,
+    default: '0.5',
   },
 });
 
@@ -53,9 +61,36 @@ const innerDefaultItemStyles = ref({
   fill: defaultItemStyles.fill || '#777777',
   stroke: defaultItemStyles.stroke || '#777777',
 });
-const innerRepeations = ref(repeations || 4);
-const innerProgress = ref(progress || 0.5);
+const innerRepeations = ref(repeations || '4');
+const innerProgress = ref(progress || '0.5');
 
+const getState = () => {
+  return {
+    storeId: storeId.value,
+  };
+};
+
+const getData = async () => {
+  if (!store) return;
+  updateFn();
+};
+
+watch(storeId, (newVal, oldVal) => {
+  console.log("store changed", storeId);
+  store = storeManager.getStore(storeId.value);
+
+  console.log(oldVal, newVal);
+
+  EventBus.off(`UPDATE:${oldVal}`, updateFn);
+  EventBus.on(`UPDATE:${storeId.value}`, updateFn);
+
+  getData();
+});
+
+const updateFn = async () => {
+  data.value = await store?.getData();
+  console.log(data);
+};
 
 onMounted(async () => {
   if(!props.src) return;
@@ -70,8 +105,39 @@ defineExpose({
   defaultItemStyles: innerDefaultItemStyles,
   progress: innerProgress,
   repeations: innerRepeations,
+  storeId,
   settings,
+  getState,
 });
+
+const createParsedData = (prop) => {
+  return computed(() => {
+    let processedString = String(prop.value);
+    const regex = /{(.*?)}/g;
+    const parts = processedString.match(regex);
+
+    if (!parts || !data.value) {
+      return processedString;
+    }
+
+    parts.forEach((element: string) => {
+      const trimmedString = element.replace("{", "").replace("}", "");
+      const dataField = trimmedString.split(".");
+
+      const res = dataField.reduce((acc: any, field) => {
+        return acc[field];
+      }, data.value);
+
+      processedString = processedString.replace(element, res);
+    });
+    return processedString;
+  });
+}
+
+const svgSourceParse = createParsedData(svgSource);
+const svgRepeationsParse = createParsedData(innerRepeations);
+const svgProgressParse = createParsedData(innerProgress);
+
 </script>
 
 <template>
@@ -82,7 +148,7 @@ defineExpose({
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
-      :viewBox="`0 0 ${100 * Number(innerRepeations)} 100`"
+      :viewBox="`0 0 ${100 * (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)} 100`"
       enable-background="new 0 0 100 100"
       xml:space="preserve"
     >
@@ -92,7 +158,7 @@ defineExpose({
             x="0"
             y="0"
             style="fill: #adadad"
-            :width="100 * Number(innerRepeations) * innerProgress"  
+            :width="100 * (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0) * svgProgressParse"  
             height="100"
           />
         </mask>
@@ -102,8 +168,8 @@ defineExpose({
         :stroke="innerDefaultItemStyles.stroke"
       >
         <g
-          v-html="svgSource"
-          v-for="index in Number(innerRepeations)"
+          v-html="svgSourceParse"
+          v-for="index in (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)"
           :transform="`translate(${100 * (index - 1)}, 0)`"
           :key="index"
         ></g>
@@ -114,8 +180,8 @@ defineExpose({
         :stroke="innerActiveItemStyles.stroke"
       >
         <g
-          v-html="svgSource"
-          v-for="index in Number(innerRepeations)"
+          v-html="svgSourceParse"
+          v-for="index in (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)"
           :transform="`translate(${100 * (index - 1)}, 0)`"
           :key="index"
         ></g>
