@@ -44,7 +44,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" header="SVG  widget settings">
+  <va-collapse v-model="opened.textSection" header="Repeatable SVG  widget settings">
     <div class="settings-container">
       <va-input v-model="props.component.src" label="src"/>
       <va-input v-model="props.component.repeations" label="repeations"/>

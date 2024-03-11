@@ -134,9 +134,15 @@ const createParsedData = (prop) => {
   });
 }
 
-const svgSourceParse = createParsedData(svgSource);
-const svgRepeationsParse = createParsedData(innerRepeations);
 const svgProgressParse = createParsedData(innerProgress);
+
+const repeationsToNumber = computed(() => {
+  return !isNaN(innerRepeations.value) ? Math.floor(Number(innerRepeations.value)) : 0;
+})
+
+const progressToNumber = computed(() => {
+  return !isNaN(svgProgressParse.value) ? Number(svgProgressParse.value) : 0;
+})
 
 </script>
 
@@ -148,7 +154,7 @@ const svgProgressParse = createParsedData(innerProgress);
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
-      :viewBox="`0 0 ${100 * (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)} 100`"
+      :viewBox="`0 0 ${100 * repeationsToNumber} 100`"
       enable-background="new 0 0 100 100"
       xml:space="preserve"
     >
@@ -158,7 +164,7 @@ const svgProgressParse = createParsedData(innerProgress);
             x="0"
             y="0"
             style="fill: #adadad"
-            :width="100 * (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0) * svgProgressParse"  
+            :width="100 * repeationsToNumber * progressToNumber"  
             height="100"
           />
         </mask>
@@ -168,8 +174,8 @@ const svgProgressParse = createParsedData(innerProgress);
         :stroke="innerDefaultItemStyles.stroke"
       >
         <g
-          v-html="svgSourceParse"
-          v-for="index in (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)"
+          v-html="svgSource"
+          v-for="index in repeationsToNumber"
           :transform="`translate(${100 * (index - 1)}, 0)`"
           :key="index"
         ></g>
@@ -180,8 +186,8 @@ const svgProgressParse = createParsedData(innerProgress);
         :stroke="innerActiveItemStyles.stroke"
       >
         <g
-          v-html="svgSourceParse"
-          v-for="index in (!isNaN(svgRepeationsParse) ? Number(svgRepeationsParse) : 0)"
+          v-html="svgSource"
+          v-for="index in repeationsToNumber"
           :transform="`translate(${100 * (index - 1)}, 0)`"
           :key="index"
         ></g>

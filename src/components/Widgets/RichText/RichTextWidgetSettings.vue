@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, Ref, onMounted, watch, inject } from "vue";
+import { ref, Ref, onMounted, watch } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 
@@ -23,15 +23,11 @@ const opened = ref({
   storeSection: false,
 });
 
-const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-
-let store = null as unknown as Store;
 let stores = ref([]) as Ref<any[]>;
 
 const requestResult = ref("");
 const storeId = ref(props.component.storeId);
-const externalData = ref(null as unknown);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -45,7 +41,6 @@ const getData = async () => {
   const store = storeManager.getStore(storeId.value) as Store;
 
   const data = await store.getData();
-  externalData.value = data;
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
@@ -119,56 +114,12 @@ const editor = useEditor({
       },
     }),
   ],
-  onUpdate: ({ editor }) => {
-    const html = editor.getHTML();
-    props.component.editor = html;
-  },
-});
-
-const updateFn = async () => {
-  externalData.value = await store?.getData();
-  console.log(externalData);
-};
-
-watch(
-  storeId, 
-  (newVal, oldVal) => {
-  console.log("store changed", storeId);
-  store = storeManager.getStore(storeId.value);
-
-  console.log(oldVal, newVal);
-
-  EventBus.off(`UPDATE:${oldVal}`, updateFn);
-  EventBus.on(`UPDATE:${storeId.value}`, updateFn);
-
-  getData();
 });
 
 watch(
-  () => editor.value?.getText(), 
-  (newText) => {
-    let processedString = newText;
-    const regex = /{(.*?)}/g;
-    const parts = processedString.match(regex) || [];
-
-    if (!parts || !externalData.value) {
-      editor.value?.commands.setContent(processedString);
-      props.component.editor = processedString;
-      return;
-    };
-
-    parts.forEach((element: string) => {
-      const trimmedString = element.replace("{", "").replace("}", "");
-      const dataField = trimmedString.split(".");
-
-      const res = dataField.reduce((acc: any, field) => {
-        return acc[field];
-      }, externalData.value);
-
-      processedString = processedString.replace(element, res);
-    });
-    editor.value?.commands.setContent(processedString);
-    props.component.editor = processedString;
+  () => editor.value?.getHTML(), 
+  (newValue) => {
+    props.component.editor = newValue;
   }
 );
 

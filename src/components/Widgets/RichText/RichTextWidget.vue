@@ -1,7 +1,16 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch, inject, computed } from "vue";
+import { useStoreManager } from "@/composables/storeManager";
+import type { Store } from "@/stores/Widgets/Store";
 import RichTextWidgetSettings from "./RichTextWidgetSettings.vue";
 const settings = RichTextWidgetSettings;
+
+const EventBus = inject("customEventBus") as any;
+const storeManager = useStoreManager();
+const storeId = ref("");
+const data = ref(null as unknown);
+
+let store = null as unknown as Store;
 
 const props = defineProps({
   initialState: {
@@ -13,19 +22,70 @@ const props = defineProps({
     required: false,
     default: "",
   },
-})
+});
 
 const innerEditor = ref(props.editor || "");
 
+const getState = () => {
+  return {
+    storeId: storeId.value,
+  };
+};
+
 defineExpose({
   editor: innerEditor,
+  getState,
+  storeId,
   settings,
-})
+});
+
+const getData = async () => {
+  if (!store) return;
+  updateFn();
+};
+
+watch(
+  storeId, 
+  (newVal, oldVal) => {
+  console.log("store changed", storeId);
+  store = storeManager.getStore(storeId.value);
+
+  console.log(oldVal, newVal);
+
+  EventBus.off(`UPDATE:${oldVal}`, updateFn);
+  EventBus.on(`UPDATE:${storeId.value}`, updateFn);
+
+  getData();
+});
+
+const updateFn = async () => {
+  data.value = await store?.getData();
+  console.log(data);
+};
+
+const parsedEditorText = computed(() => {
+  let processedString = innerEditor.value;
+  const regex = /{(.*?)}/g;
+  const parts = processedString.match(regex);
+
+  if (!parts || !data.value) return processedString;
+
+  parts.forEach((element: string) => {
+    const trimmedString = element.replace("{", "").replace("}", "");
+    const dataField = trimmedString.split(".");
+
+    const res = dataField.reduce((acc: any, field) => {
+      return acc[field];
+    }, data.value);
+    processedString = processedString.replace(element, res);
+  });
+  return processedString;
+});
 </script>
 
 <template>
   <div class="text-container">
-    <div class="editor-content" v-html="innerEditor"></div>
+    <div class="editor-content" v-html="parsedEditorText"/>
   </div>
 </template>
 
