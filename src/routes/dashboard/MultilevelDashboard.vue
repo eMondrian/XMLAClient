@@ -16,15 +16,12 @@ Contributors: Smart City Jena
       :class="{ editDisabled: !editEnabled }"
     >
       <div class="widgets-select">
-        <va-select 
+        <va-select
           v-model="selectedAction"
           :options="widgetOptions"
           label="widgets"
         />
-        <va-button 
-          class="add-widget-btn"
-          @click="addSelectedWidget"
-        >
+        <va-button class="add-widget-btn" @click="addSelectedWidget">
           Add Widget
         </va-button>
       </div>
@@ -41,336 +38,12 @@ Contributors: Smart City Jena
         <va-button preset="primary" class="ml-2" @click="openStoreList">
           Open Store List
         </va-button>
-        <va-button preset="primary" class="ml-2" @click="loadDemo">
-          Load demo
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="addPivotTable">
-          Add pivot table
-        </va-button>
         <va-button preset="primary" class="ml-2" @click="openAppSettings">
           Open App settings
         </va-button>
       </div>
       <div class="main-section">
-        <!-- <div class="dashboard-container">
-          <div
-            class="d_1 dashboard-item-container"
-            :style="getInitialStyle('d_1')"
-            ref="d_1"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <smart-widget
-                    title="Einwohner 2022"
-                    shadow="hover"
-                    class="widget-content"
-                  >
-                    <div class="layout-center">
-                      <h1>108.867</h1>
-                    </div>
-                  </smart-widget>
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_1')">Move up</va-button>
-                  <va-button @click="moveDown('d_1')">Move down</va-button>
-                  <va-button @click="moveToTop('d_1')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_1')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_1']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag('d_1', $event)"
-            @resize="resize('d_1', $event)"
-            ref="d_1_control"
-            :snappable="false"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            :style="getMovableControlStyles('d_1')"
-          >
-          </Moveable>
-
-          <div
-            class="d_2 dashboard-item-container"
-            :style="getInitialStyle('d_2')"
-            ref="d_2"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <smart-widget
-                    title="Einwohner 2021"
-                    loading
-                    shadow="hover"
-                    class="widget-content"
-                  >
-                    <div class="layout-center">
-                      <h1>108.141</h1>
-                    </div>
-                  </smart-widget>
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_2')">Move up</va-button>
-                  <va-button @click="moveDown('d_2')">Move down</va-button>
-                  <va-button @click="moveToTop('d_2')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_2')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_2']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @resize="resize('d_2', $event)"
-            @drag="drag('d_2', $event)"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            ref="d_2_control"
-            :style="getMovableControlStyles('d_2')"
-          >
-          </Moveable>
-
-          <div
-            class="d_3 dashboard-item-container"
-            :style="getInitialStyle('d_3')"
-            ref="d_3"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <DashboardControls
-                    @openSettings="openSettings('test')"
-                    v-if="editEnabled"
-                  />
-                  <ButtonControl class="widget-content" ref="test" />
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_3')">Move up</va-button>
-                  <va-button @click="moveDown('d_3')">Move down</va-button>
-                  <va-button @click="moveToTop('d_3')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_3')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_3']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag('d_3', $event)"
-            @resize="resize('d_3', $event)"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            ref="d_3_control"
-            :style="getMovableControlStyles('d_3')"
-          >
-          </Moveable>
-
-          <div
-            class="d_4 dashboard-item-container"
-            :style="getInitialStyle('d_4')"
-            ref="d_4"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <smart-widget
-                    title="Einwohner je Jahr"
-                    class="widget-content"
-                  >
-                    <Suspense>
-                      <ChartWidget chart-store="w1" :mdx="mdx"></ChartWidget>
-                    </Suspense>
-                  </smart-widget>
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_4')">Move up</va-button>
-                  <va-button @click="moveDown('d_4')">Move down</va-button>
-                  <va-button @click="moveToTop('d_4')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_4')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_4']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag('d_4', $event)"
-            @resize="resize('d_4', $event)"
-            ref="d_4_control"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            :style="getMovableControlStyles('d_4')"
-          >
-          </Moveable>
-
-          <div
-            class="d_5 dashboard-item-container"
-            :style="getInitialStyle('d_5')"
-            ref="d_5"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <smart-widget
-                    title="Altersgruppen je Bezirk"
-                    fullscreen
-                    class="widget-content"
-                  >
-                    <Suspense>
-                      <ChartWidget chart-store="w2" :mdx="mdx2"></ChartWidget>
-                    </Suspense>
-                  </smart-widget>
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_5')">Move up</va-button>
-                  <va-button @click="moveDown('d_5')">Move down</va-button>
-                  <va-button @click="moveToTop('d_5')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_5')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_5']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag('d_5', $event)"
-            @resize="resize('d_5', $event)"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            ref="d_5_control"
-            :style="getMovableControlStyles('d_5')"
-          >
-          </Moveable>
-
-          <div
-            class="d_6 dashboard-item-container"
-            :style="getInitialStyle('d_6')"
-            ref="d_6"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <smart-widget
-                    title="Kinder pro Jahr"
-                    fullscreen
-                    class="widget-content"
-                  >
-                    <Suspense>
-                      <ChartPolarWidget
-                        chart-store="w3"
-                        :mdx="mdx3"
-                      ></ChartPolarWidget>
-                    </Suspense>
-                  </smart-widget>
-                </div>
-              </template>
-
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp('d_6')">Move up</va-button>
-                  <va-button @click="moveDown('d_6')">Move down</va-button>
-                  <va-button @click="moveToTop('d_6')">Move to top</va-button>
-                  <va-button @click="moveToBottom('d_6')">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="['.d_6']"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag('d_6', $event)"
-            @resize="resize('d_6', $event)"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            ref="d_6_control"
-            :style="getMovableControlStyles('d_6')"
-          >
-          </Moveable>
-        </div> -->
-        <template v-for="widget in customWidgets" :key="widget.id">
+        <template v-for="widget in widgets" :key="widget.id">
           <div
             :class="`${widget.id} dashboard-item-container`"
             :style="getInitialStyle(widget.id)"
@@ -384,16 +57,10 @@ Contributors: Smart City Jena
             >
               <template #anchor>
                 <div class="dashboard-item">
-                  <!-- <smart-widget
-                    title="Kinder pro Jahr"
-                    fullscreen
-                    class="widget-content"
-                  > -->
                   <Suspense>
                     <template #fallback>
                       <div>Loading...</div>
                     </template>
-                    <!-- :storeId="widget.storeId" -->
                     <WidgetWrapper :ref="`${widget.id}_wrapper`">
                       <component
                         :is="enabledWidgets[widget.component]"
@@ -402,7 +69,6 @@ Contributors: Smart City Jena
                       ></component>
                     </WidgetWrapper>
                   </Suspense>
-                  <!-- </smart-widget> -->
                   <DashboardControls
                     v-if="editEnabled"
                     @openSettings="
@@ -412,9 +78,7 @@ Contributors: Smart City Jena
                         'Widget',
                       )
                     "
-                    @deleteWidget="
-                      deleteWidget(widget.id)
-                    "
+                    @deleteWidget="deleteWidget(widget.id)"
                   />
                 </div>
               </template>
@@ -449,104 +113,6 @@ Contributors: Smart City Jena
           >
           </Moveable>
         </template>
-
-        <div
-          class="d_3 dashboard-item-container"
-          :style="getInitialStyle('d_3')"
-          ref="d_3"
-        >
-          <va-dropdown
-            :trigger="editEnabled ? 'right-click' : 'none'"
-            :auto-placement="false"
-            placement="right-start"
-            cursor
-          >
-            <template #anchor>
-              <div class="dashboard-item">
-                <DashboardControls
-                  @openSettings="openSettings('test', null)"
-                  v-if="editEnabled"
-                />
-                <ButtonControl class="widget-content" ref="test" />
-              </div>
-            </template>
-
-            <va-dropdown-content>
-              <div class="dropdown-buttons-container">
-                <va-button @click="moveUp('d_3')">Move up</va-button>
-                <va-button @click="moveDown('d_3')">Move down</va-button>
-                <va-button @click="moveToTop('d_3')">Move to top</va-button>
-                <va-button @click="moveToBottom('d_3')">
-                  Move to bottom
-                </va-button>
-              </div>
-            </va-dropdown-content>
-          </va-dropdown>
-        </div>
-        <Moveable
-          v-bind:target="['.d_3']"
-          v-bind:draggable="editEnabled"
-          v-bind:resizable="editEnabled"
-          v-bind:useResizeObserver="true"
-          v-bind:useMutationObserver="true"
-          @drag="drag('d_3', $event)"
-          @resize="resize('d_3', $event)"
-          :snappable="true"
-          :snapGridWidth="20"
-          :snapGridHeight="20"
-          ref="d_3_control"
-          :style="getMovableControlStyles('d_3')"
-        >
-        </Moveable>
-
-        <!-- <div
-          class="d_7 dashboard-item-container"
-          :style="getInitialStyle('d_7')"
-          ref="d_7"
-        >
-          <va-dropdown
-            :trigger="editEnabled ? 'right-click' : 'none'"
-            :auto-placement="false"
-            placement="right-start"
-            cursor
-          >
-            <template #anchor>
-              <div class="dashboard-item">
-                <DashboardControls
-                  @openSettings="openSettings('test1')"
-                  v-if="editEnabled"
-                />
-                <InputControl class="widget-content" ref="test1" />
-              </div>
-            </template>
-
-            <va-dropdown-content>
-              <div class="dropdown-buttons-container">
-                <va-button @click="moveUp('d_7')">Move up</va-button>
-                <va-button @click="moveDown('d_7')">Move down</va-button>
-                <va-button @click="moveToTop('d_7')">Move to top</va-button>
-                <va-button @click="moveToBottom('d_7')">
-                  Move to bottom
-                </va-button>
-              </div>
-            </va-dropdown-content>
-          </va-dropdown>
-        </div>
-        <Moveable
-          v-bind:target="['.d_7']"
-          v-bind:draggable="editEnabled"
-          v-bind:resizable="editEnabled"
-          v-bind:useResizeObserver="true"
-          v-bind:useMutationObserver="true"
-          @drag="drag('d_7', $event)"
-          @resize="resize('d_7', $event)"
-          :snappable="true"
-          :snapGridWidth="20"
-          :snapGridHeight="20"
-          ref="d_7_control"
-          :style="getMovableControlStyles('d_7')"
-        >
-        </Moveable> -->
       </div>
     </div>
     <SidebarSettings
@@ -561,400 +127,135 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
-import {getCurrentInstance, inject, markRaw, nextTick, onMounted, ref,} from "vue";
-import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
-import PlainTextWidget from "@/components/Widgets/PlainText/PlainTextWidget.vue";
-import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
-import ImageWidget from "@/components/Widgets/Image/ImageWidget.vue";
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-import ListWidget from "@/components/Widgets/List/ListWidget.vue";
-import SvgWidget from "@/components/Widgets/Svg/SvgWidget.vue";
-import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
-import ProgressWidget from "@/components/Widgets/Progress/ProgressWidget.vue";
-import VideoWidget from "@/components/Widgets/Video/VideoWidget.vue";
-import IconWidget from "@/components/Widgets/Icon/IconWidget.vue";
-import RichTextWidget from "@/components/Widgets/RichText/RichTextWidget.vue";
+import { markRaw, ref, getCurrentInstance } from "vue";
+
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
-import {useDatasourceManager} from "@/composables/datasourceManager";
+import { useDatasourceManager } from "@/composables/datasourceManager";
+import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
+import { useSerialization } from "@/composables/dashboard/serialization";
+import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
-import TableWidget from "@/components/Widgets/Table/TableWidget.vue";
 
 const storeManager = useStoreManager();
 const dsManager = useDatasourceManager();
 
-const customWidgets = ref([] as any[]);
 const editEnabled = ref(false);
-const timestamp = ref(Date.now());
 const showSidebar = ref(false);
 const settingsSection = ref(null as any);
-const test = ref(null);
-const test1 = ref(null);
-const settingsBackground = ref('#fefefe');
-const EventBus = inject("customEventBus") as any;
-const selectedAction = ref('');
+const settingsBackground = ref("#fefefe");
+const selectedAction = ref("");
 
-const enabledWidgets = {
-  ImageWidget,
-  TextWidget,
-  PlainTextWidget,
-  PivotTableWidget,
-  SvgWidget,
-  RepeatableSvgWidget,
-  ProgressWidget,
-  VideoWidget,
-  IconWidget,
-  RichTextWidget,
-  TableWidget,
-};
-
-const widgetOptions = [
-  // 'Plain Text Widget',
-  // 'Plain List Widget',
-  'Image Widget',
-  'Text Widget',
-  'Svg Widget',
-  'Repeatable Svg Widget',
-  'Progress Widget',
-  'Video Widget',
-  'Icon Widget',
-  'Rich Text Widget',
-  'Table Widget',
-  'Pivot Table Widget'
-];
+const instance = getCurrentInstance();
 
 const addSelectedWidget = () => {
-  switch (selectedAction.value) {
-    // case 'Plain Text Widget':
-    //   addWidget("PlainTextWidget");
-    //   break;
-    // case 'Plain List Widget':
-    //   addWidget("ListWidget");
-    //   break;
-    case 'Image Widget':
-      addWidget("ImageWidget");
-      break;
-    case 'Text Widget':
-      addWidget("TextWidget");
-      break;
-    case 'Svg Widget':
-      addWidget("SvgWidget");
-      break;
-    case 'Repeatable Svg Widget':
-      addWidget("RepeatableSvgWidget");
-      break;
-    case 'Progress Widget':
-      addWidget("ProgressWidget");
-      break;
-    case 'Video Widget':
-      addWidget("VideoWidget");
-      break;
-    case 'Icon Widget':
-      addWidget("IconWidget");
-      break;
-    case 'Rich Text Widget':
-      addWidget("RichTextWidget");
-      break;
-    case 'Table Widget':
-      addWidget("TableWidget");
-      break;
-    case 'Pivot Table Widget':
-      addWidget("PivotTableWidget")
-    default:
-      break;
-  }
+  if (selectedAction.value === "") return;
+
+  const widget = widgetNames.filter((e) => e.label === selectedAction.value)[0];
+
+  const id: string = `id_${Date.now()}`;
+  layout.value[id] = {
+    x: 0,
+    y: 700,
+    width: 300,
+    height: 150,
+    z: 3005,
+  };
+
+  addWidget(widget.name, id);
 };
 
-let layout = {
-  d_1: {
-    x: 0,
-    y: 0,
-    width: 400,
-    height: 400,
-    z: 3001,
-  },
-  d_2: {
-    x: 410,
-    y: 0,
-    width: 400,
-    height: 400,
-    z: 3000,
-  },
-  d_3: {
-    x: 0,
-    y: 430,
-    width: 100,
-    height: 40,
-    z: 3000,
-  },
-  d_4: {
-    x: 410,
-    y: 410,
-    width: 400,
-    height: 400,
-    z: 3000,
-  },
-  d_5: {
-    x: 820,
-    y: 0,
-    width: 400,
-    height: 400,
-    z: 3000,
-  },
-  d_6: {
-    x: 820,
-    y: 410,
-    width: 400,
-    height: 400,
-    z: 3002,
-  },
-  d_7: {
-    x: 1230,
-    y: 410,
-    width: 200,
-    height: 50,
-    z: 3000,
-  },
-};
+const {
+  widgets,
+  widgetsStorage,
+  addWidget,
+  removeWidget,
+  widgetNames,
+  enabledWidgets,
+} = useWidgets();
 
-let refs;
-onMounted(() => {
-  refs = getCurrentInstance();
+const widgetOptions = widgetNames.map((widget) => widget.label);
+
+const {
+  layout,
+  layoutStorage,
+  getInitialStyle,
+  getMovableControlStyles,
+  drag,
+  resize,
+  moveUp,
+  moveDown,
+  moveToBottom,
+  moveToTop,
+} = useMoveableLayout();
+
+const { getSerializedState, loadState } = useSerialization({
+  layout: layoutStorage,
+  stores: storeManager,
+  datasources: dsManager,
+  widgets: widgetsStorage,
 });
-
-const getInitialStyle = (id) => {
-  timestamp.value;
-
-  return {
-    width: `${layout[id].width}px`,
-    height: `${layout[id].height}px`,
-    transform: `translate(${layout[id].x}px, ${layout[id].y}px)`,
-    "z-index": layout[id].z,
-  };
-};
-
-const getMovableControlStyles = (id) => {
-  timestamp.value;
-  return {
-    "z-index": layout[id].z,
-  };
-};
-
-const drag = (id, e) => {
-  console.log("drag", e.transform);
-
-  layout[id].x = e.translate[0];
-  layout[id].y = e.translate[1];
-
-  e.target.style.transform = e.transform;
-  console.log(e.transform);
-};
-
-const resize = (id, e) => {
-  e.target.style.width = `${e.width}px`;
-  e.target.style.height = `${e.height}px`;
-
-  layout[id].width = e.width;
-  layout[id].height = e.height;
-  layout[id].x = e.drag.translate[0];
-  layout[id].y = e.drag.translate[1];
-  e.target.style.transform = e.drag.transform;
-};
-
-const moveUp = (id) => {
-  layout[id].z = layout[id].z + 1;
-
-  const refArr = refs.ctx.$refs[id];
-  const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-  ref.style["z-index"] = layout[id].z;
-  refs.ctx.$refs[`${id}_control`].$el.style["z-index"] = layout[id].z;
-};
-
-const moveDown = (id) => {
-  layout[id].z = layout[id].z - 1;
-
-  const refArr = refs.ctx.$refs[id];
-  const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-  ref.style["z-index"] = layout[id].z;
-  refs.ctx.$refs[`${id}_control`].$el.style["z-index"] = layout[id].z;
-};
-
-const moveToBottom = (id) => {
-  const obj = Object.entries(layout);
-  const res = obj.reduce(function (p, v) {
-    return p[1].z < v[1].z ? p : v;
-  }, obj[0]);
-
-  if (id !== res[0]) {
-    layout[id].z = res[1].z - 1;
-
-    const refArr = refs.ctx.$refs[id];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-    ref.style["z-index"] = layout[id].z;
-    refs.ctx.$refs[`${id}_control`][0].$el.style["z-index"] = layout[id].z;
-  }
-};
-
-const moveToTop = (id) => {
-  const obj = Object.entries(layout);
-  const res = obj.reduce(function (p, v) {
-    return p[1].z > v[1].z ? p : v;
-  }, obj[0]);
-
-  if (id !== res[0]) {
-    layout[id].z = res[1].z + 1;
-
-    const refArr = refs.ctx.$refs[id];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-    ref.style["z-index"] = layout[id].z;
-    refs.ctx.$refs[`${id}_control`].$el.style["z-index"] = layout[id].z;
-  }
-};
 
 const toggleEdit = () => {
   editEnabled.value = !editEnabled.value;
-  manuallyUpdateLayout();
-};
-
-const manuallyUpdateLayout = () => {
-  timestamp.value = Date.now();
 };
 
 const saveLayout = () => {
-  localStorage.setItem("testLayout", JSON.stringify(layout));
-
-  const storeState = storeManager.getSerializedState();
-  const dsState = dsManager.getSerializedState();
-
-  const widgetsState = {};
-  customWidgets.value.forEach((e) => {
-    const refArr = refs.ctx.$refs[`${e.id}_component`];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-    const refArrWp = refs.ctx.$refs[`${e.id}_wrapper`];
-    const refWp = Array.isArray(refArrWp) ? refArrWp[0] : refArrWp;
-
-    const state = ref.getState();
-    widgetsState[e.id] = {
-      component: e.component,
-      caption: e.caption,
-      state,
-    };
-    if(refWp && refWp.getState){
-      const stateWp = refWp.getState();
-      widgetsState[e.id+'_wrapper'] = {
-        component: e.component,
-        caption: e.caption,
-        stateWp,
-      };
-    }
-
-  });
-
-  localStorage.setItem("dsState", dsState);
-  localStorage.setItem("storeState", storeState);
-  localStorage.setItem("widgetsState", JSON.stringify(widgetsState));
-
-  const tempJson = {
-    layout,
-    storeState: JSON.parse(storeState),
-    dsState: JSON.parse(dsState),
-    widgetsState,
-  };
-
-  console.log(JSON.stringify(tempJson));
-};
-
-const loadDemo = async () => {
-  const layoutReq = await fetch("/demo/layout.json");
-  const layoutJson = await layoutReq.json();
-  console.log(layout);
-
-  layout = layoutJson.layout;
-
-  manuallyUpdateLayout();
-
-  Object.keys(layoutJson.widgetsState).forEach((key) => {
-    const e = layoutJson.widgetsState[key];
-    customWidgets.value.push({
-      id: key,
-      component: e.component,
-      caption: e.caption,
-      // state: e.state,
-    });
-  });
-
-  dsManager.loadState(layoutJson.dsState);
-  storeManager.loadState(layoutJson.storeState, EventBus);
-
-  await nextTick();
-
-  customWidgets.value.forEach((e) => {
-    const refArr = refs.ctx.$refs[`${e.id}_component`];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-    ref.setState(layoutJson.widgetsState[e.id].state);
-    console.log(ref);
-  });
+  const state = getSerializedState();
+  console.log(state);
 };
 
 const loadLayout = async () => {
-  const retrievedObject =
-    localStorage.getItem("testLayout") || JSON.stringify(layout);
-  layout = JSON.parse(retrievedObject);
+  loadState("{}");
+  // const retrievedObject =
+  //   localStorage.getItem("testLayout") || JSON.stringify(layout);
+  // layout.value = JSON.parse(retrievedObject);
 
-  manuallyUpdateLayout();
-  console.log(layout);
+  // console.log(layout.value);
 
-  const dsState = localStorage.getItem("dsState");
-  const storeState = localStorage.getItem("storeState");
-  const widgetsState = localStorage.getItem("widgetsState");
+  // const dsState = localStorage.getItem("dsState") || "{}";
+  // const storeState = localStorage.getItem("storeState") || "{}";
+  // const widgetsState = localStorage.getItem("widgetsState") || "{}";
 
-  const widgetsStateObj = JSON.parse(widgetsState);
+  // const widgetsStateObj = JSON.parse(widgetsState);
 
-  let wrappers =[];
+  // let wrappers = [];
 
-  Object.keys(widgetsStateObj).forEach((key) => {
-    const e = widgetsStateObj[key];
-    if(key.includes('_wrapper')){
-      wrappers.push(key);
-    }else{
-      customWidgets.value.push({
-        id: key,
-        component: e.component,
-        caption: e.caption,
-        // state: e.state,
-      });
-    }
+  // Object.keys(widgetsStateObj).forEach((key) => {
+  //   const e = widgetsStateObj[key];
+  //   if (key.includes("_wrapper")) {
+  //     wrappers.push(key);
+  //   } else {
+  //     customWidgets.value.push({
+  //       id: key,
+  //       component: e.component,
+  //       caption: e.caption,
+  //       // state: e.state,
+  //     });
+  //   }
+  // });
+  // console.log(customWidgets.value);
 
-  });
-  console.log(customWidgets.value);
+  // dsManager.loadState(JSON.parse(dsState));
+  // storeManager.loadState(JSON.parse(storeState), EventBus);
 
-  dsManager.loadState(JSON.parse(dsState));
-  storeManager.loadState(JSON.parse(storeState), EventBus);
+  // await nextTick();
 
-  await nextTick();
+  // customWidgets.value.forEach((e) => {
+  //   const refArr = refs.ctx.$refs[`${e.id}_component`];
+  //   const ref = Array.isArray(refArr) ? refArr[0] : refArr;
 
-  customWidgets.value.forEach((e) => {
-    const refArr = refs.ctx.$refs[`${e.id}_component`];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-
-    ref.setState(widgetsStateObj[e.id].state);
-    console.log(ref);
-  });
-  wrappers.forEach(key=>{
-    const e = widgetsStateObj[key];
-    const refArr = refs.ctx.$refs[key];
-    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
-    console.log(e)
-    ref.setState(e.stateWp)
-  })
-
+  //   ref.setState(widgetsStateObj[e.id].state);
+  //   console.log(ref);
+  // });
+  // wrappers.forEach((key) => {
+  //   const e = widgetsStateObj[key];
+  //   const refArr = refs.ctx.$refs[key];
+  //   const ref = Array.isArray(refArr) ? refArr[0] : refArr;
+  //   console.log(e);
+  //   ref.setState(e.stateWp);
+  // });
 };
 
 const openStoreList = () => {
@@ -972,60 +273,37 @@ const updateBackgroundColor = (newColor) => {
 };
 
 const openSettings = (id, wrapperId, type = "Control") => {
-  const refArr = refs.ctx.$refs[id];
-  const ref = Array.isArray(refArr) ? refArr[0] : refArr;
+  const refs = instance?.refs;
 
-  let wrapperRef = null;
+  if (!refs) return;
+
+  const ref = refs[id] as any[];
+
+  let wrapperRef = null as any;
   if (wrapperId) {
-    const wrapperRefArr = refs.ctx.$refs[wrapperId];
-    console.log(wrapperRefArr);
-    wrapperRef = Array.isArray(wrapperRefArr)
-      ? wrapperRefArr[0]
-      : wrapperRefArr;
+    wrapperRef = refs[wrapperId] as any[];
   }
 
   settingsSection.value = markRaw({
     type,
-    component: ref,
-    wrapper: wrapperRef,
+    component: ref[0],
+    wrapper: wrapperRef?.[0],
     id,
   });
   showSidebar.value = true;
 };
 
 const deleteWidget = (id) => {
-  if (settingsSection?.value && `${id}_component` === settingsSection.value.id) {
+  if (
+    settingsSection?.value &&
+    `${id}_component` === settingsSection.value.id
+  ) {
     showSidebar.value = false;
   }
-  customWidgets.value = customWidgets.value.filter(widget => widget.id !== id);
-};
 
-const addWidget = (component: string, x?: number, y?: number, width?: number, height?: number, z?: number) => {
-  const id: string = `id_${Date.now()}`;
-  layout[id] = { x: x || 0, y: y || 700, width: width || 300, height: height || 150, z: z || 3005 };
+  delete layout.value[id];
 
-  customWidgets.value.push({
-    id,
-    component,
-    caption: "Test",
-  });
-};
-
-const addTableWidget = () => {
-  const id = `id_${Date.now()}`;
-  layout[id] = {
-    x: 200,
-    y: 40,
-    width: 1200,
-    height: 700,
-    z: 3005,
-  };
-
-  customWidgets.value.push({
-    id: id,
-    component: "TableWidget",
-    caption: "Test",
-  });
+  removeWidget(id);
 };
 </script>
 

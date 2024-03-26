@@ -73,7 +73,7 @@ export function useDatasourceManager() {
     }
   };
 
-  const getSerializedState = () => {
+  const getState = () => {
     const state = {};
 
     // availableDatasources.value.forEach((ds) => {
@@ -107,7 +107,7 @@ export function useDatasourceManager() {
     getDatasource,
     getDatasourceList,
     updateDatasource,
-    getSerializedState,
+    getState,
     loadState,
   };
 }
