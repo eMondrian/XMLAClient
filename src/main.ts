@@ -58,7 +58,9 @@ import {
   VaRadio,
   VaCollapse,
   VaColorInput,
+  VaTextarea,
   VaSlider,
+  VaPagination,
 } from "vuestic-ui";
 import "vuestic-ui/css";
 
@@ -129,7 +131,9 @@ app.use(
       VaRadio,
       VaCollapse,
       VaColorInput,
+      VaTextarea,
       VaSlider,
+      VaPagination,
     },
     config: {
       colors: {

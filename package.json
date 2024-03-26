@@ -7,7 +7,7 @@
     "test:unit": "vitest --environment jsdom --root src/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "build-only": "vite build",
-    "dev": "vite",
+    "dev": "vite --host --port 5174",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "test.axe": "npx nightwatch test/E2E/axe.js --env chrome",
@@ -27,6 +27,7 @@
     "chart.js": "^4.4.1",
     "chartjs-plugin-autocolors": "^0.2.2",
     "chartjs-plugin-hierarchical": "^4.3.5",
+    "csv-parse": "^5.5.5",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
@@ -42,7 +43,7 @@
     "vue-smart-widget": "^1.0.0-alpha.1",
     "vue3-moveable": "^0.26.2",
     "vuedraggable": "^4.1.0",
-    "vuestic-ui": "^1.8.6"
+    "vuestic-ui": "^1.9.5"
   },
   "devDependencies": {
     "@nightwatch/vue": "^0.4.5",

@@ -34,6 +34,9 @@
         <va-button preset="primary" class="ml-2" @click="loadDemo">
           Load demo
         </va-button>
+        <va-button preset="primary" class="ml-2" @click="addPivotTable">
+          Add pivot table
+        </va-button>
         <va-button preset="primary" class="ml-2" @click="openAppSettings">
           Open App settings
         </va-button>
@@ -561,6 +564,7 @@ import {
 import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
 import InputControl from "@/components/Controls/Input/InputControl.vue";
 import PlainTextWidget from "@/components/Widgets/PlainText/PlainTextWidget.vue";
+import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
 import ImageWidget from "@/components/Widgets/Image/ImageWidget.vue";
 import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
 import ListWidget from "@/components/Widgets/List/ListWidget.vue";
@@ -575,6 +579,7 @@ import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
+import TableWidget from "@/components/Widgets/Table/TableWidget.vue";
 
 const storeManager = useStoreManager();
 const dsManager = useDatasourceManager();
@@ -624,13 +629,15 @@ const selectedAction = ref('');
 const enabledWidgets = {
   ImageWidget,
   TextWidget,
-  // PlainTextWidget,
+  PlainTextWidget,
+  PivotTableWidget,
   SvgWidget,
   RepeatableSvgWidget,
   ProgressWidget,
   VideoWidget,
   IconWidget,
   RichTextWidget,
+  TableWidget,
 };
 
 const widgetOptions = [
@@ -644,6 +651,8 @@ const widgetOptions = [
   'Video Widget',
   'Icon Widget',
   'Rich Text Widget',
+  'Table Widget',
+  'Pivot Table Widget'
 ];
 
 const addSelectedWidget = () => {
@@ -678,6 +687,11 @@ const addSelectedWidget = () => {
     case 'Rich Text Widget':
       addWidget("RichTextWidget");
       break;
+    case 'Table Widget':
+      addWidget("TableWidget");
+      break;
+    case 'Pivot Table Widget':
+      addWidget("PivotTableWidget")
     default:
       break;
   }
@@ -997,6 +1011,23 @@ const addWidget = (component: string, x?: number, y?: number, width?: number, he
   customWidgets.value.push({
     id,
     component,
+    caption: "Test",
+  });
+};
+
+const addTableWidget = () => {
+  const id = `id_${Date.now()}`;
+  layout[id] = {
+    x: 200,
+    y: 40,
+    width: 1200,
+    height: 700,
+    z: 3005,
+  };
+
+  customWidgets.value.push({
+    id: id,
+    component: "TableWidget",
     caption: "Test",
   });
 };
@@ -1336,7 +1367,7 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper {
-  z-index: 20000000;
+  z-index: 20000000 !important;
 }
 </style>
 <style scoped lang="scss">
