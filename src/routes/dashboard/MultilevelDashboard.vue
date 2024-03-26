@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <template>
   <NavBarDash></NavBarDash>
   <div class="app-container">
@@ -550,19 +560,9 @@
 
 <script setup lang="ts">
 import NavBarDash from "./NavBarDash.vue";
-import ChartWidget from "@/components/Charts/ChartWidgetModule.vue";
-import ChartPolarWidget from "@/components/Charts/ChartPolarWidgetModule.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
-import {
-  ref,
-  markRaw,
-  getCurrentInstance,
-  onMounted,
-  inject,
-  nextTick,
-} from "vue";
+import {getCurrentInstance, inject, markRaw, nextTick, onMounted, ref,} from "vue";
 import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
-import InputControl from "@/components/Controls/Input/InputControl.vue";
 import PlainTextWidget from "@/components/Widgets/PlainText/PlainTextWidget.vue";
 import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
 import ImageWidget from "@/components/Widgets/Image/ImageWidget.vue";
@@ -577,43 +577,12 @@ import RichTextWidget from "@/components/Widgets/RichText/RichTextWidget.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
-import { useDatasourceManager } from "@/composables/datasourceManager";
+import {useDatasourceManager} from "@/composables/datasourceManager";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
 import TableWidget from "@/components/Widgets/Table/TableWidget.vue";
 
 const storeManager = useStoreManager();
 const dsManager = useDatasourceManager();
-
-const mdx = ref(`SELECT
-Hierarchize(AddCalculatedMembers({[Geschlecht.Geschlecht (m/w/d)].[(All)].members})) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME ON 1,
-Hierarchize(AddCalculatedMembers({[Jahr].[Jahr].members})) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME ON 0
-FROM [Bevölkerung] CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`);
-
-const mdx2 = ref(`SELECT
-
-        Hierarchize(
-            DrilldownLevel({[Alter.Altersgruppen (10-Jahres-Gruppen)].[(All)]},,,INCLUDE_CALC_MEMBERS)
-        ) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME ON 1,
-
-
-        Hierarchize(
-          AddCalculatedMembers
-          (
-
-            DrilldownMember({{
-              DrilldownLevel({[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[(All)]},,,INCLUDE_CALC_MEMBERS)
-            }}, {[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Jena]})
-
-          )
-        ) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME,[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Stadt].[GeoJson],[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Planungsraum].[uuid],[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Planungsraum].[GeoJson],[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Statistischer Bezirk].[uuid],[statistischer Bezirk.Stadt - Planungsraum - statistischer Bezirk].[Statistischer Bezirk].[GeoJson] ON 0
-FROM [Bevölkerung] CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`);
-
-const mdx3 = ref(`
-SELECT
-Hierarchize(AddCalculatedMembers({[Alter.Altersgruppen (Kinder)].[(All)].members})) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME ON 1,
-
-Hierarchize(AddCalculatedMembers({[Jahr].[Jahr].members})) DIMENSION PROPERTIES PARENT_UNIQUE_NAME,HIERARCHY_UNIQUE_NAME ON 0
-FROM [Bevölkerung] CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS`);
 
 const customWidgets = ref([] as any[]);
 const editEnabled = ref(false);
@@ -867,12 +836,24 @@ const saveLayout = () => {
     const refArr = refs.ctx.$refs[`${e.id}_component`];
     const ref = Array.isArray(refArr) ? refArr[0] : refArr;
 
+    const refArrWp = refs.ctx.$refs[`${e.id}_wrapper`];
+    const refWp = Array.isArray(refArrWp) ? refArrWp[0] : refArrWp;
+
     const state = ref.getState();
     widgetsState[e.id] = {
       component: e.component,
       caption: e.caption,
       state,
     };
+    if(refWp && refWp.getState){
+      const stateWp = refWp.getState();
+      widgetsState[e.id+'_wrapper'] = {
+        component: e.component,
+        caption: e.caption,
+        stateWp,
+      };
+    }
+
   });
 
   localStorage.setItem("dsState", dsState);
@@ -936,14 +917,21 @@ const loadLayout = async () => {
 
   const widgetsStateObj = JSON.parse(widgetsState);
 
+  let wrappers =[];
+
   Object.keys(widgetsStateObj).forEach((key) => {
     const e = widgetsStateObj[key];
-    customWidgets.value.push({
-      id: key,
-      component: e.component,
-      caption: e.caption,
-      // state: e.state,
-    });
+    if(key.includes('_wrapper')){
+      wrappers.push(key);
+    }else{
+      customWidgets.value.push({
+        id: key,
+        component: e.component,
+        caption: e.caption,
+        // state: e.state,
+      });
+    }
+
   });
   console.log(customWidgets.value);
 
@@ -959,6 +947,14 @@ const loadLayout = async () => {
     ref.setState(widgetsStateObj[e.id].state);
     console.log(ref);
   });
+  wrappers.forEach(key=>{
+    const e = widgetsStateObj[key];
+    const refArr = refs.ctx.$refs[key];
+    const ref = Array.isArray(refArr) ? refArr[0] : refArr;
+    console.log(e)
+    ref.setState(e.stateWp)
+  })
+
 };
 
 const openStoreList = () => {

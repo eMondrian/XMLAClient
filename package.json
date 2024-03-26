@@ -12,7 +12,9 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "test.axe": "npx nightwatch test/E2E/axe.js --env chrome",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "gitea_api:get": "curl https://try.gitea.io/swagger.v1.json --output ./src/generated/gitea/definition/swagger.json",
+    "gitea_api:build": "npx @openapitools/openapi-generator-cli generate -i ./src/generated/gitea/definition/swagger.json --type-mappings AnyType=any,UNKNOWN_BASE_TYPE=object,enumPropertyNaming=original  -g typescript-axios -o ./src/generated/gitea --additional-properties=withInterfaces=true,enumPropertyNaming=original"
   },
   "dependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
@@ -30,6 +32,7 @@
     "csv-parse": "^5.5.5",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
+    "mqtt": "^5.3.5",
     "pinia": "^2.1.7",
     "process": "^0.11.10",
     "query-string": "^8.1.0",
@@ -48,14 +51,14 @@
   "devDependencies": {
     "@nightwatch/vue": "^0.4.5",
     "@rushstack/eslint-patch": "^1.6.0",
-    "@storybook/addon-essentials": "^7.6.3",
+    "@storybook/addon-essentials": "^7.6.13",
     "@storybook/addon-interactions": "^7.6.3",
     "@storybook/addon-links": "^7.6.3",
     "@storybook/blocks": "^7.6.3",
-    "@storybook/manager-api": "^7.6.3",
+    "@storybook/manager-api": "^7.6.13",
     "@storybook/test": "^7.6.3",
     "@storybook/theming": "^7.6.3",
-    "@storybook/vue3": "^7.6.3",
+    "@storybook/vue3": "^7.6.13",
     "@storybook/vue3-vite": "^7.6.3",
     "@tsconfig/node18": "^18.2.2",
     "@types/jsdom": "^21.1.5",
@@ -89,7 +92,7 @@
     "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sass": "^1.69.5",
+    "sass": "^1.70.0",
     "storybook": "^7.6.3",
     "ts-node": "^10.9.1",
     "typescript": "~5.3.3",
@@ -100,6 +103,6 @@
     "vue-tsc": "^1.8.25"
   },
   "volta": {
-    "node": "21.0.0"
+    "node": "18.19.0"
   }
 }

@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
 import { useStoreManager } from "../../composables/storeManager";
 import { onMounted, ref, watch } from "vue";
@@ -105,5 +115,8 @@ onMounted(() => {
 
 .event-action-input {
   width: 230px;
+}
+.va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper{
+  z-index:1000000!important;
 }
 </style>

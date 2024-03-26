@@ -61,6 +61,7 @@ import {
   VaTextarea,
   VaSlider,
   VaPagination,
+  VaCounter,
 } from "vuestic-ui";
 import "vuestic-ui/css";
 
@@ -134,6 +135,7 @@ app.use(
       VaTextarea,
       VaSlider,
       VaPagination,
+      VaCounter,
     },
     config: {
       colors: {
@@ -147,3 +149,4 @@ app.use(
 );
 
 app.mount("#app");
+export default app;

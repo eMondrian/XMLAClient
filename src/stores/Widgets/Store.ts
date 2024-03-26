@@ -1,3 +1,14 @@
+/*
+  Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  SPDX-License-Identifier: EPL-2.0
+
+  Contributors: Smart City Jena
+
+*/
+
 import { useDatasourceManager } from "@/composables/datasourceManager";
 
 interface EventBus {
@@ -31,6 +42,7 @@ export class Store {
     // };
 
     this.calculateParams();
+    this.registerForDataSourceEvents();
   }
 
   calculateParams() {
@@ -59,6 +71,7 @@ export class Store {
   setDatasources(datasourceIds) {
     this.datasourceIds = [...datasourceIds];
     this.eventBus.emit(`UPDATE:${this.id}`);
+    this.registerForDataSourceEvents();
   }
 
   async getData(body) {
@@ -152,6 +165,15 @@ export class Store {
         cb,
       });
     });
+  }
+
+  registerForDataSourceEvents(){
+    for(let id of this.datasourceIds){
+      this.eventBus.on(`UPDATE:${id}`,()=>{
+        console.log('updt');
+        this.eventBus.emit(`UPDATE:${this.id}`);
+      });
+    }
   }
 
   getState() {

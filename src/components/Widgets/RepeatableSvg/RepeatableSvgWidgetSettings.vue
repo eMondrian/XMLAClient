@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
 import { ref, Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
@@ -10,7 +20,7 @@ const opened = ref({
 });
 
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<any[]>;
+const stores = ref([]) as Ref<any[]>;
 const requestResult = ref("");
 const storeId = ref(props.component.storeId);
 
@@ -50,31 +60,32 @@ onMounted(() => {
       <va-input v-model="props.component.repeations" label="repeations"/>
       <va-input v-model="props.component.progress" label="progress"/>
       <div class="colors">
-        <va-color-input 
+        <va-color-input
           class="color-input"
-          v-model="props.component.activeItemStyles.fill" 
+          v-model="props.component.activeItemStyles.fill"
           label="Active item fill"
         />
-        <va-color-input 
-          class="color-input" 
-          v-model="props.component.activeItemStyles.stroke" 
+        <va-color-input
+          class="color-input"
+          v-model="props.component.activeItemStyles.stroke"
           label="Active item stroke"
         />
       </div>
       <div class="colors">
-        <va-color-input 
-          class="color-input" 
-          v-model="props.component.defaultItemStyles.fill" 
+        <va-color-input
+          class="color-input"
+          v-model="props.component.defaultItemStyles.fill"
           label="Default item fill"
         />
-        <va-color-input 
-          class="color-input" 
-          v-model="props.component.defaultItemStyles.stroke" 
+        <va-color-input
+          class="color-input"
+          v-model="props.component.defaultItemStyles.stroke"
           label="Default item stroke"
         />
       </div>
     </div>
   </va-collapse>
+
   <va-collapse v-model="opened.storeSection" header="Store settings">
     <div class="settings-container">
       <div>
@@ -89,6 +100,7 @@ onMounted(() => {
             }"
             value-by="id"
             name="store-radio-group"
+
           />
         </div>
         <pre class="response">{{ requestResult }}</pre>

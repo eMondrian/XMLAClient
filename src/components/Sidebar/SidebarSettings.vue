@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
 import StoreList from "@/components/Sidebar/StoreList.vue";
 import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
@@ -14,7 +24,8 @@ const updateBackgroundColor = (color) => {
 </script>
 
 <template>
-  <va-sidebar :modelValue="modelValue" animated="right" width="500px">
+  <va-sidebar  color="#ffffff" :modelValue="modelValue" animated="right" width="500px">
+
     <div class="settings-sidebar">
       <div class="settings-sidebar-content">
         <template v-if="props.settingsSection?.type === 'Stores'">
@@ -38,20 +49,25 @@ const updateBackgroundColor = (color) => {
             @updateBackgroundColor="updateBackgroundColor"
           />
         </template>
+
       </div>
+
+
       <div class="settings-sidebar-actions">
         <va-button @click="$emit('update:modelValue', !modelValue)">
           Close
         </va-button>
       </div>
     </div>
+
   </va-sidebar>
 </template>
 
 <style lang="css">
+
 .settings-sidebar {
-  background-color: white;
-  height: 100%;
+
+  height: auto;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -71,5 +87,10 @@ const updateBackgroundColor = (color) => {
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+</style>
+<style scoped>
+.sidebar{
+  background-color: white;
 }
 </style>

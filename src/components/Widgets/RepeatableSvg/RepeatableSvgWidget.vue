@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
 import { onMounted, ref, watch, inject, computed } from "vue";
 import RepeatableSvgWidgetSettings from "./RepeatableSvgWidgetSettings.vue";
@@ -53,7 +63,7 @@ const props = defineProps({
 const { src, activeItemStyles, defaultItemStyles, repeations, progress } = props;
 
 const svgSource = ref(src || "");
-const innerActiveItemStyles = ref({ 
+const innerActiveItemStyles = ref({
   fill: activeItemStyles.fill || '#ff0000',
   stroke: activeItemStyles.stroke || '#FFFF00',
 });
@@ -97,6 +107,7 @@ onMounted(async () => {
   const req = await fetch(props.src);
   const svgObject = await req.text();
   svgSource.value = svgObject;
+
 });
 
 defineExpose({
