@@ -9,20 +9,21 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, Ref, watch, onMounted } from "vue";
+import { ref, type Ref, watch, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+import { CollapseState, SvgSharingComponentProps, StyleFields, Config } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+const props: SvgSharingComponentProps = defineProps(["component"]);
+const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<any[]>;
-const requestResult = ref("");
-const storeId = ref(props.component.storeId);
+let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+const requestResult: Ref<string> = ref("");
+const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -52,7 +53,7 @@ onMounted(() => {
   }
 });
 
-const fields = ref([{className: '', fill: '', stroke: '', strokeWidth: ''}]);
+const fields: Ref<StyleFields[]> = ref([{className: '', fill: '', stroke: '', strokeWidth: ''}]);
 const addItems = () => {
   return fields.value.push({
     className: '',
@@ -65,7 +66,7 @@ const addItems = () => {
 watch(
   fields,
   () => {
-    const config = {};
+    const config: Config = {};
     fields.value.forEach(
       ({ className, fill, stroke, strokeWidth }) => {
         if (!config[className]) {

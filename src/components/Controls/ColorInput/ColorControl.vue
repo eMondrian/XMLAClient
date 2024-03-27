@@ -9,13 +9,15 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-import { inject, ref, type Component, type Ref } from "vue";
-import { EventItem, ComponentProps } from "@/@types/controls";
-import ButtonSettings from "@/components/Controls/Button/ButtonSettings.vue";
+import { inject, ref, type Ref, type Component} from "vue";
+import ColorSettings from "@/components/Controls/ColorInput/ColorSettings.vue";
+import { ComponentProps, EventItem } from "@/@types/controls";
 
-const settings: Component = ButtonSettings;
-const title: Ref<string> = ref("Next page");
 const EventBus = inject("customEventBus") as any;
+const settings: Component = ColorSettings;
+
+const label: Ref<string> = ref('Test');
+const selectValue: Ref<string> = ref("#FF00FF");
 const availableEvents: string[] = ["Click"];
 
 const events: Ref<EventItem[]> = ref([
@@ -28,21 +30,26 @@ const events: Ref<EventItem[]> = ref([
 const click = () => {
   events.value.forEach((e: EventItem) => {
     if (e.trigger === "Click") {
-      console.log(`${e.name} emited`, settings);
-      EventBus.emit(e.name);
+      console.log(`${e.name} emited`);
+      EventBus.emit(e.name, selectValue.value);
     }
   });
 };
 
-defineExpose({ title, events, availableEvents, settings }) as ComponentProps;
+defineExpose({ label, events, availableEvents, settings }) as ComponentProps;
 </script>
 
-<template>
-  <va-button class="button-control" @click="click"> {{ title }} </va-button>
+<template> 
+  <va-color-input
+    class="color-control"
+    v-model="selectValue"
+    :label="label"
+    @update:modelValue="click"
+  />
 </template>
 
-<style scoped>
-.button-control {
+<style lang="scss" scoped>
+.color-control {
   width: 100%;
   height: 100%;
 }

@@ -1,18 +1,30 @@
-<script lang="ts" setup>
-import { ref, onMounted, computed } from "vue";
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+Contributors: Smart City Jena
+
+-->
+<script lang="ts" setup>
+import { CollapseState, MaterialIcon, IconSharingComponentProps } from "@/@types/widgets";
+import { ref, onMounted, computed, type Ref } from "vue";
+import MaterialIcons from '@/assets/icons/MaterialIcons.json';
+
+const props: IconSharingComponentProps = defineProps(["component"]);
+const opened: ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });
 
-const innerIconList = ref([]);
-const searchQuery = ref('');
+const innerIconList: Ref<MaterialIcon[]> = ref([]);
+const searchQuery: Ref<string> = ref('');
 
-function filterUniqueIcons(icons) {
-  const uniqueNames = new Set();
-  return icons.filter((icon) => {
+function filterUniqueIcons(icons: MaterialIcon[]) {
+  const uniqueNames: Set<string> = new Set();
+  return icons.filter((icon: MaterialIcon) => {
     if (!uniqueNames.has(icon.name)) {
       uniqueNames.add(icon.name);
       return true;
@@ -22,19 +34,18 @@ function filterUniqueIcons(icons) {
 }
 
 const filteredIcons = computed(() => {
-  return innerIconList.value.filter((icon) =>
+  return innerIconList.value.filter((icon: MaterialIcon) =>
     icon.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 
-const handleIconClick = (icon) => {
+const handleIconClick = (icon: MaterialIcon) => {
   if (icon) props.component.currentIcon = icon.name;
 };
 
-onMounted(async () => {
-  const req = await fetch('src/assets/icons/MaterialIcons.json');
-  const iconsArray = await req.json();
-  innerIconList.value = filterUniqueIcons(iconsArray);
+onMounted(() => {
+  console.log(props)
+  innerIconList.value = filterUniqueIcons(MaterialIcons);
 });
 </script>
 
@@ -91,12 +102,12 @@ onMounted(async () => {
       />
       <va-slider 
         class="slider"
-        v-model="props.component.emphasis"
+        v-model="props.component.grade"
         track-label-visible
         :min="-25" 
         :max="200"
         :step="15"
-        label="emphasis"
+        label="Grade"
       />
     </div>
   </va-collapse>

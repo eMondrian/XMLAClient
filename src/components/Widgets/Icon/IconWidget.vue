@@ -1,7 +1,18 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { IconSharingComponentProps, IconComponentProps } from "@/@types/widgets";
+import { ref, computed, type Ref, type Component } from "vue";
 import IconWidgetSettings from "./IconWidgetSettings.vue";
-const settings = IconWidgetSettings;
+const settings: Component = IconWidgetSettings;
 
 const props = defineProps({
   initialState: {
@@ -38,27 +49,28 @@ const props = defineProps({
     required: false,
     default: 48,
   },
-  emphasis: {
+  grade: {
     type: Number,
     required: false,
     default: 0,
   }
-});
+}) as IconComponentProps;
 
-const innerCurrentIcon = ref(props.currentIcon || "");
-const innerIconColor = ref(props.iconColor || "#000");
-const innerIconSize = ref(props.iconSize || 100);
-const innerIsIconFilled = ref(props.isIconFilled || false);
-const innerStrokeWeight = ref(props.strokeWeight || 100);
-const innerOpticSize = ref(props.opticSize || 48);
-const innerEmphasis = ref(props.emphasis || 48);
+const innerCurrentIcon: Ref<string> = ref(props.currentIcon || "");
+const innerIconColor: Ref<string> = ref(props.iconColor || "#000");
+const innerIconSize: Ref<number> = ref(props.iconSize || 100);
+const innerIsIconFilled: Ref<boolean> = ref(props.isIconFilled || false);
+const innerStrokeWeight: Ref<number> = ref(props.strokeWeight || 100);
+const innerOpticSize: Ref<number> = ref(props.opticSize || 48);
+const innerGrade: Ref<number> = ref(props.grade || 48);
 
-const iconStyle = computed(() => {
+const iconStyle: string = computed<string>(() => {
+  console.log(props, settings)
   return `
     font-variation-settings: 
       'FILL' ${+innerIsIconFilled.value}, 
       'wght' ${innerStrokeWeight.value}, 
-      'GRAD' ${innerEmphasis.value}, 
+      'GRAD' ${innerGrade.value}, 
       'opsz' ${innerOpticSize.value};
   `
 });
@@ -70,9 +82,9 @@ defineExpose({
   isIconFilled: innerIsIconFilled,
   strokeWeight: innerStrokeWeight,
   opticSize: innerOpticSize,
-  emphasis: innerEmphasis,
+  grade: innerGrade,
   settings,
-});
+}) as IconSharingComponentProps;
 </script>
 
 <template>

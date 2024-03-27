@@ -15,9 +15,10 @@ Contributors: Smart City Jena
       class="app-layout-container bg grey padd"
       :class="{ editDisabled: !editEnabled }"
     >
+    <div class="adding-elements">
       <div class="widgets-select">
         <va-select 
-          v-model="selectedAction"
+          v-model="selectedWidget"
           :options="widgetOptions"
           label="widgets"
         />
@@ -28,6 +29,20 @@ Contributors: Smart City Jena
           Add Widget
         </va-button>
       </div>
+      <div class="widgets-select">
+        <va-select 
+          v-model="selectedControl"
+          :options="controlOptions"
+          label="Controls "
+        />
+        <va-button 
+          class="add-widget-btn"
+          @click="addSelectedControl"
+        >
+          Add Control
+        </va-button>
+      </div>
+    </div>
       <div class="buttons-list">
         <va-button preset="primary" class="ml-2" @click="toggleEdit">
           Toggle edit
@@ -43,9 +58,6 @@ Contributors: Smart City Jena
         </va-button>
         <va-button preset="primary" class="ml-2" @click="loadDemo">
           Load demo
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="addPivotTable">
-          Add pivot table
         </va-button>
         <va-button preset="primary" class="ml-2" @click="openAppSettings">
           Open App settings
@@ -412,7 +424,7 @@ Contributors: Smart City Jena
                         'Widget',
                       )
                     "
-                    @deleteWidget="
+                    @deleteElement="
                       deleteWidget(widget.id)
                     "
                   />
@@ -450,7 +462,77 @@ Contributors: Smart City Jena
           </Moveable>
         </template>
 
-        <div
+        <template v-for="control in customControls" :key="control.id">
+          <div
+            :class="`${control.id} dashboard-item-container`"
+            :style="getInitialStyle(control.id)"
+            :ref="control.id"
+          >
+            <va-dropdown
+                :trigger="editEnabled ? 'right-click' : 'none'"
+                :auto-placement="false"
+                placement="right-start"
+                cursor
+              >
+                <template #anchor>
+                  <div class="dashboard-item">
+                    <!-- <Suspense>
+                      <template #fallback>
+                        <div>Loading...</div>
+                      </template> -->
+                    <!-- :storeId="widget.storeId" -->
+                      <component
+                        :is="enabledControls[control.component]"
+                        :ref="`${control.id}_component`"
+                        :initialState="control.state"
+                      ></component>
+                    <!-- </Suspense> -->
+                    <DashboardControls
+                      v-if="editEnabled"
+                      @openSettings="
+                        openSettings(
+                          `${control.id}_component`,
+                          null
+                        )
+                      "
+                      @deleteElement="
+                        deleteControl(control.id)
+                      "
+                    />
+                  </div>
+                </template>
+                <va-dropdown-content>
+                  <div class="dropdown-buttons-container">
+                    <va-button @click="moveUp(control.id)">Move up</va-button>
+                    <va-button @click="moveDown(control.id)">Move down</va-button>
+                    <va-button @click="moveToTop(control.id)"
+                      >Move to top</va-button
+                    >
+                    <va-button @click="moveToBottom(control.id)">
+                      Move to bottom
+                    </va-button>
+                  </div>
+              </va-dropdown-content>
+            </va-dropdown>
+          </div>
+          <Moveable
+            v-bind:target="[`.${control.id}`]"
+            v-bind:draggable="editEnabled"
+            v-bind:resizable="editEnabled"
+            v-bind:useResizeObserver="true"
+            v-bind:useMutationObserver="true"
+            @drag="drag(control.id, $event)"
+            @resize="resize(control.id, $event)"
+            :snappable="true"
+            :snapGridWidth="20"
+            :snapGridHeight="20"
+            :ref="`${control.id}_control`"
+            :style="getMovableControlStyles(control.id)"
+          >
+          </Moveable>
+        </template>
+
+        <!-- <div
           class="d_3 dashboard-item-container"
           :style="getInitialStyle('d_3')"
           ref="d_3"
@@ -465,6 +547,7 @@ Contributors: Smart City Jena
               <div class="dashboard-item">
                 <DashboardControls
                   @openSettings="openSettings('test', null)"
+                  @deleteElement="deleteControl('test')"
                   v-if="editEnabled"
                 />
                 <ButtonControl class="widget-content" ref="test" />
@@ -497,7 +580,7 @@ Contributors: Smart City Jena
           ref="d_3_control"
           :style="getMovableControlStyles('d_3')"
         >
-        </Moveable>
+        </Moveable> -->
 
         <!-- <div
           class="d_7 dashboard-item-container"
@@ -514,9 +597,10 @@ Contributors: Smart City Jena
               <div class="dashboard-item">
                 <DashboardControls
                   @openSettings="openSettings('test1')"
+                  @deleteElement="deleteControl('test1')"
                   v-if="editEnabled"
                 />
-                <InputControl class="widget-content" ref="test1" />
+                <ColorControl class="widget-content" ref="test1" />
               </div>
             </template>
 
@@ -563,11 +647,9 @@ import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
 import {getCurrentInstance, inject, markRaw, nextTick, onMounted, ref,} from "vue";
 import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
-import PlainTextWidget from "@/components/Widgets/PlainText/PlainTextWidget.vue";
-import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
+import InputControl from "@/components/Controls/Input/InputControl.vue";
 import ImageWidget from "@/components/Widgets/Image/ImageWidget.vue";
 import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-import ListWidget from "@/components/Widgets/List/ListWidget.vue";
 import SvgWidget from "@/components/Widgets/Svg/SvgWidget.vue";
 import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
 import ProgressWidget from "@/components/Widgets/Progress/ProgressWidget.vue";
@@ -579,12 +661,19 @@ import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
 import {useDatasourceManager} from "@/composables/datasourceManager";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
+import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
 import TableWidget from "@/components/Widgets/Table/TableWidget.vue";
+import SwitchControl from "@/components/Controls/Switch/SwitchControl.vue";
+import SelectControl from "@/components/Controls/Select/SelectControl.vue";
+import DateControl from "@/components/Controls/DateInput/DateControl.vue";
+import TimeControl from "@/components/Controls/TimeInput/TimeControl.vue";
+import ColorControl from "@/components/Controls/ColorInput/ColorControl.vue";
 
 const storeManager = useStoreManager();
 const dsManager = useDatasourceManager();
 
 const customWidgets = ref([] as any[]);
+const customControls = ref([] as any[]);
 const editEnabled = ref(false);
 const timestamp = ref(Date.now());
 const showSidebar = ref(false);
@@ -593,25 +682,33 @@ const test = ref(null);
 const test1 = ref(null);
 const settingsBackground = ref('#fefefe');
 const EventBus = inject("customEventBus") as any;
-const selectedAction = ref('');
+const selectedWidget = ref('');
+const selectedControl= ref('');
 
 const enabledWidgets = {
   ImageWidget,
   TextWidget,
-  PlainTextWidget,
-  PivotTableWidget,
   SvgWidget,
   RepeatableSvgWidget,
   ProgressWidget,
   VideoWidget,
   IconWidget,
   RichTextWidget,
+  PivotTableWidget,
   TableWidget,
 };
 
+const enabledControls = {
+  SwitchControl,
+  SelectControl,
+  DateControl,
+  TimeControl,
+  ColorControl,
+  ButtonControl,
+  InputControl,
+};
+
 const widgetOptions = [
-  // 'Plain Text Widget',
-  // 'Plain List Widget',
   'Image Widget',
   'Text Widget',
   'Svg Widget',
@@ -624,14 +721,18 @@ const widgetOptions = [
   'Pivot Table Widget'
 ];
 
+const controlOptions = [
+  'Switch Control',
+  'Select Control',
+  'Date Control',
+  'Time Control',
+  'Color Control',
+  'Button Control',
+  'Input Control',
+];
+
 const addSelectedWidget = () => {
-  switch (selectedAction.value) {
-    // case 'Plain Text Widget':
-    //   addWidget("PlainTextWidget");
-    //   break;
-    // case 'Plain List Widget':
-    //   addWidget("ListWidget");
-    //   break;
+  switch (selectedWidget.value) {
     case 'Image Widget':
       addWidget("ImageWidget");
       break;
@@ -661,6 +762,34 @@ const addSelectedWidget = () => {
       break;
     case 'Pivot Table Widget':
       addWidget("PivotTableWidget")
+    default:
+      break;
+  }
+};
+
+const addSelectedControl = () => {
+  switch (selectedControl.value) {
+    case 'Switch Control':
+      addControl("SwitchControl");
+      break;
+    case 'Select Control':
+      addControl("SelectControl");
+      break;
+    case 'Date Control':
+      addControl("DateControl");
+      break;
+    case 'Time Control':
+      addControl("TimeControl");
+      break;
+    case 'Color Control':
+      addControl("ColorControl");
+      break;
+    case 'Button Control':
+      addControl("ButtonControl");
+      break;
+    case 'Input Control':
+      addControl("InputControl");
+      break;
     default:
       break;
   }
@@ -995,9 +1124,18 @@ const openSettings = (id, wrapperId, type = "Control") => {
 
 const deleteWidget = (id) => {
   if (settingsSection?.value && `${id}_component` === settingsSection.value.id) {
+    settingsSection.value = null;
     showSidebar.value = false;
   }
   customWidgets.value = customWidgets.value.filter(widget => widget.id !== id);
+};
+
+const deleteControl = (id) => {
+  if (settingsSection?.value && `${id}_component` === settingsSection.value.id) {
+    settingsSection.value = null;
+    showSidebar.value = false;
+  }
+  customControls.value = customControls.value.filter(control => control.id !== id);
 };
 
 const addWidget = (component: string, x?: number, y?: number, width?: number, height?: number, z?: number) => {
@@ -1011,19 +1149,19 @@ const addWidget = (component: string, x?: number, y?: number, width?: number, he
   });
 };
 
-const addTableWidget = () => {
-  const id = `id_${Date.now()}`;
+const addControl = (component: string) => {
+  const id: string = `id_${Date.now()}`;
   layout[id] = {
-    x: 200,
-    y: 40,
-    width: 1200,
-    height: 700,
-    z: 3005,
+    x: 0,
+    y: 430,
+    width: 100,
+    height: 40,
+    z: 3000,
   };
 
-  customWidgets.value.push({
-    id: id,
-    component: "TableWidget",
+  customControls.value.push({
+    id,
+    component,
     caption: "Test",
   });
 };
@@ -1388,6 +1526,12 @@ body.no-overflow[data-v-059e0ffc] {
 .widgets-select {
   display: flex;
   align-self: flex-end;
+}
+
+.adding-elements {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .add-widget-btn {

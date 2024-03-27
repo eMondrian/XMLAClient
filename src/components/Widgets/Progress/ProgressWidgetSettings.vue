@@ -9,22 +9,23 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, watch, onMounted, Ref } from "vue";
+import { ref, watch, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+import { CollapseState, ProgressSharingComponentProps, GradientPart } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+const props: ProgressSharingComponentProps = defineProps(["component"]);
+const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<any[]>;
-const requestResult = ref("");
-const storeId = ref(props.component.storeId);
-const fields = ref([]);
-const progress = ref(props.component.progress);
+let stores: Ref<any[]> = ref([]);
+const requestResult: Ref<string> = ref("");
+const storeId: Ref<string> = ref(props.component.storeId);
+const fields: Ref<GradientPart[]> = ref([]);
+const progress: Ref<number | string> = ref(props.component.progress);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -62,18 +63,18 @@ const addItem = () => {
 };
 
 watch(
-  [() => props.component.fillColor.backgroundColor, () => fields.value],
+  [() => props.component.fillColor?.backgroundColor, () => fields.value],
   ([backgroundColor, fields]) => {
     props.component.fillColor.backgroundColor = backgroundColor;
 
     props.component.fillColor.backgroundGradient = fields.length === 0
       ? `${backgroundColor} 0, #FAFAFA 85%`
-      : fields.map(v => `${v.color} ${v.location}%`).join(', ');
+      : fields.map((v: GradientPart) => `${v.color} ${v.location}%`).join(', ');
   },
   { deep: true }
 );
 
-const deleteField = (id) => {
+const deleteField = (id: number) => {
   fields.value = fields.value.filter((_,i) => i !== id)
 }
 

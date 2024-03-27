@@ -9,8 +9,8 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, type Ref } from "vue";
 import { ComponentProps, EventItem } from "@/@types/controls";
+import { ref, type Ref } from "vue";
 
 const props: ComponentProps = defineProps(["component"]);
 const options: Ref<string[]> = ref(props.component.availableEvents);
@@ -31,11 +31,11 @@ const deleteEvent = (id: number) => {
 <template>
   <va-input
     class="event-input"
-    v-model="props.component.title"
-    label="Button text"
+    v-model="props.component.label"
+    label="Label text"
   />
   <div class="events-list">
-    <div class="events-list-title">
+    <div class="events-list-label">
       <h3>Events list</h3>
       <va-button @click="addEvent">Add</va-button>
     </div>
@@ -67,12 +67,22 @@ const deleteEvent = (id: number) => {
     </div>
   </div>
 </template>
-<style>
+<style lang="scss" scoped>
+.options-list {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+
+  button {
+    margin: 14px 0 0 15px;
+  }
+}
+
 .events-list {
   margin-top: 20px;
 }
 
-.events-list-title {
+.events-list-label {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -80,7 +90,7 @@ const deleteEvent = (id: number) => {
   align-items: start;
 }
 
-.events-list-title > h3 {
+.events-list-label > h3 {
   margin-bottom: 8px;
   font-size: 20px;
 }

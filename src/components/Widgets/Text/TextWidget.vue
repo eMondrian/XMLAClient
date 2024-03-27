@@ -9,15 +9,16 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, watch, computed, inject } from "vue";
+import { ref, watch, computed, inject, type Ref, type Component } from "vue";
 import TextWidgetSettings from "./TextWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-const settings = TextWidgetSettings;
+import { TextComponentProps, TextSharingComponentProps } from "@/@types/widgets";
+const settings: Component = TextWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -62,25 +63,25 @@ const props = defineProps({
     required: false,
     default: "Top",
   },
-});
+}) as TextComponentProps;
 
 const { initialState, text } = props;
 
-const innerText = ref(initialState?.text || text || "");
-const innerFontSize = ref(initialState?.fontSize || props.fontSize || 12);
-const innerFontColor = ref(
+const innerText: Ref<string> = ref(initialState?.text || text || "");
+const innerFontSize: Ref<number> = ref(initialState?.fontSize || props.fontSize || 12);
+const innerFontColor: Ref<string> = ref(
   initialState?.fontColor || props.fontColor || "#000",
 );
-const innerFontWeight = ref(
+const innerFontWeight: Ref<string> = ref(
   initialState?.fontWeight || props.fontWeight || "normal",
 );
-const innerTextDecoration = ref(
+const innerTextDecoration: Ref<string> = ref(
   initialState?.textDecoration || props.textDecoration || "None",
 );
-const innerVerticalAlign = ref(
+const innerVerticalAlign: Ref<string> = ref(
   initialState?.verticalAlign || props.verticalAlign || "Top",
 );
-const innerHorizontalAlign = ref(
+const innerHorizontalAlign: Ref<string> = ref(
   initialState?.horizontalAlign || props.horizontalAlign || "Left",
 );
 
@@ -136,7 +137,7 @@ defineExpose({
   settings,
   getState,
   setState,
-});
+}) as TextSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;

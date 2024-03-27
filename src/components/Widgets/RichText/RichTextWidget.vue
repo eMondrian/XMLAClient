@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { ref, watch, inject, computed } from "vue";
+import { ref, watch, inject, computed, type Ref, type Component } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import RichTextWidgetSettings from "./RichTextWidgetSettings.vue";
-const settings = RichTextWidgetSettings;
+import { RichTextComponentProps, RichTextSharingComponentProps } from "@/@types/widgets";
+const settings: Component = RichTextWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -22,9 +23,9 @@ const props = defineProps({
     required: false,
     default: "",
   },
-});
+}) as RichTextComponentProps;
 
-const innerEditor = ref(props.editor || "");
+const innerEditor: Ref<string> = ref(props.editor || "");
 
 const getState = () => {
   return {
@@ -37,7 +38,7 @@ defineExpose({
   getState,
   storeId,
   settings,
-});
+}) as RichTextSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;

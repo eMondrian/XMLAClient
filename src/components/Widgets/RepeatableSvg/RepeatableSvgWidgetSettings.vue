@@ -9,20 +9,21 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, Ref, onMounted } from "vue";
+import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+import { CollapseState, RepeatableSvgSharingComponentProps } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+const props: Ref<RepeatableSvgSharingComponentProps> = defineProps(["component"]);
+const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
-const stores = ref([]) as Ref<any[]>;
-const requestResult = ref("");
-const storeId = ref(props.component.storeId);
+const stores: Ref<any[]> = ref([]) as Ref<any[]>;
+const requestResult: Ref<string> = ref("");
+const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();

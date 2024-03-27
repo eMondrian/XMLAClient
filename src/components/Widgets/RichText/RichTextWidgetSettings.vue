@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { ref, Ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-
+import { Editor } from 'tiptap';
 import StarterKit from '@tiptap/starter-kit';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import Bold from '@tiptap/extension-bold';
@@ -16,9 +16,10 @@ import CodeBlock from '@tiptap/extension-code-block';
 import Blockquote from '@tiptap/extension-blockquote';
 import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Underline from '@tiptap/extension-underline';
+import { CollapseState, RichTextSharingComponentProps } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+const props: RichTextSharingComponentProps = defineProps(["component"]);
+const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });
@@ -27,7 +28,7 @@ const storeManager = useStoreManager();
 let stores = ref([]) as Ref<any[]>;
 
 const requestResult = ref("");
-const storeId = ref(props.component.storeId);
+const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -114,7 +115,7 @@ const editor = useEditor({
       },
     }),
   ],
-});
+}) as Editor;
 
 watch(
   () => editor.value?.getHTML(), 
