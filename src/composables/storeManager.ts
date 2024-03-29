@@ -53,7 +53,7 @@ export function useStoreManager() {
     return availableStores;
   };
 
-  const getSerializedState = () => {
+  const getState = () => {
     const state = {};
 
     availableStores.value.forEach((store) => {
@@ -78,7 +78,7 @@ export function useStoreManager() {
     initStore,
     getStore,
     getStoreList,
-    getSerializedState,
+    getState,
     loadState,
   };
 }
