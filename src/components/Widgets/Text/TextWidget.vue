@@ -19,25 +19,26 @@ interface ITextSettings {
   verticalAlign: string;
 }
 
-interface ITextSettingsProps {
-  text?: string;
-  fontSize?: number;
-  fontColor?: string;
-  fontWeight?: string;
-  textDecoration?: string;
-  horizontalAlign?: string;
-  verticalAlign?: string;
-}
+// interface ITextSettingsProps {
+//   text?: string;
+//   fontSize?: number;
+//   fontColor?: string;
+//   fontWeight?: string;
+//   textDecoration?: string;
+//   horizontalAlign?: string;
+//   verticalAlign?: string;
+// }
 
-import { ref, watch, computed } from "vue";
+import { computed } from "vue";
 import TextWidgetSettings from "./TextWidgetSettings.vue";
 import { useSettings } from "@/composables/widgets/settings";
 import { useStore } from "@/composables/widgets/store";
 import { useSerialization } from "@/composables/widgets/serialization";
+import type { Store } from "@/stores/Widgets/Store";
 
 const settingsComponent = TextWidgetSettings;
 
-const props = withDefaults(defineProps<ITextSettingsProps>(), {
+const props = withDefaults(defineProps<ITextSettings>(), {
   text: "",
   fontSize: 12,
   fontColor: "#000",
@@ -47,16 +48,16 @@ const props = withDefaults(defineProps<ITextSettingsProps>(), {
   verticalAlign: "Top",
 });
 
-const { settings, setSetting } = useSettings<ITextSettings>(props);
-const { storeId, data, setStoreId } = useStore();
+const { settings, setSetting } = useSettings<typeof props>(props);
+const { store, data, setStore } = useStore<Store>();
 const { getState } = useSerialization(settings);
 
 defineExpose({
   setSetting,
   settings,
   settingsComponent,
-  storeId,
-  setStoreId,
+  store,
+  setStore,
   getState,
 });
 

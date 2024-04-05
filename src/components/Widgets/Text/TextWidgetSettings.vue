@@ -12,6 +12,7 @@ Contributors: Smart City Jena
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 
 interface ITextSettings {
   text: string;
@@ -24,10 +25,10 @@ interface ITextSettings {
 }
 
 interface ITextComponent {
-  storeId: string;
+  store: Store | XMLAStore;
   settings: ITextSettings;
   setSetting: (key: string, value: any) => void;
-  setStoreId: (storeId: string) => void;
+  setStore: (store: Store | XMLAStore) => void;
 }
 
 const { component } = defineProps<{ component: ITextComponent }>();
@@ -37,6 +38,7 @@ const opened = ref({
   storeSection: false,
 });
 
+// TODO: Move to store selection component
 const storeManager = useStoreManager();
 let stores = ref([]) as Ref<Store[]>;
 const requestResult = ref("");
@@ -50,19 +52,21 @@ const getStores = () => {
 };
 
 const getData = async () => {
-  const store = storeManager.getStore(component.storeId) as Store;
+  const store = component.store as Store;
   const data = await store.getData();
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
 const updateStore = (storeId) => {
-  component.setStoreId(storeId);
+  const store = storeManager.getStore(storeId) as Store;
+  component.setStore(store);
+  console.log(component);
   getData();
 };
 
 onMounted(() => {
   getStores();
-  if (component.storeId) {
+  if (component.store) {
     getData();
   }
 });
@@ -124,7 +128,7 @@ onMounted(() => {
         <h3 class="mb-2">Select store</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
-            :model-value="component.storeId"
+            :model-value="component.store?.id"
             @update:model-value="updateStore"
             :option="{
               text: `${store.caption} ${store.id}`,

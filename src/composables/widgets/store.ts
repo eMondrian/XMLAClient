@@ -1,43 +1,38 @@
-import type { Store } from "@/stores/Widgets/Store";
-import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
-import { ref, watch, type Ref, inject } from "vue";
-import { useStoreManager } from "@/composables/storeManager";
+import { ref, type Ref, inject } from "vue";
 import type { TinyEmitter } from "tiny-emitter";
 
-export function useStore() {
-  const data = ref({}) as Ref<any>;
-  let store = null as unknown as Store | XMLAStore;
-  const storeId = ref("");
-  const storeManager = useStoreManager();
+interface Store {
+  id: string;
+  getData: () => Promise<any>;
+}
+
+export function useStore<Type extends Store>() {
+  const data = ref({});
+  const store = ref(null) as unknown as Ref<Type>;
 
   const EventBus = inject("customEventBus") as TinyEmitter;
 
   const updateFn = async () => {
     if (!store) return;
-    data.value = await store.getData();
+    data.value = await store.value.getData();
   };
 
-  watch(
-    storeId,
-    (newVal, oldVal) => {
-      if (!newVal) return;
-      store = storeManager.getStore(storeId.value);
+  const setStore = (newStore: Type) => {
+    if (store.value) {
+      EventBus.off(`UPDATE:${store.value.id}`, updateFn);
+    }
 
-      EventBus.off(`UPDATE:${oldVal}`, updateFn);
-      EventBus.on(`UPDATE:${newVal}`, updateFn);
+    if (!newStore) return;
+    store.value = newStore;
 
-      updateFn();
-    },
-    { immediate: true },
-  );
-
-  const setStoreId = (id: string) => {
-    storeId.value = id;
+    EventBus.on(`UPDATE:${newStore.id}`, updateFn);
+    updateFn();
+    console.log(store);
   };
 
   return {
     data,
-    storeId,
-    setStoreId,
+    store,
+    setStore,
   };
 }
