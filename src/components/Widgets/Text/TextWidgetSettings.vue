@@ -12,9 +12,9 @@ Contributors: Smart City Jena
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { CollapseState, TextSharingComponentProps } from "@/@types/widgets";
+import type { CollapseState, TextSharingComponentProps } from "@/@types/widgets";
 
-const props: TextSharingComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as TextSharingComponentProps;
 const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,

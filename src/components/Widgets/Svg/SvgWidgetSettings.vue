@@ -12,9 +12,9 @@ Contributors: Smart City Jena
 import { ref, type Ref, watch, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { CollapseState, SvgSharingComponentProps, StyleFields, Config } from "@/@types/widgets";
+import type { CollapseState, SvgSharingComponentProps, StyleFields, Config } from "@/@types/widgets";
 
-const props: SvgSharingComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as SvgSharingComponentProps;
 const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,

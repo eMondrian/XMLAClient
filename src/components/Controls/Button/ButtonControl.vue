@@ -10,7 +10,7 @@ Contributors: Smart City Jena
 -->
 <script setup lang="ts">
 import { inject, ref, type Component, type Ref } from "vue";
-import { EventItem, ComponentProps } from "@/@types/controls";
+import type { EventItem, ButtonComponentProps } from "@/@types/controls";
 import ButtonSettings from "@/components/Controls/Button/ButtonSettings.vue";
 
 const settings: Component = ButtonSettings;
@@ -34,7 +34,7 @@ const click = () => {
   });
 };
 
-defineExpose({ title, events, availableEvents, settings }) as ComponentProps;
+defineExpose({ title, events, availableEvents, settings }) as unknown as ButtonComponentProps;
 </script>
 
 <template>

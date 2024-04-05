@@ -9,12 +9,12 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ComponentProps } from "@/@types/controls";
+import type { ComponentProps, EventItem } from "@/@types/controls";
 import { ref, type Ref } from "vue";
 
-const props: ComponentProps = defineProps(["component"]);
-const options = ref(props.component.availableEvents);
-const events = ref(props.component.events);
+const props = defineProps(["component"]) as ComponentProps;
+const options: Ref<string[]> = ref(props.component.availableEvents);
+const events: Ref<EventItem[]> = ref(props.component.events);
 
 const addEvent = () => {
   events.value.push({

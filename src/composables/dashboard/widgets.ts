@@ -1,8 +1,25 @@
+/*
+  Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  SPDX-License-Identifier: EPL-2.0
+
+  Contributors: Smart City Jena
+
+*/
 import { ref, getCurrentInstance } from "vue";
 import type { ISerializable } from "./serialization";
-import { enabledWidgets, widgetNames } from "@/components/Widgets";
+import { enabledWidgets, widgetNames, enabledControls, controlNames } from "@/components/Widgets";
 
 declare interface Widget {
+  id: string;
+  component: string;
+  caption: string;
+  state: any;
+}
+
+declare interface Control {
   id: string;
   component: string;
   caption: string;
@@ -55,4 +72,53 @@ export function useWidgets() {
     widgetNames,
     removeWidget,
   };
+}
+
+export function useControls() {
+  const instance = getCurrentInstance();
+  const controls = ref<Control[]>([]);
+
+  const controlsStorage: ISerializable = {
+    getState: () => {
+      const state = {};
+
+      controls.value.forEach((control) => {
+        const refs = instance?.refs;
+        if (!refs) return;
+
+        const componentRef = refs[`${control.id}_component`] as ISerializable[];
+
+        state[control.id] = componentRef[0];
+        
+        const wrapperRef = refs[`${control.id}_wrapper`] as ISerializable[];
+        state[`${control.id}_wrapper`] = wrapperRef[0].getState();
+      });
+
+      return JSON.stringify(state);
+    },
+    loadState: (state) => {
+      console.warn("Not implemented");
+    },
+  };
+  const addControl = (component: string, id: string) => {
+    controls.value.push({
+      id,
+      component,
+      caption: "Test",
+    });
+  };
+
+  const removeControl = (id: string) => {
+    controls.value = controls.value.filter((control) => control.id !== id);
+  };
+
+  return {
+    controls,
+    controlsStorage,
+    addControl,
+    enabledControls,
+    controlNames,
+    removeControl,
+  };
+
 }

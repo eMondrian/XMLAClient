@@ -13,7 +13,7 @@ import { onMounted, ref, watch, inject, type Ref, type Component, computed } fro
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import ImageWidgetSettings from "./ImageWidgetSettings.vue";
-import { ImageComponentProps, ImageSettings, ImageSharingComponentProps, ImageGalleryItem } from "@/@types/widgets";
+import type { ImageComponentProps, ImageSettings, ImageSharingComponentProps, ImageGalleryItem } from "@/@types/widgets";
 const settings: Component = ImageWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
@@ -110,7 +110,7 @@ defineExpose({
   images,
   imageSettings,
   storeId,
-}) as ImageSharingComponentProps;
+}) as unknown as ImageSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;

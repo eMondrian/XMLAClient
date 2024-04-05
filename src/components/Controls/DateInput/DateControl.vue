@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import { inject, ref, type Ref, type Component} from "vue";
 import DateSettings from "@/components/Controls/DateInput/DateSettings.vue";
-import { EventItem } from "@/@types/controls";
+import type { EventItem, ComponentProps } from "@/@types/controls";
 
 const EventBus = inject("customEventBus") as any;
 const settings: Component = DateSettings;
@@ -62,7 +62,7 @@ const blur = () => {
     }
   });
 };
-defineExpose({ label, events, availableEvents, settings }) as ComponentProps;
+defineExpose({ label, events, availableEvents, settings }) as unknown as ComponentProps;
 </script>
 
 <template> 

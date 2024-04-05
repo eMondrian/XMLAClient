@@ -18,7 +18,7 @@ Contributors: Smart City Jena
       <div class="adding-elements">
         <div class="widgets-select">
           <va-select
-            v-model="selectedAction"
+            v-model="selectedWidget"
             :options="widgetOptions"
             label="widgets"
           />
@@ -90,7 +90,7 @@ Contributors: Smart City Jena
                         'Widget',
                       )
                     "
-                    @deleteWidget="deleteWidget(widget.id)"
+                    @deleteElement="deleteWidget(widget.id)"
                   />
                 </div>
               </template>
@@ -126,7 +126,7 @@ Contributors: Smart City Jena
           </Moveable>
         </template>
 
-        <template v-for="control in customControls" :key="control.id">
+        <template v-for="control in controls" :key="control.id">
           <div
             :class="`${control.id} dashboard-item-container`"
             :style="getInitialStyle(control.id)"
@@ -140,17 +140,18 @@ Contributors: Smart City Jena
             >
               <template #anchor>
                 <div class="dashboard-item">
-                  <!-- <Suspense>
-                      <template #fallback>
-                        <div>Loading...</div>
-                      </template> -->
-                  <!-- :storeId="widget.storeId" -->
-                  <component
-                    :is="enabledControls[control.component]"
-                    :ref="`${control.id}_component`"
-                    :initialState="control.state"
-                  ></component>
-                  <!-- </Suspense> -->
+                  <Suspense>
+                    <template #fallback>
+                      <div>Loading...</div>
+                    </template>
+                    <WidgetWrapper :ref="`${control.id}_wrapper`">
+                      <component
+                        :is="enabledControls[control.component]"
+                        :ref="`${control.id}_component`"
+                        :initialState="control.state"
+                      ></component>
+                    </WidgetWrapper>
+                  </Suspense>
                   <DashboardControls
                     v-if="editEnabled"
                     @openSettings="
@@ -205,63 +206,36 @@ Contributors: Smart City Jena
 import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
 import { getCurrentInstance, inject, markRaw, ref } from "vue";
-import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
-import InputControl from "@/components/Controls/Input/InputControl.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
 import { useSerialization } from "@/composables/dashboard/serialization";
-import { useWidgets } from "@/composables/dashboard/widgets";
+import { useControls, useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
-import SwitchControl from "@/components/Controls/Switch/SwitchControl.vue";
-import SelectControl from "@/components/Controls/Select/SelectControl.vue";
-import DateControl from "@/components/Controls/DateInput/DateControl.vue";
-import TimeControl from "@/components/Controls/TimeInput/TimeControl.vue";
-import ColorControl from "@/components/Controls/ColorInput/ColorControl.vue";
 
 const dsManager = useDatasourceManager();
 const storeManager = useStoreManager();
 
-const customControls = ref([] as any[]);
 const editEnabled = ref(false);
 const showSidebar = ref(false);
 const settingsSection = ref(null as any);
 
 const settingsBackground = ref("#fefefe");
 const EventBus = inject("customEventBus") as any;
-const selectedAction = ref("");
+const selectedWidget = ref("");
 const selectedControl = ref("");
 
 const instance = getCurrentInstance();
 
-const enabledControls = {
-  SwitchControl,
-  SelectControl,
-  DateControl,
-  TimeControl,
-  ColorControl,
-  ButtonControl,
-  InputControl,
-};
-
-const controlOptions = [
-  "Switch Control",
-  "Select Control",
-  "Date Control",
-  "Time Control",
-  "Color Control",
-  "Button Control",
-  "Input Control",
-];
-
 const addSelectedWidget = () => {
-  if (selectedAction.value === "") return;
+  if (selectedWidget.value === "") return;
 
-  const widget = widgetNames.filter((e) => e.label === selectedAction.value)[0];
+  const widget = widgetNames.filter((e) => e.label === selectedWidget.value)[0];
 
   const id: string = `id_${Date.now()}`;
+  
   layout.value[id] = {
     x: 0,
     y: 700,
@@ -273,6 +247,24 @@ const addSelectedWidget = () => {
   addWidget(widget.name, id);
 };
 
+const addSelectedControl = () => {
+  if (selectedControl.value === "") return;
+
+  const control = controlNames.filter((e) => e.label === selectedControl.value)[0];
+
+  const id: string = `id_${Date.now()}`;
+
+  layout.value[id] = {
+    x: 0,
+    y: 700,
+    width: 300,
+    height: 150,
+    z: 3005,
+  };
+
+  addControl(control.name, id);
+};
+
 const {
   widgets,
   widgetsStorage,
@@ -282,35 +274,17 @@ const {
   enabledWidgets,
 } = useWidgets();
 
-const addSelectedControl = () => {
-  switch (selectedControl.value) {
-    case "Switch Control":
-      addControl("SwitchControl");
-      break;
-    case "Select Control":
-      addControl("SelectControl");
-      break;
-    case "Date Control":
-      addControl("DateControl");
-      break;
-    case "Time Control":
-      addControl("TimeControl");
-      break;
-    case "Color Control":
-      addControl("ColorControl");
-      break;
-    case "Button Control":
-      addControl("ButtonControl");
-      break;
-    case "Input Control":
-      addControl("InputControl");
-      break;
-    default:
-      break;
-  }
-};
+const {
+  controls,
+  controlsStorage,
+  addControl,
+  removeControl,
+  controlNames,
+  enabledControls,
+} = useControls();
 
 const widgetOptions = widgetNames.map((widget) => widget.label);
+const controlOptions = controlNames.map((control) => control.label);
 
 const {
   layout,
@@ -330,6 +304,7 @@ const { getSerializedState, loadState } = useSerialization({
   stores: storeManager,
   datasources: dsManager,
   widgets: widgetsStorage,
+  controls: controlsStorage,
 });
 
 const toggleEdit = () => {
@@ -449,26 +424,9 @@ const deleteControl = (id) => {
     settingsSection.value = null;
     showSidebar.value = false;
   }
-  customControls.value = customControls.value.filter(
-    (control) => control.id !== id,
-  );
-};
 
-const addControl = (component: string) => {
-  const id: string = `id_${Date.now()}`;
-  layout[id] = {
-    x: 0,
-    y: 430,
-    width: 100,
-    height: 40,
-    z: 3000,
-  };
-
-  customControls.value.push({
-    id,
-    component,
-    caption: "Test",
-  });
+  delete layout.value[id];
+  removeControl(id);
 };
 </script>
 
@@ -798,7 +756,7 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .va-dropdown__content {
-  z-index: 10000000;
+  z-index: 10000000 !important;
 }
 
 .app-layout-container.editDisabled .moveable-line {

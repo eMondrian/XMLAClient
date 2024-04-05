@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import { inject, ref, type Ref, type Component } from "vue";
 import SwitchSettings from "@/components/Controls/Switch/SwitchSettings.vue";
-import { ComponentProps, EventItem } from "@/@types/controls";
+import type { ComponentProps, EventItem } from "@/@types/controls";
 
 const EventBus = inject("customEventBus") as any;
 const settings: Component = SwitchSettings;
@@ -64,7 +64,7 @@ const focus = () => {
   });
 };
 
-defineExpose({ label, events, availableEvents, settings }) as ComponentProps;
+defineExpose({ label, events, availableEvents, settings }) as unknown as ComponentProps;
 </script>
 
 <template> 

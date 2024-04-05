@@ -13,7 +13,7 @@ import { onMounted, ref, watch, inject, computed, type Ref, type Component, Prop
 import RepeatableSvgWidgetSettings from "./RepeatableSvgWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { ItemStyles, RepeatableSvgComponentProps, RepeatableSvgSharingComponentProps } from "@/@types/widgets";
+import type { ItemStyles, RepeatableSvgComponentProps, RepeatableSvgSharingComponentProps } from "@/@types/widgets";
 const settings: Component = RepeatableSvgWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
@@ -120,7 +120,7 @@ defineExpose({
   storeId,
   settings,
   getState,
-}) as RepeatableSvgSharingComponentProps;
+}) as unknown as RepeatableSvgSharingComponentProps;
 
 const createParsedData = (prop) => {
   return computed(() => {
@@ -149,11 +149,11 @@ const createParsedData = (prop) => {
 const svgProgressParse: Ref<string> = createParsedData(innerProgress);
 
 const repeationsToNumber: Ref<number> = computed(() => {
-  return !isNaN(innerRepeations.value) ? Math.floor(Number(innerRepeations.value)) : 0;
+  return !isNaN(parseFloat(innerRepeations.value)) ? Math.floor(Number(innerRepeations.value)) : 0;
 })
 
 const progressToNumber: Ref<number> = computed(() => {
-  return !isNaN(svgProgressParse.value) ? Number(svgProgressParse.value) : 0;
+  return !isNaN(parseFloat(svgProgressParse.value)) ? Number(svgProgressParse.value) : 0;
 })
 
 </script>

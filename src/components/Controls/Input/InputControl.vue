@@ -12,7 +12,7 @@ Contributors: Smart City Jena
 import { inject, ref, type Ref } from "vue";
 import InputSettings from "./InputSettings.vue";
 import type { Component } from 'vue';
-import { ComponentProps, EventItem } from "@/@types/controls";
+import type { ComponentProps, EventItem } from "@/@types/controls";
 
 const settings: Component = InputSettings;
 
@@ -47,7 +47,7 @@ const blur = () => {
   });
 };
 
-defineExpose({ label, events, availableEvents, settings }) as ComponentProps;
+defineExpose({ label, events, availableEvents, settings }) as unknown as ComponentProps;
 </script>
 
 <template>

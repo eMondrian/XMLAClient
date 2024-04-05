@@ -10,9 +10,9 @@ Contributors: Smart City Jena
 -->
 <script lang="ts" setup>
 import { ref, type Ref } from "vue";
-import { ComponentProps, EventItem } from "@/@types/controls";
+import type { ButtonComponentProps, EventItem } from "@/@types/controls";
 
-const props: ComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as ButtonComponentProps;
 const options: Ref<string[]> = ref(props.component.availableEvents);
 const events: Ref<EventItem[]> = ref(props.component.events);
 

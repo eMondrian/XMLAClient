@@ -1,3 +1,13 @@
+/*
+  Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  SPDX-License-Identifier: EPL-2.0
+
+  Contributors: Smart City Jena
+
+*/
 import { ref, getCurrentInstance } from "vue";
 import { type ISerializable } from "@/composables/dashboard/serialization";
 
@@ -21,6 +31,10 @@ declare interface LayoutStorage extends ISerializable {
 export function useMoveableLayout() {
   const instance = getCurrentInstance();
   const layout = ref<Layout>({});
+  let zIndexMax = 0;
+  let zIndexMin = 0;
+  let countMaxZValues = 0;
+  let countMinZValues = 0;
 
   const layoutStorage: LayoutStorage = {
     getState: () => {
@@ -65,64 +79,95 @@ export function useMoveableLayout() {
     e.target.style.transform = e.drag.transform;
   };
 
-  const moveUp = (id: string) => {
-    const refs = instance?.refs;
-    if (!refs) return;
-
-    layout.value[id].z = layout.value[id].z + 1;
-
-    const ref = refs[id] as HTMLElement[];
-    ref[0].style["z-index"] = layout.value[id].z;
-
-    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-    componentRef[0].$el.style["z-index"] = layout.value[id].z;
+  const updateZIndex = () => {
+    const zIndexValues = Object.values(layout.value).map(item => item.z);
+    zIndexMax = Math.max(...zIndexValues);
+    zIndexMin = Math.min(...zIndexValues);
+    countMaxZValues = zIndexValues.filter(z => z === zIndexMax).length;
+    countMinZValues = zIndexValues.filter(z => z === zIndexMin).length;
   };
+
+    const moveUp = (id: string) => {
+      const refs = instance?.refs;
+      if (!refs) return;
+
+      // updateZIndex();
+
+      if (layout.value[id].z === zIndexMax && countMaxZValues === 1) {
+        return;
+      } 
+      // else if (layout.value[id].z <= zIndexMax && countMaxZValues > 1) {
+        layout.value[id].z = layout.value[id].z + 1;
+        const ref = refs[id] as HTMLElement[];
+        ref[0].style["z-index"] = layout.value[id].z;
+
+        const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+        componentRef[0].$el.style["z-index"] = layout.value[id].z;
+      // }
+    };
 
   const moveDown = (id: string) => {
     const refs = instance?.refs;
     if (!refs) return;
 
-    layout.value[id].z = layout.value[id].z - 1;
+    // updateZIndex();
 
-    const ref = refs[id] as HTMLElement[];
-    ref[0].style["z-index"] = layout.value[id].z;
+    if (layout.value[id].z < zIndexMin && countMinZValues === 1) {
+      return;
+    } 
+    // else if (layout.value[id].z > zIndexMin && countMinZValues >= 1) {
+      layout.value[id].z = layout.value[id].z - 1;
+      const ref = refs[id] as HTMLElement[];
+      ref[0].style["z-index"] = layout.value[id].z;
 
-    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-    componentRef[0].$el.style["z-index"] = layout.value[id].z;
+      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+      componentRef[0].$el.style["z-index"] = layout.value[id].z;
+    // }
   };
 
   const moveToBottom = (id) => {
-    // const obj = Object.entries(layout);
-    // const res = obj.reduce(function (p, v) {
-    //   return p[1].z < v[1].z ? p : v;
-    // }, obj[0]);
+    const obj = Object.entries(layout.value);
+    const res = obj.reduce(function (p, v) {
+      return p[1].z < v[1].z ? p : v;
+    }, obj[0]);
 
-    // if (id !== res[0]) {
-    //   layout[id].z = res[1].z - 1;
+    if (id !== res[0]) {
+      updateZIndex();
+      layout.value[id].z = zIndexMin - 1;
 
-    //   const refArr = ctx.$refs[id];
-    //   const ref = Array.isArray(refArr) ? refArr[0] : refArr;
+      const refs = instance?.refs;
+      if (!refs) return;
 
-    //   ref.style["z-index"] = layout[id].z;
-    //   ctx.$refs[`${id}_control`][0].$el.style["z-index"] = layout[id].z;
-    // }
+      const ref = refs[id] as HTMLElement[];
+
+      ref[0].style["z-index"] = layout.value[id].z;
+
+      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+      componentRef[0].$el.style["z-index"] = layout.value[id].z;
+    }
   };
 
   const moveToTop = (id) => {
-    // const obj = Object.entries(layout);
-    // const res = obj.reduce(function (p, v) {
-    //   return p[1].z > v[1].z ? p : v;
-    // }, obj[0]);
+    
+    const obj = Object.entries(layout.value);
+    const res = obj.reduce(function (p, v) {
+      return p[1].z > v[1].z ? p : v;
+    }, obj[0]);
 
-    // if (id !== res[0]) {
-    //   layout[id].z = res[1].z + 1;
+    if (id !== res[0]) {
+      updateZIndex();
+      layout.value[id].z = zIndexMax + 1;
 
-    //   const refArr = ctx.$refs[id];
-    //   const ref = Array.isArray(refArr) ? refArr[0] : refArr;
+      const refs = instance?.refs;
+      if (!refs) return;
 
-    //   ref.style["z-index"] = layout[id].z;
-    //   ctx.$refs[`${id}_control`].$el.style["z-index"] = layout[id].z;
-    // }
+      const ref = refs[id] as HTMLElement[];
+
+      ref[0].style["z-index"] = layout.value[id].z;
+
+      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+      componentRef[0].$el.style["z-index"] = layout.value[id].z;
+    }
   };
 
   return {

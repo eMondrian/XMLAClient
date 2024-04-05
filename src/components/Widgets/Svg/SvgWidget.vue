@@ -13,7 +13,7 @@ import { computed, getCurrentInstance, onMounted, ref, watch, inject, type Ref, 
 import SvgWidgetSettings from "./SvgWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { Config, RepeatableSvgSharingComponentProps, SvgComponentProps } from "@/@types/widgets";
+import type { Config, RepeatableSvgSharingComponentProps, SvgComponentProps } from "@/@types/widgets";
 const settings: Component = SvgWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
@@ -21,6 +21,8 @@ const storeManager = useStoreManager();
 const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 const svgSource: Ref<string> = ref("");
+const inst = getCurrentInstance();
+const scope = inst?.type.__scopeId;
 
 let store = null as unknown as Store;
 
@@ -74,8 +76,6 @@ const innerClassesConfig: Ref<Config> = ref(props.classesConfig || null);
 const styles: Ref<string> = computed(() => {
   let string: string = "";
 
-  const inst = getCurrentInstance();
-  const scope = inst?.type.__scopeId;
   if (innerClassesConfig.value) {
     string += "<style>";
     for (const [key, value] of Object.entries(innerClassesConfig.value)) {
@@ -106,7 +106,7 @@ defineExpose({
   storeId,
   settings,
   getState,
-}) as RepeatableSvgSharingComponentProps;
+}) as unknown as RepeatableSvgSharingComponentProps;
 
 const svgSourceParced = computed(() => {
   let processedString = svgSource.value;

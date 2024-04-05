@@ -12,10 +12,10 @@ Contributors: Smart City Jena
 import { v4 } from "uuid";
 import { ref, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
-import { CollapseState, ImageSharingComponentProps } from "@/@types/widgets";
+import type { CollapseState, ImageSharingComponentProps } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 
-const props: ImageSharingComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as ImageSharingComponentProps;
 const opened: Ref<CollapseState> = ref({
   imageSection: false,
   storeSection: false,

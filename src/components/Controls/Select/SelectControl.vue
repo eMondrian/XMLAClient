@@ -9,9 +9,9 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-import { inject, ref, type Ref, type Component, watch } from "vue";
+import { inject, ref, type Ref, type Component } from "vue";
 import SelectSettings from "@/components/Controls/Select/SelectSettings.vue";
-import { ComponentProps, EventItem } from "@/@types/controls";
+import type { SelectComponentProps, EventItem } from "@/@types/controls";
 
 const EventBus = inject("customEventBus") as any;
 const settings: Component = SelectSettings;
@@ -55,7 +55,7 @@ const scrollBottom = () => {
   });
 };
 
-defineExpose({ label, events, options, availableEvents, settings, selectValue }) as ComponentProps;
+defineExpose({ label, events, options, availableEvents, settings, selectValue }) as unknown as SelectComponentProps;
 </script>
 
 <template> 

@@ -12,9 +12,9 @@ Contributors: Smart City Jena
 import { ref, watch, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { CollapseState, ProgressSharingComponentProps, GradientPart } from "@/@types/widgets";
+import type { CollapseState, ProgressSharingComponentProps, GradientPart } from "@/@types/widgets";
 
-const props: ProgressSharingComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as ProgressSharingComponentProps;
 const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
@@ -25,7 +25,7 @@ let stores: Ref<any[]> = ref([]);
 const requestResult: Ref<string> = ref("");
 const storeId: Ref<string> = ref(props.component.storeId);
 const fields: Ref<GradientPart[]> = ref([]);
-const progress: Ref<number | string> = ref(props.component.progress);
+const progress: Ref<string> = ref(props.component.progress);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -88,8 +88,8 @@ watch(
 
       if (!isNaN(numericValue) && allowDot) {
         const clampedValue = Math.max(0, Math.min(1, numericValue));
-        progress.value = clampedValue;
-        props.component.progress = clampedValue;
+        progress.value = String(clampedValue);
+        props.component.progress = String(clampedValue);
       } else {
         props.component.progress = newValue;
       }

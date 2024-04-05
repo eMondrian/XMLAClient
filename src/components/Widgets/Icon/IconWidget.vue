@@ -9,7 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { IconSharingComponentProps, IconComponentProps } from "@/@types/widgets";
+import type { IconSharingComponentProps, IconComponentProps } from "@/@types/widgets";
 import { ref, computed, type Ref, type Component } from "vue";
 import IconWidgetSettings from "./IconWidgetSettings.vue";
 const settings: Component = IconWidgetSettings;
@@ -64,8 +64,7 @@ const innerStrokeWeight: Ref<number> = ref(props.strokeWeight || 100);
 const innerOpticSize: Ref<number> = ref(props.opticSize || 48);
 const innerGrade: Ref<number> = ref(props.grade || 48);
 
-const iconStyle: string = computed<string>(() => {
-  console.log(props, settings)
+const iconStyle = computed<string>(() => {
   return `
     font-variation-settings: 
       'FILL' ${+innerIsIconFilled.value}, 
@@ -84,7 +83,7 @@ defineExpose({
   opticSize: innerOpticSize,
   grade: innerGrade,
   settings,
-}) as IconSharingComponentProps;
+}) as unknown as IconSharingComponentProps;
 </script>
 
 <template>

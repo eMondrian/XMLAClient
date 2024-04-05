@@ -13,7 +13,7 @@ import { ref, inject, watch, computed, type Ref, type Component } from "vue";
 import VideoWidgetSettings from "./VideoWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { VideoComponentProps, VideoSharingComponentProps, ObjectFitSetting } from "@/@types/widgets";
+import type { VideoComponentProps, VideoSharingComponentProps, ObjectFitSetting } from "@/@types/widgets";
 const settings: Component = VideoWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
@@ -76,7 +76,7 @@ defineExpose({
   storeId,
   settings,
   getState,
-}) as VideoSharingComponentProps;
+}) as unknown as VideoSharingComponentProps;
 
 const videoUrlParced = computed(() => {
   let processedString = innerVideoUrl.value;

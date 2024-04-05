@@ -9,12 +9,12 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { CollapseState, MaterialIcon, IconSharingComponentProps } from "@/@types/widgets";
+import type { CollapseState, MaterialIcon, IconSharingComponentProps } from "@/@types/widgets";
 import { ref, onMounted, computed, type Ref } from "vue";
 import MaterialIcons from '@/assets/icons/MaterialIcons.json';
 
-const props: IconSharingComponentProps = defineProps(["component"]);
-const opened: ref<CollapseState> = ref({
+const props = defineProps(["component"]) as IconSharingComponentProps;
+const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
 });

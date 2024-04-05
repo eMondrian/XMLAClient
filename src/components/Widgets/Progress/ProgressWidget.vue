@@ -13,7 +13,7 @@ import { ref, computed, inject, watch, type Ref, type Component, type PropType }
 import ProgressWidgetSettings from "./ProgressWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { ProgressComponentProps, ProgressSharingComponentProps, FillColor } from "@/@types/widgets";
+import type { ProgressComponentProps, ProgressSharingComponentProps, FillColor } from "@/@types/widgets";
 
 const settings: Component = ProgressWidgetSettings;
 
@@ -30,12 +30,12 @@ const props = defineProps({
     required: false,
   },
   progress: {
-    type: [Number, String],
+    type: String,
     required: false,
-    default: () => 0.5,
-    validator: (value) => {
-      return typeof value === 'string' || typeof value === 'number';
-    },
+    default: () => "0.5",
+    // validator: (value) => {
+    //   return typeof value === 'string' || typeof value === 'number';
+    // },
   },
   fillColor: {
     type: Object as PropType<FillColor>,
@@ -69,7 +69,7 @@ const props = defineProps({
 
 const { initialState } = props;
 
-const innerProgress: Ref<number | string> = ref(initialState?.progress || props.progress || 50);
+const innerProgress: Ref<string> = ref(initialState?.progress || props.progress || 50);
 const innerFillColor: Ref<FillColor> = ref(
   initialState?.innerFillColor || {
     backgroundColor: props.fillColor?.backgroundColor || '#00FF00',
@@ -115,7 +115,7 @@ defineExpose({
   getState,
   setState,
   settings,
-}) as ProgressSharingComponentProps;
+}) as unknown as ProgressSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;
@@ -150,7 +150,7 @@ const updateFn = async () => {
 };
 
 const parsedProgress = computed(() => {
-  if (!isNaN(innerProgress.value)) return `${(innerProgress.value * 100).toFixed(2)}%`;
+  if (!isNaN(parseFloat(innerProgress.value))) return `${(parseFloat(innerProgress.value) * 100).toFixed(2)}%`;
   
   let processedString = innerProgress.value;
   const regex = /{(.*?)}/g;
@@ -171,29 +171,29 @@ const parsedProgress = computed(() => {
   return `${processedString}%`;
 });
 
-const backgroundProgressColor: string = computed<string>(() => {
+const backgroundProgressColor = computed<string>(() => {
   return innerIsGradient.value
     ? `linear-gradient(${innerRotation.value}deg, ${innerFillColor.value.backgroundGradient})`
     : `${innerFillColor.value.backgroundColor}`;
 });
 
-const transition: string = computed<string>(() => {
+const transition = computed<string>(() => {
   return innerIsVertical.value ? 'height .7s ease' : 'width .7s ease';
 });
 
-const verticalPositionFiller: string = computed<string>(() => {
+const verticalPositionFiller = computed<string>(() => {
   return innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
-const horizontalPositionFiller: string = computed<string>(() => {
+const horizontalPositionFiller = computed<string>(() => {
   return !innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
-const verticalPositionBackground: string = computed<string>(() => {
+const verticalPositionBackground = computed<string>(() => {
   return innerIsVertical.value ? '35px' : '100%';
 });
 
-const horizontalPositionBackground: string = computed<string>(() => {
+const horizontalPositionBackground = computed<string>(() => {
   return !innerIsVertical.value ? '35px' : '100%';
 });
 </script>

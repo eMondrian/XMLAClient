@@ -13,7 +13,7 @@ import { ref, watch, computed, inject, type Ref, type Component } from "vue";
 import TextWidgetSettings from "./TextWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import { TextComponentProps, TextSharingComponentProps } from "@/@types/widgets";
+import type { TextComponentProps, TextSharingComponentProps } from "@/@types/widgets";
 const settings: Component = TextWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
@@ -137,7 +137,7 @@ defineExpose({
   settings,
   getState,
   setState,
-}) as TextSharingComponentProps;
+}) as unknown as TextSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;

@@ -1,3 +1,13 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
 import { ref, onMounted, watch, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
@@ -16,9 +26,9 @@ import CodeBlock from '@tiptap/extension-code-block';
 import Blockquote from '@tiptap/extension-blockquote';
 import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Underline from '@tiptap/extension-underline';
-import { CollapseState, RichTextSharingComponentProps } from "@/@types/widgets";
+import type { CollapseState, RichTextSharingComponentProps } from "@/@types/widgets";
 
-const props: RichTextSharingComponentProps = defineProps(["component"]);
+const props = defineProps(["component"]) as RichTextSharingComponentProps;
 const opened: Ref<CollapseState> = ref({
   textSection: false,
   storeSection: false,
