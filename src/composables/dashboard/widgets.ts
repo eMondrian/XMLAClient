@@ -6,7 +6,7 @@ declare interface Widget {
   id: string;
   component: string;
   caption: string;
-  state: any;
+  state?: any;
 }
 
 export function useWidgets() {
@@ -20,8 +20,8 @@ export function useWidgets() {
       widgets.value.forEach((widget) => {
         const refs = instance?.refs;
         if (!refs) return;
-        const componentRef = refs[`${widget.id}_component`] as ISerializable[];
 
+        const componentRef = refs[`${widget.id}_component`] as ISerializable[];
         state[widget.id] = componentRef[0].getState();
 
         const wrapperRef = refs[`${widget.id}_wrapper`] as ISerializable[];

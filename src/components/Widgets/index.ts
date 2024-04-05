@@ -34,3 +34,8 @@ export const widgetNames = [
   { name: "TableWidget", label: "Table Widget" },
   { name: "PivotTableWidget", label: "Pivot Table Widget" },
 ];
+
+// TODO: move settings components def here
+// export const settingsComponents = {
+//  ImageWidget: ImageWidgetSettings,
+// }
