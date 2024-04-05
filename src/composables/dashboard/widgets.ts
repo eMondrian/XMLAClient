@@ -88,6 +88,7 @@ export function useControls() {
 
         const componentRef = refs[`${control.id}_component`] as ISerializable[];
 
+        // TODO: Fix getState()
         state[control.id] = componentRef[0];
         
         const wrapperRef = refs[`${control.id}_wrapper`] as ISerializable[];
