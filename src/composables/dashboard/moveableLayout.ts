@@ -80,49 +80,47 @@ export function useMoveableLayout() {
   };
 
   const updateZIndex = () => {
-    const zIndexValues = Object.values(layout.value).map(item => item.z);
+    const zIndexValues = Object.values(layout.value).map((item) => item.z);
     zIndexMax = Math.max(...zIndexValues);
     zIndexMin = Math.min(...zIndexValues);
-    countMaxZValues = zIndexValues.filter(z => z === zIndexMax).length;
-    countMinZValues = zIndexValues.filter(z => z === zIndexMin).length;
+    countMaxZValues = zIndexValues.filter((z) => z === zIndexMax).length;
+    countMinZValues = zIndexValues.filter((z) => z === zIndexMin).length;
   };
 
-    const moveUp = (id: string) => {
-      const refs = instance?.refs;
-      if (!refs) return;
+  const moveUp = (id: string) => {
+    const refs = instance?.refs;
+    if (!refs) return;
 
-      // updateZIndex();
+    updateZIndex();
 
-      if (layout.value[id].z === zIndexMax && countMaxZValues === 1) {
-        return;
-      } 
-      // else if (layout.value[id].z <= zIndexMax && countMaxZValues > 1) {
-        layout.value[id].z = layout.value[id].z + 1;
-        const ref = refs[id] as HTMLElement[];
-        ref[0].style["z-index"] = layout.value[id].z;
+    if (layout.value[id].z === zIndexMax && countMaxZValues === 1) {
+      return;
+    }
 
-        const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-        componentRef[0].$el.style["z-index"] = layout.value[id].z;
-      // }
-    };
+    layout.value[id].z = layout.value[id].z + 1;
+    const ref = refs[id] as HTMLElement[];
+    ref[0].style["z-index"] = layout.value[id].z;
+
+    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+    componentRef[0].$el.style["z-index"] = layout.value[id].z;
+  };
 
   const moveDown = (id: string) => {
     const refs = instance?.refs;
     if (!refs) return;
 
-    // updateZIndex();
+    updateZIndex();
 
     if (layout.value[id].z < zIndexMin && countMinZValues === 1) {
       return;
-    } 
-    // else if (layout.value[id].z > zIndexMin && countMinZValues >= 1) {
-      layout.value[id].z = layout.value[id].z - 1;
-      const ref = refs[id] as HTMLElement[];
-      ref[0].style["z-index"] = layout.value[id].z;
+    }
 
-      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-      componentRef[0].$el.style["z-index"] = layout.value[id].z;
-    // }
+    layout.value[id].z = layout.value[id].z - 1;
+    const ref = refs[id] as HTMLElement[];
+    ref[0].style["z-index"] = layout.value[id].z;
+
+    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+    componentRef[0].$el.style["z-index"] = layout.value[id].z;
   };
 
   const moveToBottom = (id) => {
@@ -148,7 +146,6 @@ export function useMoveableLayout() {
   };
 
   const moveToTop = (id) => {
-    
     const obj = Object.entries(layout.value);
     const res = obj.reduce(function (p, v) {
       return p[1].z > v[1].z ? p : v;
