@@ -10,7 +10,7 @@
 */
 import { ref, getCurrentInstance } from "vue";
 import type { ISerializable } from "./serialization";
-import { enabledWidgets, widgetNames, enabledControls, controlNames } from "@/components/Widgets";
+import { enabledWidgets, widgetNames } from "@/components/Widgets";
 
 declare interface Widget {
   id: string;
@@ -28,7 +28,7 @@ declare interface Control {
 
 export function useWidgets() {
   const instance = getCurrentInstance();
-  const widgets = ref<Widget[]>([]);
+  const widgets = ref<(Widget | Control)[]>([]);
 
   const widgetsStorage: ISerializable = {
     getState: () => {
@@ -72,54 +72,4 @@ export function useWidgets() {
     widgetNames,
     removeWidget,
   };
-}
-
-export function useControls() {
-  const instance = getCurrentInstance();
-  const controls = ref<Control[]>([]);
-
-  const controlsStorage: ISerializable = {
-    getState: () => {
-      const state = {};
-
-      controls.value.forEach((control) => {
-        const refs = instance?.refs;
-        if (!refs) return;
-
-        const componentRef = refs[`${control.id}_component`] as ISerializable[];
-
-        // TODO: Fix getState()
-        state[control.id] = componentRef[0];
-        
-        const wrapperRef = refs[`${control.id}_wrapper`] as ISerializable[];
-        state[`${control.id}_wrapper`] = wrapperRef[0].getState();
-      });
-
-      return JSON.stringify(state);
-    },
-    loadState: (state) => {
-      console.warn("Not implemented");
-    },
-  };
-  const addControl = (component: string, id: string) => {
-    controls.value.push({
-      id,
-      component,
-      caption: "Test",
-    });
-  };
-
-  const removeControl = (id: string) => {
-    controls.value = controls.value.filter((control) => control.id !== id);
-  };
-
-  return {
-    controls,
-    controlsStorage,
-    addControl,
-    enabledControls,
-    controlNames,
-    removeControl,
-  };
-
 }

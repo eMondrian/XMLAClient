@@ -26,16 +26,6 @@ Contributors: Smart City Jena
             Add Widget
           </va-button>
         </div>
-        <div class="widgets-select">
-          <va-select
-            v-model="selectedControl"
-            :options="controlOptions"
-            label="Controls "
-          />
-          <va-button class="add-widget-btn" @click="addSelectedControl">
-            Add Control
-          </va-button>
-        </div>
       </div>
       <div class="buttons-list">
         <va-button preset="primary" class="ml-2" @click="toggleEdit">
@@ -125,72 +115,6 @@ Contributors: Smart City Jena
           >
           </Moveable>
         </template>
-
-        <template v-for="control in controls" :key="control.id">
-          <div
-            :class="`${control.id} dashboard-item-container`"
-            :style="getInitialStyle(control.id)"
-            :ref="control.id"
-          >
-            <va-dropdown
-              :trigger="editEnabled ? 'right-click' : 'none'"
-              :auto-placement="false"
-              placement="right-start"
-              cursor
-            >
-              <template #anchor>
-                <div class="dashboard-item">
-                  <Suspense>
-                    <template #fallback>
-                      <div>Loading...</div>
-                    </template>
-                    <WidgetWrapper :ref="`${control.id}_wrapper`">
-                      <component
-                        :is="enabledControls[control.component]"
-                        :ref="`${control.id}_component`"
-                        :initialState="control.state"
-                      ></component>
-                    </WidgetWrapper>
-                  </Suspense>
-                  <DashboardControls
-                    v-if="editEnabled"
-                    @openSettings="
-                      openSettings(`${control.id}_component`, null)
-                    "
-                    @deleteElement="deleteControl(control.id)"
-                  />
-                </div>
-              </template>
-              <va-dropdown-content>
-                <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp(control.id)">Move up</va-button>
-                  <va-button @click="moveDown(control.id)">Move down</va-button>
-                  <va-button @click="moveToTop(control.id)"
-                    >Move to top</va-button
-                  >
-                  <va-button @click="moveToBottom(control.id)">
-                    Move to bottom
-                  </va-button>
-                </div>
-              </va-dropdown-content>
-            </va-dropdown>
-          </div>
-          <Moveable
-            v-bind:target="[`.${control.id}`]"
-            v-bind:draggable="editEnabled"
-            v-bind:resizable="editEnabled"
-            v-bind:useResizeObserver="true"
-            v-bind:useMutationObserver="true"
-            @drag="drag(control.id, $event)"
-            @resize="resize(control.id, $event)"
-            :snappable="true"
-            :snapGridWidth="20"
-            :snapGridHeight="20"
-            :ref="`${control.id}_control`"
-            :style="getMovableControlStyles(control.id)"
-          >
-          </Moveable>
-        </template>
       </div>
     </div>
     <SidebarSettings
@@ -212,7 +136,7 @@ import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
 import { useSerialization } from "@/composables/dashboard/serialization";
-import { useControls, useWidgets } from "@/composables/dashboard/widgets";
+import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
 
 const dsManager = useDatasourceManager();
@@ -225,11 +149,11 @@ const settingsSection = ref(null as any);
 const settingsBackground = ref("#fefefe");
 const EventBus = inject("customEventBus") as any;
 const selectedWidget = ref("");
-const selectedControl = ref("");
 
 const instance = getCurrentInstance();
 
 const addSelectedWidget = () => {
+  console.log(widgetOptions)
   if (selectedWidget.value === "") return;
 
   const widget = widgetNames.filter((e) => e.label === selectedWidget.value)[0];
@@ -247,24 +171,6 @@ const addSelectedWidget = () => {
   addWidget(widget.name, id);
 };
 
-const addSelectedControl = () => {
-  if (selectedControl.value === "") return;
-
-  const control = controlNames.filter((e) => e.label === selectedControl.value)[0];
-
-  const id: string = `id_${Date.now()}`;
-
-  layout.value[id] = {
-    x: 0,
-    y: 700,
-    width: 300,
-    height: 150,
-    z: 3005,
-  };
-
-  addControl(control.name, id);
-};
-
 const {
   widgets,
   widgetsStorage,
@@ -274,17 +180,7 @@ const {
   enabledWidgets,
 } = useWidgets();
 
-const {
-  controls,
-  controlsStorage,
-  addControl,
-  removeControl,
-  controlNames,
-  enabledControls,
-} = useControls();
-
 const widgetOptions = widgetNames.map((widget) => widget.label);
-const controlOptions = controlNames.map((control) => control.label);
 
 const {
   layout,
@@ -304,7 +200,6 @@ const { getSerializedState, loadState } = useSerialization({
   stores: storeManager,
   datasources: dsManager,
   widgets: widgetsStorage,
-  controls: controlsStorage,
 });
 
 const toggleEdit = () => {
@@ -416,18 +311,6 @@ const deleteWidget = (id) => {
   removeWidget(id);
 };
 
-const deleteControl = (id) => {
-  if (
-    settingsSection?.value &&
-    `${id}_component` === settingsSection.value.id
-  ) {
-    settingsSection.value = null;
-    showSidebar.value = false;
-  }
-
-  delete layout.value[id];
-  removeControl(id);
-};
 </script>
 
 <style>

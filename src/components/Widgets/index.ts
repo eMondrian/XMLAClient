@@ -27,6 +27,7 @@ import ButtonControl from "@/components/Controls/Button/ButtonControl.vue";
 import InputControl from "@/components/Controls/Input/InputControl.vue";
 
 export const enabledWidgets = {
+  // Widgets
   ImageWidget,
   TextWidget,
   SvgWidget,
@@ -37,9 +38,7 @@ export const enabledWidgets = {
   RichTextWidget,
   TableWidget,
   PivotTableWidget,
-};
-
-export const enabledControls = {
+  // Controls
   SwitchControl,
   SelectControl,
   DateControl,
@@ -50,6 +49,7 @@ export const enabledControls = {
 };
 
 export const widgetNames = [
+  // Widgets
   { name: "ImageWidget", label: "Image Widget" },
   { name: "TextWidget", label: "Text Widget" },
   { name: "SvgWidget", label: "SVG Widget" },
@@ -60,9 +60,7 @@ export const widgetNames = [
   { name: "RichTextWidget", label: "Rich Text Widget" },
   { name: "TableWidget", label: "Table Widget" },
   { name: "PivotTableWidget", label: "Pivot Table Widget" },
-];
-
-export const controlNames = [
+  // Controls
   { name: "SwitchControl", label: "Switch Control" },
   { name: "SelectControl", label: "Select Control" },
   { name: "DateControl", label: "Date Control" },

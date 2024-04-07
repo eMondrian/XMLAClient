@@ -31,10 +31,6 @@ declare interface LayoutStorage extends ISerializable {
 export function useMoveableLayout() {
   const instance = getCurrentInstance();
   const layout = ref<Layout>({});
-  let zIndexMax = 0;
-  let zIndexMin = 0;
-  let countMaxZValues = 0;
-  let countMinZValues = 0;
 
   const layoutStorage: LayoutStorage = {
     getState: () => {
@@ -80,47 +76,61 @@ export function useMoveableLayout() {
   };
 
   const updateZIndex = () => {
+    let zIndexMax = 0;
+    let zIndexMin = 0;
+    let countMaxZValues = 0;
+    let countMinZValues = 0;
+
     const zIndexValues = Object.values(layout.value).map((item) => item.z);
     zIndexMax = Math.max(...zIndexValues);
     zIndexMin = Math.min(...zIndexValues);
     countMaxZValues = zIndexValues.filter((z) => z === zIndexMax).length;
     countMinZValues = zIndexValues.filter((z) => z === zIndexMin).length;
+
+    return {
+      zIndexMax,
+      zIndexMin,
+      countMaxZValues,
+      countMinZValues,
+    }
+  };
+
+  const updateElementZIndex = (refs: any, id: string, zIndex: number) => {
+    const ref = refs[id] as HTMLElement[];
+    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
+  
+    if (ref && componentRef) {
+      ref[0].style["z-index"] = zIndex;
+      componentRef[0].$el.style["z-index"] = zIndex;
+    }
   };
 
   const moveUp = (id: string) => {
     const refs = instance?.refs;
     if (!refs) return;
 
-    updateZIndex();
+    const { zIndexMax, countMaxZValues } = updateZIndex();
 
     if (layout.value[id].z === zIndexMax && countMaxZValues === 1) {
       return;
     }
 
     layout.value[id].z = layout.value[id].z + 1;
-    const ref = refs[id] as HTMLElement[];
-    ref[0].style["z-index"] = layout.value[id].z;
-
-    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-    componentRef[0].$el.style["z-index"] = layout.value[id].z;
+    updateElementZIndex(refs, id, layout.value[id].z);
   };
 
   const moveDown = (id: string) => {
     const refs = instance?.refs;
     if (!refs) return;
 
-    updateZIndex();
+    const { zIndexMin, countMinZValues } = updateZIndex();
 
-    if (layout.value[id].z < zIndexMin && countMinZValues === 1) {
+    if (layout.value[id].z === zIndexMin && countMinZValues === 1) {
       return;
     }
 
     layout.value[id].z = layout.value[id].z - 1;
-    const ref = refs[id] as HTMLElement[];
-    ref[0].style["z-index"] = layout.value[id].z;
-
-    const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-    componentRef[0].$el.style["z-index"] = layout.value[id].z;
+    updateElementZIndex(refs, id, layout.value[id].z);
   };
 
   const moveToBottom = (id) => {
@@ -130,18 +140,13 @@ export function useMoveableLayout() {
     }, obj[0]);
 
     if (id !== res[0]) {
-      updateZIndex();
+      const { zIndexMin } = updateZIndex();
       layout.value[id].z = zIndexMin - 1;
 
       const refs = instance?.refs;
       if (!refs) return;
 
-      const ref = refs[id] as HTMLElement[];
-
-      ref[0].style["z-index"] = layout.value[id].z;
-
-      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-      componentRef[0].$el.style["z-index"] = layout.value[id].z;
+      updateElementZIndex(refs, id, layout.value[id].z);
     }
   };
 
@@ -152,18 +157,13 @@ export function useMoveableLayout() {
     }, obj[0]);
 
     if (id !== res[0]) {
-      updateZIndex();
+      const { zIndexMax } = updateZIndex();
       layout.value[id].z = zIndexMax + 1;
 
       const refs = instance?.refs;
       if (!refs) return;
 
-      const ref = refs[id] as HTMLElement[];
-
-      ref[0].style["z-index"] = layout.value[id].z;
-
-      const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-      componentRef[0].$el.style["z-index"] = layout.value[id].z;
+      updateElementZIndex(refs, id, layout.value[id].z);
     }
   };
 
