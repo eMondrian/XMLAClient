@@ -89,7 +89,7 @@ const updateBackgroundColor = (color) => {
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
   right: 32px;
 }
 </style>

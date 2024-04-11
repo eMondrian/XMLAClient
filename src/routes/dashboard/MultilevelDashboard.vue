@@ -710,6 +710,7 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .layout-settings {
+  height: 40px;
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;   
@@ -732,6 +733,7 @@ body.no-overflow[data-v-059e0ffc] {
 
 .dropdown-item {
   width: 100%;
+  height: 100%;
   min-width: 284px;
   font-size: 16px;
   font-weight: 500;
@@ -747,7 +749,6 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .widgets-dropdown-button {
-  height: 32px;
   font-size: 16px;
   font-weight: 500;
   line-height: 19.5px;
@@ -756,15 +757,14 @@ body.no-overflow[data-v-059e0ffc] {
   box-sizing: border-box; 
 
   &:hover {
+    color: #4153B5 !important;
+    
     --va-background-color: #B0BEFE  !important;
     --va-background-color-opacity: 1 !important;
     --va-background-mask-opacity: 0 !important;
-
-    color: #4153B5 !important;
   }
 
   &:active {
-    height: 32px;
     box-sizing: border-box;  
     border: 2px solid #4153B5 !important;
     border-radius: 8px;
@@ -776,11 +776,15 @@ body.no-overflow[data-v-059e0ffc] {
   }
 }
 
-.button-list {
+.buttons-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 
 .settings-button {
+  height: 100%;
   margin-left: 12px;
   border-radius: 72px;
   border: 2px solid transparent;
@@ -793,14 +797,13 @@ body.no-overflow[data-v-059e0ffc] {
     font-size: 12px;
     font-weight: 600;
     line-height: 14.5px;
-    border: 2px solid #4153B5 !important;
 
     --va-background-color: #B0BEFE !important;
     --va-background-color-opacity: 1 !important;
   }
 
   &:active {
-    border: 2px solid #4153B5;
+    border: 2px solid #4153B5 !important;
 
     --va-background-color: #fafafa !important;
   }
@@ -874,8 +877,9 @@ body.no-overflow[data-v-059e0ffc] {
 
 .sidebar {
   z-index: 1000000;
-  -webkit-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // -webkit-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // -moz-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  border-left: 1px solid #B1B1B1
 }
 </style>
