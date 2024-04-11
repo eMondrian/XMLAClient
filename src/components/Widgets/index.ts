@@ -69,3 +69,8 @@ export const widgetNames = [
   { name: "ButtonControl", label: "Button Control" },
   { name: "InputControl", label: "Input Control" },
 ];
+
+// TODO: move settings components def here
+// export const settingsComponents = {
+//  ImageWidget: ImageWidgetSettings,
+// }

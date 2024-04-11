@@ -12,18 +12,37 @@ Contributors: Smart City Jena
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import type { CollapseState, TextSharingComponentProps } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as TextSharingComponentProps;
-const opened: Ref<CollapseState> = ref({
+import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+
+interface ITextSettings {
+  text: string;
+  fontSize: number;
+  fontColor: string;
+  fontWeight: string;
+  textDecoration: string;
+  horizontalAlign: string;
+  verticalAlign: string;
+}
+
+interface ITextComponent {
+  store: Store | XMLAStore;
+  settings: ITextSettings;
+  setSetting: (key: string, value: any) => void;
+  setStore: (store: Store | XMLAStore) => void;
+}
+
+const { component } = defineProps<{ component: ITextComponent }>();
+
+const opened = ref({
   textSection: false,
   storeSection: false,
 });
 
+// TODO: Move to store selection component
 const storeManager = useStoreManager();
-let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<Store[]>;
 const requestResult = ref("");
-const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -34,24 +53,21 @@ const getStores = () => {
 };
 
 const getData = async () => {
-  const store = storeManager.getStore(storeId.value) as Store;
-
+  const store = component.store as Store;
   const data = await store.getData();
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
-const updateStore = (store) => {
-  storeId.value = store;
-  props.component.storeId = store;
-  // props.component.setSettings({
-  //   store: store,
-  // });
+const updateStore = (storeId) => {
+  const store = storeManager.getStore(storeId) as Store;
+  component.setStore(store);
+  console.log(component);
   getData();
 };
 
 onMounted(() => {
   getStores();
-  if (storeId.value) {
+  if (component.store) {
     getData();
   }
 });
@@ -60,12 +76,27 @@ onMounted(() => {
 <template>
   <va-collapse v-model="opened.textSection" header="Text widget settings">
     <div class="settings-container">
-      <va-input v-model="props.component.text" label="Text" />
-      <va-input v-model="props.component.fontSize" label="Font Size" />
-      <va-input v-model="props.component.fontColor" label="Font Color" />
-      <va-input v-model="props.component.fontWeight" label="Font Weight" />
+      <va-input
+        label="Text"
+        :model-value="component.settings.text"
+        @update:model-value="component.setSetting('text', $event)"
+      />
+      <va-input
+        label="Font Size"
+        :model-value="component.settings.fontSize"
+        @update:model-value="component.setSetting('fontSize', $event)"
+      />
+      <va-input
+        label="Font Color"
+        :model-value="component.settings.fontColor"
+        @update:model-value="component.setSetting('fontColor', $event)"
+      />
+      <va-input
+        label="Font Weight"
+        :model-value="component.settings.fontWeight"
+        @update:model-value="component.setSetting('fontWeight', $event)"
+      />
       <va-select
-        v-model="props.component.textDecoration"
         label="Text decoration"
         :options="[
           'Underline solid',
@@ -75,16 +106,20 @@ onMounted(() => {
           'Overline',
           'None',
         ]"
+        :model-value="component.settings.textDecoration"
+        @update:model-value="component.setSetting('textDecoration', $event)"
       />
       <va-select
-        v-model="props.component.horizontalAlign"
         label="Horizontal align"
         :options="['Left', 'Center', 'Right']"
+        :model-value="component.settings.horizontalAlign"
+        @update:model-value="component.setSetting('horizontalAlign', $event)"
       />
       <va-select
-        v-model="props.component.verticalAlign"
         label="Vertical align"
         :options="['Top', 'Center', 'Bottom']"
+        :model-value="component.settings.verticalAlign"
+        @update:model-value="component.setSetting('verticalAlign', $event)"
       />
     </div>
   </va-collapse>
@@ -94,7 +129,7 @@ onMounted(() => {
         <h3 class="mb-2">Select store</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
-            :model-value="storeId"
+            :model-value="component.store?.id"
             @update:model-value="updateStore"
             :option="{
               text: `${store.caption} ${store.id}`,
