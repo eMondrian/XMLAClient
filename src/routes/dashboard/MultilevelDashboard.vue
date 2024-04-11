@@ -41,7 +41,7 @@ Contributors: Smart City Jena
                 v-model="isDropdownVisible"
                 :preset="isDropdownVisible ? 'primary' : ''"
                 :border-color="isDropdownVisible ? '#4153B5' : ''"
-                :iconColor="(isActiveButton || isDropdownVisible) ? '#4153B5' : isMouseOver ? '#4153B5' : '#fafafa'"
+                :iconColor="isMouseOver ? '#4153B5' : ''"
                 color="#4153B5"
                 @mousedown="mousedown" 
                 @mouseup="mouseup"
@@ -54,7 +54,7 @@ Contributors: Smart City Jena
             <va-dropdown-content class="dropdown-list">
               <div class="dropdown-item" v-for="widget of widgetOptions">
                 <div
-                  @click="selectedAction = widget; addSelectedWidget()"
+                  @click="addSelectedWidget(widget)"
                 >
                   {{ widget }}
                 </div>
@@ -166,7 +166,6 @@ const editEnabled = ref(false);
 const showSidebar = ref(false);
 const settingsSection = ref(null as any);
 const settingsBackground = ref("#fefefe");
-const selectedAction = ref("");
 const isDropdownVisible = ref(false);
 const isActiveButton = ref(false);
 const isMouseOver = ref(false);
@@ -192,10 +191,10 @@ const mouseleave = () => {
   isMouseOver.value = false;
 }
 
-const addSelectedWidget = () => {
-  if (selectedAction.value === "") return;
+const addSelectedWidget = (selectedWidget) => {
+  if (selectedWidget === "") return;
 
-  const widget = widgetNames.filter((e) => e.label === selectedAction.value)[0];
+  const widget = widgetNames.filter((e) => e.label === selectedWidget)[0];
 
   const id: string = `id_${Date.now()}`;
   layout.value[id] = {
@@ -710,10 +709,10 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .layout-settings {
-  height: 40px;
+  box-sizing: border-box;   
   display: flex;
   justify-content: space-between;
-  box-sizing: border-box;   
+  height: 40px;
   margin-left: 22px;
 }
 
@@ -749,6 +748,7 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .widgets-dropdown-button {
+  height: 100%;
   font-size: 16px;
   font-weight: 500;
   line-height: 19.5px;
