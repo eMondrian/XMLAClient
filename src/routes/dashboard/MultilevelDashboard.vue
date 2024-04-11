@@ -15,15 +15,17 @@ Contributors: Smart City Jena
       class="app-layout-container bg grey padd"
       :class="{ editDisabled: !editEnabled }"
     >
-      <div class="widgets-select">
-        <va-select
-          v-model="selectedAction"
-          :options="widgetOptions"
-          label="widgets"
-        />
-        <va-button class="add-widget-btn" @click="addSelectedWidget">
-          Add Widget
-        </va-button>
+      <div class="adding-elements">
+        <div class="widgets-select">
+          <va-select
+            v-model="selectedWidget"
+            :options="widgetOptions"
+            label="widgets"
+          />
+          <va-button class="add-widget-btn" @click="addSelectedWidget">
+            Add Widget
+          </va-button>
+        </div>
       </div>
       <div class="buttons-list">
         <va-button preset="primary" class="ml-2" @click="toggleEdit">
@@ -78,7 +80,7 @@ Contributors: Smart City Jena
                         'Widget',
                       )
                     "
-                    @deleteWidget="deleteWidget(widget.id)"
+                    @deleteElement="deleteWidget(widget.id)"
                   />
                 </div>
               </template>
@@ -127,8 +129,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
-import { markRaw, ref, getCurrentInstance } from "vue";
-
+import { getCurrentInstance, inject, markRaw, ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
@@ -138,23 +139,27 @@ import { useSerialization } from "@/composables/dashboard/serialization";
 import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
 
-const storeManager = useStoreManager();
 const dsManager = useDatasourceManager();
+const storeManager = useStoreManager();
 
 const editEnabled = ref(false);
 const showSidebar = ref(false);
 const settingsSection = ref(null as any);
+
 const settingsBackground = ref("#fefefe");
-const selectedAction = ref("");
+const EventBus = inject("customEventBus") as any;
+const selectedWidget = ref("");
 
 const instance = getCurrentInstance();
 
 const addSelectedWidget = () => {
-  if (selectedAction.value === "") return;
+  console.log(widgetOptions)
+  if (selectedWidget.value === "") return;
 
-  const widget = widgetNames.filter((e) => e.label === selectedAction.value)[0];
+  const widget = widgetNames.filter((e) => e.label === selectedWidget.value)[0];
 
   const id: string = `id_${Date.now()}`;
+  
   layout.value[id] = {
     x: 0,
     y: 700,
@@ -298,13 +303,14 @@ const deleteWidget = (id) => {
     settingsSection?.value &&
     `${id}_component` === settingsSection.value.id
   ) {
+    settingsSection.value = null;
     showSidebar.value = false;
   }
 
   delete layout.value[id];
-
   removeWidget(id);
 };
+
 </script>
 
 <style>
@@ -633,7 +639,7 @@ body.no-overflow[data-v-059e0ffc] {
 }
 
 .va-dropdown__content {
-  z-index: 10000000;
+  z-index: 10000000 !important;
 }
 
 .app-layout-container.editDisabled .moveable-line {
@@ -666,6 +672,12 @@ body.no-overflow[data-v-059e0ffc] {
 .widgets-select {
   display: flex;
   align-self: flex-end;
+}
+
+.adding-elements {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .add-widget-btn {

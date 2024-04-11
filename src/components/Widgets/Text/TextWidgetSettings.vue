@@ -12,6 +12,7 @@ Contributors: Smart City Jena
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 
 interface ITextSettings {

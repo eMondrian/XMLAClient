@@ -9,15 +9,16 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, inject, watch, computed } from "vue";
+import { ref, inject, watch, computed, type Ref, type Component } from "vue";
 import VideoWidgetSettings from "./VideoWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-const settings = VideoWidgetSettings;
+import type { VideoComponentProps, VideoSharingComponentProps, ObjectFitSetting } from "@/@types/widgets";
+const settings: Component = VideoWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -33,7 +34,7 @@ const props = defineProps({
     required: false,
     default: "",
   }
-});
+}) as VideoComponentProps;
 
 const getState = () => {
   return {
@@ -64,8 +65,8 @@ const updateFn = async () => {
 };
 
 
-const innerVideoUrl = ref(props.videoUrl || "");
-const videoSettings = ref({
+const innerVideoUrl: Ref<string> = ref(props.videoUrl || "");
+const videoSettings: Ref<ObjectFitSetting> = ref({
   fit: "None",
 })
 
@@ -75,7 +76,7 @@ defineExpose({
   storeId,
   settings,
   getState,
-});
+}) as unknown as VideoSharingComponentProps;
 
 const videoUrlParced = computed(() => {
   let processedString = innerVideoUrl.value;

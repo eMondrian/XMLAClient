@@ -9,15 +9,16 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { onMounted, ref, watch, inject } from "vue";
+import { onMounted, ref, watch, inject, type Ref, type Component, computed } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import ImageWidgetSettings from "./ImageWidgetSettings.vue";
-const settings = ImageWidgetSettings;
+import type { ImageComponentProps, ImageSettings, ImageSharingComponentProps, ImageGalleryItem } from "@/@types/widgets";
+const settings: Component = ImageWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -32,16 +33,17 @@ const props = defineProps({
     required: false,
     default: "",
   },
-});
+}) as ImageComponentProps;
+
 const { initialState, imgSrc } = props;
 
-const innerImgSrc = ref(initialState?.imgSrc || imgSrc || "");
+const innerImgSrc: Ref<string> = ref(initialState?.imgSrc || imgSrc || "");
 let interval = null as any;
 
-const images = ref([] as any[]);
-const imagesFromData = ref([] as any[]);
-const currentImage = ref(0);
-const imageSettings = ref({
+const images: Ref<ImageGalleryItem[]> = ref([]);
+const imagesFromData: Ref<ImageGalleryItem[]> = ref([]);
+const currentImage: Ref<number> = ref(0);
+const imageSettings: Ref<ImageSettings> = ref({
   fit: "None",
   diashowInterval: 0,
 });
@@ -63,7 +65,7 @@ const getState = () => {
     storeId: storeId.value,
     imgSrc: innerImgSrc.value,
     images: images.value,
-    imageSettings:imageSettings.value
+    imageSettings: imageSettings.value,
   };
 };
 
@@ -108,7 +110,7 @@ defineExpose({
   images,
   imageSettings,
   storeId,
-});
+}) as unknown as ImageSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;
@@ -158,7 +160,7 @@ const parsedUrl = (url) => {
 watch(
   images.value,
   (newValue) => {
-    imagesFromData.value = newValue.map((img) => {
+    imagesFromData.value = newValue.map((img: ImageGalleryItem) => {
         return {
         id: img.id,
         url: parsedUrl(img.url),
@@ -177,6 +179,14 @@ watch(
     }
   }
 );
+
+const lastImageIndex = computed(() => {
+  return imagesFromData.value.length > 0 ? imagesFromData.value.length - 1 : 0;
+});
+
+watch(lastImageIndex, () => {
+  currentImage.value = lastImageIndex.value;
+});
 </script>
 
 <template>

@@ -10,24 +10,25 @@ Contributors: Smart City Jena
 -->
 <script lang="ts" setup>
 import { v4 } from "uuid";
-import { ref, onMounted, Ref } from "vue";
+import { ref, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
+import type { CollapseState, ImageSharingComponentProps } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 
-const props = defineProps(["component"]) as any;
-const opened = ref({
+const props = defineProps(["component"]) as ImageSharingComponentProps;
+const opened: Ref<CollapseState> = ref({
   imageSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<any[]>;
-const requestResult = ref("");
-const storeId = ref(props.component.storeId);
+let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+const requestResult: Ref<string> = ref("");
+const storeId: Ref<string> = ref(props.component.storeId);
 
 const addNew = () => {
   console.log(props.component);
-  props.component.images.push({
+  props.component.images?.push({
     id: v4(),
     url: "Test",
   });

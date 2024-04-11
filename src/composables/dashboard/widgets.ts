@@ -1,3 +1,13 @@
+/*
+  Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  SPDX-License-Identifier: EPL-2.0
+
+  Contributors: Smart City Jena
+
+*/
 import { ref, getCurrentInstance } from "vue";
 import type { ISerializable } from "./serialization";
 import { enabledWidgets, widgetNames } from "@/components/Widgets";
@@ -9,9 +19,16 @@ declare interface Widget {
   state?: any;
 }
 
+declare interface Control {
+  id: string;
+  component: string;
+  caption: string;
+  state: any;
+}
+
 export function useWidgets() {
   const instance = getCurrentInstance();
-  const widgets = ref<Widget[]>([]);
+  const widgets = ref<(Widget | Control)[]>([]);
 
   const widgetsStorage: ISerializable = {
     getState: () => {
