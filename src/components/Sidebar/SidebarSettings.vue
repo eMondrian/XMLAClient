@@ -19,13 +19,17 @@ const props = defineProps(["modelValue", "settingsSection"]);
 const emit = defineEmits(["update:modelValue", "updateBackgroundColor"]);
 
 const updateBackgroundColor = (color) => {
- emit('updateBackgroundColor', color);
+  emit("updateBackgroundColor", color);
 };
 </script>
 
 <template>
-  <va-sidebar  color="#ffffff" :modelValue="modelValue" animated="right" width="500px">
-
+  <va-sidebar
+    color="#ffffff"
+    :modelValue="modelValue"
+    animated="right"
+    width="500px"
+  >
     <div class="settings-sidebar">
       <div class="settings-sidebar-content">
         <template v-if="props.settingsSection?.type === 'Stores'">
@@ -45,13 +49,9 @@ const updateBackgroundColor = (color) => {
           />
         </template>
         <template v-if="props.settingsSection?.type === 'App'">
-          <SidebarAppSettings
-            @updateBackgroundColor="updateBackgroundColor"
-          />
+          <SidebarAppSettings @updateBackgroundColor="updateBackgroundColor" />
         </template>
-
       </div>
-
 
       <div class="settings-sidebar-actions">
         <va-button @click="$emit('update:modelValue', !modelValue)">
@@ -59,14 +59,11 @@ const updateBackgroundColor = (color) => {
         </va-button>
       </div>
     </div>
-
   </va-sidebar>
 </template>
 
 <style lang="css">
-
 .settings-sidebar {
-
   height: auto;
   width: 100%;
   display: flex;
@@ -90,7 +87,7 @@ const updateBackgroundColor = (color) => {
 }
 </style>
 <style scoped>
-.sidebar{
+.sidebar {
   background-color: white;
 }
 </style>
