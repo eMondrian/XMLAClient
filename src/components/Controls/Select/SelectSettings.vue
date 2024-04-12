@@ -9,11 +9,12 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import type { SelectComponentProps, EventItem } from "@/@types/controls";
 import { ref, type Ref } from "vue";
-import type { ButtonComponentProps, EventItem } from "@/@types/controls";
 
-const props = defineProps(["component"]) as ButtonComponentProps;
+const props = defineProps(["component"]) as SelectComponentProps;
 const options: Ref<string[]> = ref(props.component.availableEvents);
+const selectOptions: Ref<string[]> = ref(props.component.options);
 const events: Ref<EventItem[]> = ref(props.component.events);
 
 const addEvent = () => {
@@ -23,19 +24,44 @@ const addEvent = () => {
   });
 };
 
+const addOption = () => {
+  selectOptions.value.push('');
+};
+
 const deleteEvent = (id: number) => {
   events.value.splice(id, 1);
+};
+
+const deleteOption = (id: number, option: string) => {
+  if (props.component.selectValue === option) {
+    props.component.selectValue = '';
+  }
+  selectOptions.value.splice(id, 1);
 };
 </script>
 
 <template>
   <va-input
     class="event-input"
-    v-model="props.component.title"
-    label="Button text"
+    v-model="props.component.label"
+    label="Label text"
   />
+  <div class="events-list-label">
+    <h3>Options list</h3>
+    <va-button @click="addOption">Add</va-button>
+  </div>
+  <!-- <div> -->
+    <div class="options-list" v-for="(option, index) in selectOptions" :key="option.index">
+      <va-input v-model="selectOptions[index]" label="Option" />
+      <va-button
+        preset="plain"
+        icon="delete"
+        @click="deleteOption(index, option)"
+      />
+    </div>
+  <!-- </div> -->
   <div class="events-list">
-    <div class="events-list-title">
+    <div class="events-list-label">
       <h3>Events list</h3>
       <va-button @click="addEvent">Add</va-button>
     </div>
@@ -67,12 +93,22 @@ const deleteEvent = (id: number) => {
     </div>
   </div>
 </template>
-<style>
+<style lang="scss" scoped>
+.options-list {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+
+  button {
+    margin: 14px 0 0 15px;
+  }
+}
+
 .events-list {
   margin-top: 20px;
 }
 
-.events-list-title {
+.events-list-label {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -80,7 +116,7 @@ const deleteEvent = (id: number) => {
   align-items: start;
 }
 
-.events-list-title > h3 {
+.events-list-label > h3 {
   margin-bottom: 8px;
   font-size: 20px;
 }

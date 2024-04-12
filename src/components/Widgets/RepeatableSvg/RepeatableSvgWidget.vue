@@ -9,15 +9,16 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { onMounted, ref, watch, inject, computed } from "vue";
+import { onMounted, ref, watch, inject, computed, type Ref, type Component, PropType } from "vue";
 import RepeatableSvgWidgetSettings from "./RepeatableSvgWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-const settings = RepeatableSvgWidgetSettings;
+import type { ItemStyles, RepeatableSvgComponentProps, RepeatableSvgSharingComponentProps } from "@/@types/widgets";
+const settings: Component = RepeatableSvgWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -33,7 +34,7 @@ const props = defineProps({
     default: "/demo/human.svg",
   },
   activeItemStyles: {
-    type: Object,
+    type: Object as PropType<ItemStyles>,
     required: false,
     default: () => ({
       fill: "#ff0000",
@@ -41,7 +42,7 @@ const props = defineProps({
     }),
   },
   defaultItemStyles: {
-    type: Object,
+    type: Object as PropType<ItemStyles>,
     required: false,
     default: () => ({
       fill: "#777777",
@@ -58,21 +59,21 @@ const props = defineProps({
     required: false,
     default: '0.5',
   },
-});
+}) as RepeatableSvgComponentProps;
 
 const { src, activeItemStyles, defaultItemStyles, repeations, progress } = props;
 
-const svgSource = ref(src || "");
-const innerActiveItemStyles = ref({
-  fill: activeItemStyles.fill || '#ff0000',
-  stroke: activeItemStyles.stroke || '#FFFF00',
+const svgSource: Ref<string> = ref(src || "");
+const innerActiveItemStyles: Ref<ItemStyles> = ref({
+  fill: activeItemStyles?.fill || '#ff0000',
+  stroke: activeItemStyles?.stroke || '#FFFF00',
 });
-const innerDefaultItemStyles = ref({
-  fill: defaultItemStyles.fill || '#777777',
-  stroke: defaultItemStyles.stroke || '#777777',
+const innerDefaultItemStyles: Ref<ItemStyles> = ref({
+  fill: defaultItemStyles?.fill || '#777777',
+  stroke: defaultItemStyles?.stroke || '#777777',
 });
-const innerRepeations = ref(repeations || '4');
-const innerProgress = ref(progress || '0.5');
+const innerRepeations: Ref<string> = ref(repeations || '4');
+const innerProgress: Ref<string> = ref(progress || '0.5');
 
 const getState = () => {
   return {
@@ -119,7 +120,7 @@ defineExpose({
   storeId,
   settings,
   getState,
-});
+}) as unknown as RepeatableSvgSharingComponentProps;
 
 const createParsedData = (prop) => {
   return computed(() => {
@@ -145,14 +146,14 @@ const createParsedData = (prop) => {
   });
 }
 
-const svgProgressParse = createParsedData(innerProgress);
+const svgProgressParse: Ref<string> = createParsedData(innerProgress);
 
-const repeationsToNumber = computed(() => {
-  return !isNaN(innerRepeations.value) ? Math.floor(Number(innerRepeations.value)) : 0;
+const repeationsToNumber: Ref<number> = computed(() => {
+  return !isNaN(parseFloat(innerRepeations.value)) ? Math.floor(Number(innerRepeations.value)) : 0;
 })
 
-const progressToNumber = computed(() => {
-  return !isNaN(svgProgressParse.value) ? Number(svgProgressParse.value) : 0;
+const progressToNumber: Ref<number> = computed(() => {
+  return !isNaN(parseFloat(svgProgressParse.value)) ? Number(svgProgressParse.value) : 0;
 })
 
 </script>

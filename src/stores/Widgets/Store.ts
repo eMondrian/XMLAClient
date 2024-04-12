@@ -74,7 +74,7 @@ export class Store {
     this.registerForDataSourceEvents();
   }
 
-  async getData(body) {
+  async getData(body?) {
     let requestTemplate = this.requestTemplate;
 
     const datasource = this.datasourceManager.getDatasource(

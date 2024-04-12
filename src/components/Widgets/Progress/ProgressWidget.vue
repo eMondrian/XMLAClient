@@ -9,15 +9,17 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, inject, watch, type Ref, type Component, type PropType } from "vue";
 import ProgressWidgetSettings from "./ProgressWidgetSettings.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-const settings = ProgressWidgetSettings;
+import type { ProgressComponentProps, ProgressSharingComponentProps, FillColor } from "@/@types/widgets";
+
+const settings: Component = ProgressWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -28,15 +30,15 @@ const props = defineProps({
     required: false,
   },
   progress: {
-    type: [Number, String],
+    type: String,
     required: false,
-    default: () => 0.5,
-    validator: (value) => {
-      return typeof value === 'string' || typeof value === 'number';
-    },
+    default: () => "0.5",
+    // validator: (value) => {
+    //   return typeof value === 'string' || typeof value === 'number';
+    // },
   },
   fillColor: {
-    type: Object,
+    type: Object as PropType<FillColor>,
     required: false,
     default: () => ({
       backgroundColor: '#00FF00',
@@ -63,21 +65,21 @@ const props = defineProps({
     required: false,
     default: 90,
   }
-});
+}) as ProgressComponentProps;
 
 const { initialState } = props;
 
-const innerProgress = ref(initialState?.progress || props.progress || 50);
-const innerFillColor = ref(
+const innerProgress: Ref<string> = ref(initialState?.progress || props.progress || 50);
+const innerFillColor: Ref<FillColor> = ref(
   initialState?.innerFillColor || {
-    backgroundColor: props.fillColor.backgroundColor || '#00FF00',
-    backgroundGradient: props.fillColor.backgroundGradient || '#00FF00 0, #FAFAFA 100%',
+    backgroundColor: props.fillColor?.backgroundColor || '#00FF00',
+    backgroundGradient: props.fillColor?.backgroundGradient || '#00FF00 0, #FAFAFA 100%',
   }
 );
-const innerBackgroundColor = ref(initialState?.backgroundColor || props.backgroundColor || '#d3d3d3');
-const innerIsGradient = ref(initialState?.isGradient || props.isGradient || false);
-const innerIsVertical = ref(initialState?.isVertical || props.isVertical || false);
-const innerRotation = ref(initialState?.rotation || props.rotation || 90);
+const innerBackgroundColor: Ref<string> = ref(initialState?.backgroundColor || props.backgroundColor || '#d3d3d3');
+const innerIsGradient: Ref<boolean> = ref(initialState?.isGradient || props.isGradient || false);
+const innerIsVertical: Ref<boolean> = ref(initialState?.isVertical || props.isVertical || false);
+const innerRotation: Ref<number> = ref(initialState?.rotation || props.rotation || 90);
 
 const getState = () => {
   return {
@@ -113,7 +115,7 @@ defineExpose({
   getState,
   setState,
   settings,
-});
+}) as unknown as ProgressSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;
@@ -148,7 +150,7 @@ const updateFn = async () => {
 };
 
 const parsedProgress = computed(() => {
-  if (!isNaN(innerProgress.value)) return `${(innerProgress.value * 100).toFixed(2)}%`;
+  if (!isNaN(parseFloat(innerProgress.value))) return `${(parseFloat(innerProgress.value) * 100).toFixed(2)}%`;
   
   let processedString = innerProgress.value;
   const regex = /{(.*?)}/g;
@@ -169,29 +171,29 @@ const parsedProgress = computed(() => {
   return `${processedString}%`;
 });
 
-const backgroundProgressColor = computed(() => {
+const backgroundProgressColor = computed<string>(() => {
   return innerIsGradient.value
     ? `linear-gradient(${innerRotation.value}deg, ${innerFillColor.value.backgroundGradient})`
     : `${innerFillColor.value.backgroundColor}`;
 });
 
-const transition = computed(() => {
+const transition = computed<string>(() => {
   return innerIsVertical.value ? 'height .7s ease' : 'width .7s ease';
 });
 
-const verticalPositionFiller = computed(() => {
+const verticalPositionFiller = computed<string>(() => {
   return innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
-const horizontalPositionFiller = computed(() => {
+const horizontalPositionFiller = computed<string>(() => {
   return !innerIsVertical.value ? `${parseFloat(parsedProgress.value)}%` : '35px';
 });
 
-const verticalPositionBackground = computed(() => {
+const verticalPositionBackground = computed<string>(() => {
   return innerIsVertical.value ? '35px' : '100%';
 });
 
-const horizontalPositionBackground = computed(() => {
+const horizontalPositionBackground = computed<string>(() => {
   return !innerIsVertical.value ? '35px' : '100%';
 });
 </script>

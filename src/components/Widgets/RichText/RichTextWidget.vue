@@ -1,13 +1,24 @@
+<!--
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+-->
 <script lang="ts" setup>
-import { ref, watch, inject, computed } from "vue";
+import { ref, watch, inject, computed, type Ref, type Component } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import RichTextWidgetSettings from "./RichTextWidgetSettings.vue";
-const settings = RichTextWidgetSettings;
+import type { RichTextComponentProps, RichTextSharingComponentProps } from "@/@types/widgets";
+const settings: Component = RichTextWidgetSettings;
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
-const storeId = ref("");
+const storeId: Ref<string> = ref("");
 const data = ref(null as unknown);
 
 let store = null as unknown as Store;
@@ -22,9 +33,9 @@ const props = defineProps({
     required: false,
     default: "",
   },
-});
+}) as RichTextComponentProps;
 
-const innerEditor = ref(props.editor || "");
+const innerEditor: Ref<string> = ref(props.editor || "");
 
 const getState = () => {
   return {
@@ -37,7 +48,7 @@ defineExpose({
   getState,
   storeId,
   settings,
-});
+}) as unknown as RichTextSharingComponentProps;
 
 const getData = async () => {
   if (!store) return;

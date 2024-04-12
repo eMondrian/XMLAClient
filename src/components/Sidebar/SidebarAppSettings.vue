@@ -31,7 +31,7 @@ const innerBackground = ref('#fafafa');
   </div>
 </template>
 
-<style lang="css">
+<style lang="scss" scoped>
 .app-settings {
   display: flex;
   flex-direction: column;
