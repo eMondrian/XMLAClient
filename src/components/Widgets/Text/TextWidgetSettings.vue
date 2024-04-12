@@ -76,27 +76,92 @@ onMounted(() => {
 <template>
   <va-collapse v-model="opened.textSection" header="Text widget settings">
     <div class="settings-container">
-      <va-input
-        label="Text"
-        :model-value="component.settings.text"
-        @update:model-value="component.setSetting('text', $event)"
-      />
-      <va-input
-        label="Font Size"
-        :model-value="component.settings.fontSize"
-        @update:model-value="component.setSetting('fontSize', $event)"
-      />
-      <va-input
-        label="Font Color"
-        :model-value="component.settings.fontColor"
-        @update:model-value="component.setSetting('fontColor', $event)"
-      />
-      <va-input
-        label="Font Weight"
-        :model-value="component.settings.fontWeight"
-        @update:model-value="component.setSetting('fontWeight', $event)"
-      />
-      <va-select
+      <div class="settings-block">
+        <va-input
+          class="text-title"
+          label="Title"
+          :model-value="component.settings.text"
+          @update:model-value="component.setSetting('text', $event)"
+        />
+        <va-input
+          class="text-size"
+          label="Font Size"
+          :model-value="component.settings.fontSize"
+          @update:model-value="component.setSetting('fontSize', $event)"
+        />
+        
+      </div>
+      <div class="settings-block">
+        <va-color-input
+          class="text-color"
+          label="Font Color"
+          :model-value="component.settings.fontColor"
+          @update:model-value="component.setSetting('fontColor', $event)"
+        />
+        <div class="align-buttons-group">
+          <VaButtonGroup
+            class="button-group"
+            size="medium"
+            grow
+            preset="plain"
+            border-color="#CDCFDB"
+          >
+            <VaButton 
+              color="#000000"
+              class="align-button ml-2" 
+              icon="align_horizontal_left" 
+              :model-value="component.settings.horizontalAlign"
+              @click="component.setSetting('horizontalAlign', 'Left')"
+            />
+            <VaButton 
+              color="#000000"
+              class="align-button" 
+              icon="align_horizontal_center" 
+              :model-value="component.settings.horizontalAlign"
+              @click="component.setSetting('horizontalAlign', 'Center')"
+            />
+            <VaButton 
+              color="#000000"
+              class="align-button" 
+              icon="align_horizontal_right"
+              :model-value="component.settings.horizontalAlign"
+              @click="component.setSetting('horizontalAlign', 'Right')"
+            />
+            <VaButton 
+              color="#000000"
+              class="align-button" 
+              icon="align_vertical_top" 
+              :model-value="component.settings.verticalAlign"
+              @click="component.setSetting('verticalAlign', 'Top')"
+            />
+            <VaButton 
+              color="#000000"
+              class="align-button" 
+              icon="align_vertical_center" 
+              :model-value="component.settings.verticalAlign"
+              @click="component.setSetting('verticalAlign', 'Center')"
+            />
+            <VaButton 
+              color="#000000"
+              class="align-button" 
+              icon="align_vertical_bottom" 
+              :model-value="component.settings.verticalAlign"
+              @click="component.setSetting('verticalAlign', 'Bottom')"
+            />
+          </VaButtonGroup>
+          
+        </div>
+        <va-input
+            class="text-weight ml-2"
+            label="Font Weight"
+            :model-value="component.settings.fontWeight"
+            @update:model-value="component.setSetting('fontWeight', $event)"
+          />
+    </div>
+    <div class="settings-block">
+        
+      </div>
+      <!-- <va-select
         label="Text decoration"
         :options="[
           'Underline solid',
@@ -108,19 +173,7 @@ onMounted(() => {
         ]"
         :model-value="component.settings.textDecoration"
         @update:model-value="component.setSetting('textDecoration', $event)"
-      />
-      <va-select
-        label="Horizontal align"
-        :options="['Left', 'Center', 'Right']"
-        :model-value="component.settings.horizontalAlign"
-        @update:model-value="component.setSetting('horizontalAlign', $event)"
-      />
-      <va-select
-        label="Vertical align"
-        :options="['Top', 'Center', 'Bottom']"
-        :model-value="component.settings.verticalAlign"
-        @update:model-value="component.setSetting('verticalAlign', $event)"
-      />
+      /> -->      
     </div>
   </va-collapse>
   <va-collapse v-model="opened.storeSection" header="Store settings">
@@ -144,11 +197,53 @@ onMounted(() => {
     </div>
   </va-collapse>
 </template>
-<style scoped>
+<style lang="scss" scoped>
 .settings-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 1rem;
+}
+
+.settings-block {
+  display: flex;
+  flex-direction: row;
+}
+
+.text-title {
+  width: 100%;
+}
+
+.text-size {
+  width: 63px;
+  margin-left: 12px;
+}
+
+.text-color {
+  width: 156px;
+}
+
+.text-weight {
+  width: 100px;
+}
+
+.align-buttons-group {
+  display: flex;
+  align-items: flex-end;
+
+  .button-group {
+    padding: 2px;
+  }
+
+  .align-button {
+
+    &:hover  {
+      --va-background-color: rgb(162, 181, 218) !important;
+    }
+
+    &:nth-child(4) {
+      // padding-left: 10px;
+    }
+  }
 }
 </style>

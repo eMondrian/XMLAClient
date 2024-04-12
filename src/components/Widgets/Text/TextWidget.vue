@@ -19,15 +19,15 @@ interface ITextSettings {
   verticalAlign: string;
 }
 
-// interface ITextSettingsProps {
-//   text?: string;
-//   fontSize?: number;
-//   fontColor?: string;
-//   fontWeight?: string;
-//   textDecoration?: string;
-//   horizontalAlign?: string;
-//   verticalAlign?: string;
-// }
+interface ITextSettingsProps {
+  text?: string;
+  fontSize?: number;
+  fontColor?: string;
+  fontWeight?: string;
+  textDecoration?: string;
+  horizontalAlign?: string;
+  verticalAlign?: string;
+}
 
 import { computed } from "vue";
 import TextWidgetSettings from "./TextWidgetSettings.vue";
@@ -38,7 +38,7 @@ import type { Store } from "@/stores/Widgets/Store";
 
 const settingsComponent = TextWidgetSettings;
 
-const props = withDefaults(defineProps<ITextSettings>(), {
+const props = withDefaults(defineProps<ITextSettingsProps>(), {
   text: "",
   fontSize: 12,
   fontColor: "#000",
