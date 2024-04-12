@@ -15,34 +15,53 @@ Contributors: Smart City Jena
       class="app-layout-container bg grey padd"
       :class="{ editDisabled: !editEnabled }"
     >
-      <div class="adding-elements">
-        <div class="widgets-select">
-          <va-select
-            v-model="selectedWidget"
-            :options="widgetOptions"
-            label="widgets"
-          />
-          <va-button class="add-widget-btn" @click="addSelectedWidget">
-            Add Widget
+      <div class="layout-settings">
+        <div class="buttons-list">
+          <va-button
+            v-for="(button, index) in layoutSettingsButtons"
+            :key="index"
+            :preset="button.preset"
+            class="settings-button"
+            @click="button.action"
+          >
+            {{ button.label }}
           </va-button>
         </div>
-      </div>
-      <div class="buttons-list">
-        <va-button preset="primary" class="ml-2" @click="toggleEdit">
-          Toggle edit
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="saveLayout">
-          Save layout
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="loadLayout">
-          Load layout
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="openStoreList">
-          Open Store List
-        </va-button>
-        <va-button preset="primary" class="ml-2" @click="openAppSettings">
-          Open App settings
-        </va-button>
+        <div class="widgets-dropdown">
+          <va-dropdown 
+            :offset="showSidebar ? [10, -227] : [10, 0]"
+            placement="bottom-start"
+            @close="isDropdownVisible = false"
+            @open="isDropdownVisible = true"
+          >
+            <template #anchor>
+              <va-button 
+                class="widgets-dropdown-button"
+                icon="add"
+                v-model="isDropdownVisible"
+                :preset="isDropdownVisible ? 'primary' : ''"
+                :border-color="isDropdownVisible ? '#4153B5' : ''"
+                :iconColor="isMouseOver ? '#4153B5' : ''"
+                color="#4153B5"
+                @mousedown="mousedown" 
+                @mouseup="mouseup"
+                @mouseover="mouseover"
+                @mouseleave="mouseleave"
+              >
+                Add
+              </va-button>
+            </template>
+            <va-dropdown-content class="dropdown-list">
+              <div class="dropdown-item" v-for="widget of widgetOptions">
+                <div
+                  @click="addSelectedWidget(widget)"
+                >
+                  {{ widget }}
+                </div>
+              </div>
+            </va-dropdown-content>
+          </va-dropdown>
+        </div>
       </div>
       <div class="main-section">
         <template v-for="widget in widgets" :key="widget.id">
@@ -147,16 +166,35 @@ const showSidebar = ref(false);
 const settingsSection = ref(null as any);
 
 const settingsBackground = ref("#fefefe");
-const EventBus = inject("customEventBus") as any;
-const selectedWidget = ref("");
+const isDropdownVisible = ref(false);
+const isActiveButton = ref(false);
+const isMouseOver = ref(false);
+const layoutSettingsButtons = ref<Array<{ label: string; preset: string; action: () => void }>>([]);
 
 const instance = getCurrentInstance();
 
-const addSelectedWidget = () => {
-  console.log(widgetOptions)
-  if (selectedWidget.value === "") return;
+const mousedown = () => {
+  isActiveButton.value = true;
+  document.addEventListener('mouseup', mouseup);
+}
 
-  const widget = widgetNames.filter((e) => e.label === selectedWidget.value)[0];
+const mouseup = () => {
+  isActiveButton.value = false;
+  document.removeEventListener('mouseup', mouseup);
+}
+
+const mouseover = () => {
+  isMouseOver.value = true;
+}
+
+const mouseleave = () => {
+  isMouseOver.value = false;
+}
+
+const addSelectedWidget = (selectedWidget) => {
+  if (selectedWidget === "") return;
+
+  const widget = widgetNames.filter((e) => e.label === selectedWidget)[0];
 
   const id: string = `id_${Date.now()}`;
   
@@ -273,6 +311,14 @@ const openAppSettings = () => {
   showSidebar.value = true;
 };
 
+layoutSettingsButtons.value.push(
+  { label: 'Edit mode', preset: 'primary', action: toggleEdit },
+  { label: 'Save', preset: 'primary', action: saveLayout },
+  { label: 'Load layout', preset: 'primary', action: loadLayout },
+  { label: 'Store List', preset: 'primary', action: openStoreList },
+  { label: 'App settings', preset: 'primary', action: openAppSettings }
+);
+
 const updateBackgroundColor = (newColor) => {
   settingsBackground.value = newColor;
 };
@@ -313,7 +359,7 @@ const deleteWidget = (id) => {
 
 </script>
 
-<style>
+<style lang="scss">
 .vue-grid-item {
   transition: all 0.2s ease;
   transition-property: left, top, right;
@@ -664,26 +710,105 @@ body.no-overflow[data-v-059e0ffc] {
   background: v-bind(settingsBackground);
 }
 
+.layout-settings {
+  box-sizing: border-box;   
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  margin-left: 22px;
+}
+
+.widgets-dropdown {
+  margin-right: 9px;
+}
+
+.dropdown-list {
+  display: flex;
+  flex-direction: column;
+  height: 308px;
+  padding: 0;
+  -webkit-box-shadow:0px 4px 20px 0px #bcbcc970;
+  -moz-box-shadow: 0px 4px 20px 0px #bcbcc970;
+  box-shadow: 0px 4px 20px 0px #bcbcc970;
+}
+
+.dropdown-item {
+  width: 100%;
+  height: 100%;
+  min-width: 284px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 19.5px;
+  padding: 12.25px 0 12.25px 16px;
+  cursor: pointer;
+  box-sizing: border-box; 
+}
+
+.dropdown-item:hover {
+  transition: background-color 0.5s ease;
+  background-color:#B0C0FE;
+}
+
+.widgets-dropdown-button {
+  height: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 19.5px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  box-sizing: border-box; 
+
+  &:hover {
+    color: #4153B5 !important;
+    
+    --va-background-color: #B0BEFE  !important;
+    --va-background-color-opacity: 1 !important;
+    --va-background-mask-opacity: 0 !important;
+  }
+
+  &:active {
+    box-sizing: border-box;  
+    border: 2px solid #4153B5 !important;
+    border-radius: 8px;
+    color: #4153B5 !important;
+
+    --va-background-color: #fafafa !important;
+    --va-background-color-opacity: 1 !important;
+    --va-background-mask-opacity: 0 !important;
+  }
+}
+
 .buttons-list {
-  align-self: flex-end;
-  order: 3;
-}
-
-.widgets-select {
   display: flex;
-  align-self: flex-end;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-.adding-elements {
-  display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-}
+.settings-button {
+  height: 100%;
+  margin-left: 12px;
+  border-radius: 72px;
+  border: 2px solid transparent;
+  color: #1A2D91 !important;
+  box-sizing: border-box;
 
-.add-widget-btn {
-  align-self: self-end;
-  margin-left: 10px;
-  height: 36px;
+  --va-background-color: #fafafa !important;
+
+  &:hover {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14.5px;
+
+    --va-background-color: #B0BEFE !important;
+    --va-background-color-opacity: 1 !important;
+  }
+
+  &:active {
+    border: 2px solid #4153B5 !important;
+
+    --va-background-color: #fafafa !important;
+  }
 }
 
 .main-section {
@@ -692,9 +817,9 @@ body.no-overflow[data-v-059e0ffc] {
   flex-grow: 1;
   gap: 1rem;
   overflow: auto;
-  -webkit-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
+  // -webkit-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
+  // -moz-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
+  // box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
 }
 
 .dashboard-container {
@@ -754,8 +879,9 @@ body.no-overflow[data-v-059e0ffc] {
 
 .sidebar {
   z-index: 1000000;
-  -webkit-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // -webkit-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // -moz-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  // box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
+  border-left: 1px solid #B1B1B1
 }
 </style>
