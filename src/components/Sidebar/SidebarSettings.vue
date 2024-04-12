@@ -54,7 +54,10 @@ const updateBackgroundColor = (color) => {
       </div>
 
       <div class="settings-sidebar-actions">
-        <va-button @click="$emit('update:modelValue', !modelValue)">
+        <va-button
+          color="#4153B5"        
+          @click="$emit('update:modelValue', !modelValue)"
+        >
           Close
         </va-button>
       </div>
@@ -62,15 +65,17 @@ const updateBackgroundColor = (color) => {
   </va-sidebar>
 </template>
 
-<style lang="css">
+<style lang="scss">
+
 .settings-sidebar {
-  height: auto;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: start;
 
   padding-bottom: 20px;
+  justify-content: space-between;
 }
 
 .settings-sidebar-content {
@@ -80,10 +85,10 @@ const updateBackgroundColor = (color) => {
 
 .settings-sidebar-actions {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
+  margin-bottom: 12px;
+  right: 32px;
 }
 </style>
 <style scoped>
