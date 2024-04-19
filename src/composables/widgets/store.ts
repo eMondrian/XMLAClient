@@ -1,12 +1,7 @@
 import { ref, type Ref, inject } from "vue";
 import type { TinyEmitter } from "tiny-emitter";
 
-interface Store {
-  id: string;
-  getData: () => Promise<any>;
-}
-
-export function useStore<Type extends Store>() {
+export function useStore<Type extends IStore>() {
   const data = ref({});
   const store = ref(null) as unknown as Ref<Type>;
 
