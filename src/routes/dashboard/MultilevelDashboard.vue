@@ -797,6 +797,9 @@ body.no-overflow[data-v-059e0ffc] {
 
 .settings-button {
   height: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14.5px;
   margin-left: 12px;
   border-radius: 72px;
   border: 2px solid transparent;

@@ -26,7 +26,8 @@ const innerBackground = ref('#fafafa');
       <va-color-input
         v-model="innerBackground"
         @input="updateBackgroundColor"
-        label="Background color"/>
+        label="Background color"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +37,7 @@ const innerBackground = ref('#fafafa');
   display: flex;
   flex-direction: column;
   align-items: start;
-  padding: 10px;
+  padding: 32px;
   width: 100%;
 }
 
@@ -49,6 +50,6 @@ const innerBackground = ref('#fafafa');
 .app-settings-title > h2 {
   font-size: 24px;
   flex-grow: 1;
-  margin: 32px;
+  margin-bottom: 32px;
 }
 </style>
