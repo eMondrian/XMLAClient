@@ -6,6 +6,7 @@ declare interface ISerializable {
 declare interface IDatasource {
   id: string;
   caption: string;
+  url: string;
   type: "REST" | "XMLA" | "CSV" | "JSON" | "MQTT";
   getData: (params: any) => Promise<any>;
 }
@@ -15,6 +16,7 @@ interface IStore {
   caption: string;
   events: IStoreEvents[];
   type: "REST" | "XMLA";
+  datasourceId: string | null;
 
   getData: () => Promise<any>;
 }

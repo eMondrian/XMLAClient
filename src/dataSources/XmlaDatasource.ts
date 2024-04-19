@@ -13,9 +13,9 @@ import { createClientAsync } from "@/XMLAClient";
 import { MetadataStore } from "./Storage/MetadataStore";
 
 export default class XMLADatasource implements IDatasource, ISerializable {
-  public url: string = "";
-  public id: string = "";
-  public caption: string = "";
+  public url: string;
+  public id: string;
+  public caption: string;
   public type = "XMLA" as const;
 
   private cube: string | null = null;

@@ -61,7 +61,7 @@ export class Store implements IStore {
     this.datasourceId = datasourceId;
   }
 
-  setDatasources(datasourceId: string): void {
+  setDatasource(datasourceId: string): void {
     this.datasourceId = datasourceId;
     this.eventBus.emit(`UPDATE:${this.id}`);
     this.registerForDataSourceEvents();

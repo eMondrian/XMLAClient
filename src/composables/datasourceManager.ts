@@ -10,18 +10,21 @@
 */
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ref, watch } from "vue";
+import { type Ref, ref, watch } from "vue";
 import { v4 } from "uuid";
 import RESTDatasource from "@/dataSources/RestDatasource";
 import XmlaDatasource from "@/dataSources/XmlaDatasource";
 import MQTTDatasource from "@/dataSources/MqttDatasource";
-import {inject} from "vue";
+import { inject } from "vue";
 
-const availableDatasources = ref({});
+declare interface DatasourceMap {
+  [key: string]: IDatasource;
+}
+
+const availableDatasources: Ref<DatasourceMap> = ref({});
 
 export function useDatasourceManager() {
   const EventBus = inject("customEventBus") as any;
-  console.log(EventBus)
 
   const initDatasource = (type: string, url: string, caption: string) => {
     const id = v4();
@@ -38,7 +41,6 @@ export function useDatasourceManager() {
       availableDatasources.value[id] = datasource;
     }
     if (type === "MQTT") {
-
       const datasource = new MQTTDatasource(id, url, caption, EventBus);
 
       availableDatasources.value[id] = datasource;
@@ -67,7 +69,7 @@ export function useDatasourceManager() {
       availableDatasources.value[key] = datasource;
     }
     if (type === "MQTT") {
-      const datasource = new MQTTDatasource(key, url, caption,EventBus);
+      const datasource = new MQTTDatasource(key, url, caption, EventBus);
 
       availableDatasources.value[key] = datasource;
     }

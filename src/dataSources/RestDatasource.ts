@@ -10,9 +10,9 @@
 */
 
 export default class RESTDatasource implements IDatasource, ISerializable {
-  public url: string = "";
-  public id: string = "";
-  public caption: string = "";
+  public url: string;
+  public id: string;
+  public caption: string;
   public type = "REST" as const;
 
   constructor(id: string, url: string, caption: string) {

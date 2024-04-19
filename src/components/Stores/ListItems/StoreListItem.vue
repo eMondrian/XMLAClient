@@ -11,10 +11,19 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import { useStoreManager } from "../../../composables/storeManager";
 import { useDatasourceManager } from "../../../composables/datasourceManager";
-import { onMounted, ref, watch } from "vue";
+import { type Ref, onMounted, ref, watch } from "vue";
+
+// TODO: fix duplicate interface
+declare interface IDatasource {
+  id: string;
+  caption: string;
+  url: string;
+  type: "REST" | "XMLA" | "CSV" | "JSON" | "MQTT";
+  getData: (params: any) => Promise<any>;
+}
 
 const storeManager = useStoreManager();
-const dslist = ref([]);
+const dslist: Ref<IDatasource[]> = ref([]);
 
 const props = defineProps({
   item: {
@@ -36,16 +45,16 @@ const clickHeader = () => {
 watch(
   dsmap,
   () => {
-    dslist.value = Object.entries(dsmap.value).map((entry) => {
-      return { ...entry[1] };
+    dslist.value = Object.entries(dsmap.value).map(([, ds]) => {
+      return { ...ds };
     });
   },
   { deep: true },
 );
 
 onMounted(() => {
-  dslist.value = Object.entries(dsmap.value).map((entry) => {
-    return { ...entry[1] };
+  dslist.value = Object.entries(dsmap.value).map(([, ds]) => {
+    return { ...ds };
   });
 });
 
@@ -89,9 +98,9 @@ const addEvent = (id) => {
 
 const setSelectedDatasources = (id, currentSelectedItems) => {
   console.log(currentSelectedItems);
-  const ids = currentSelectedItems.map((e) => e.id);
+  const dsId = currentSelectedItems.map((e) => e.id)[0];
   const store = storeManager.getStore(id);
-  store.setDatasources(ids);
+  store.setDatasource(dsId);
 };
 
 const updateEvents = (item) => {
@@ -100,10 +109,12 @@ const updateEvents = (item) => {
 };
 
 const getParams = (item) => {
-  const params = Object.entries(item.params).map((e) => ({
-    name: e[0],
-    value: e[1],
-  }));
+  const params = Object.entries(item.params as { [s: string]: string }).map(
+    (e: [string, string]) => ({
+      name: e[0],
+      value: e[1],
+    }),
+  );
 
   return params;
 };
@@ -116,12 +127,12 @@ const setParamValue = (item, index, value) => {
   console.log(paramName, value);
 };
 
-const getSelectedDatasources = (item) => {
+const getSelectedDatasource = (item) => {
   const store = storeManager.getStore(item.id);
-  const selectedDatasources = store.datasourceIds;
+  const selectedDatasource = store.datasourceId;
 
-  return dslist.value.filter((e) => {
-    return selectedDatasources.includes(e.id);
+  return dslist.value.filter((e: { id: string }) => {
+    return e.id === selectedDatasource;
   });
 };
 </script>
@@ -156,7 +167,7 @@ const getSelectedDatasources = (item) => {
         class="table-crud"
         :items="dslist"
         :columns="[{ key: 'caption' }, { key: 'type' }, { key: 'url' }]"
-        :model-value="getSelectedDatasources(item)"
+        :model-value="getSelectedDatasource(item)"
         selectable
         select-mode="single"
         @update:model-value="setSelectedDatasources(item.id, $event)"
