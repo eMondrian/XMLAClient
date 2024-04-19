@@ -55,10 +55,17 @@ const updateBackgroundColor = (color) => {
 
       <div class="settings-sidebar-actions">
         <va-button
-          color="#4153B5"        
+          class="sidebar-button-close"
+          preset="primary"        
           @click="$emit('update:modelValue', !modelValue)"
         >
           Close
+        </va-button>
+        <va-button
+          class="sidebar-button-done ml-2"
+          color="#4153B5"        
+        >
+          Done
         </va-button>
       </div>
     </div>
@@ -91,8 +98,47 @@ const updateBackgroundColor = (color) => {
   right: 32px;
 }
 </style>
-<style scoped>
-.sidebar {
+<style lang="scss" scoped>
+.sidebar{
   background-color: white;
+}
+
+.sidebar-button-done {
+  height: 100%;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+
+  &:hover {
+    color: #1A2D91 !important;
+    --va-background-color: #B0BEFE !important;
+    --va-background-color-opacity: 1 !important;
+  }
+
+  &:active {
+    color: #1A2D91 !important;
+    border: 2px solid #4153B5 !important;
+    --va-background-color: #fafafa !important;
+  }
+}
+
+.sidebar-button-close {
+  height: 100%;
+  border-radius: 72px;
+  border: 2px solid transparent;
+  color: #1A2D91 !important;
+  box-sizing: border-box;
+
+  --va-background-color: #fafafa !important;
+
+  &:hover {
+    --va-background-color: #B0BEFE !important;
+    --va-background-color-opacity: 1 !important;
+  }
+
+  &:active {
+    border: 2px solid #4153B5 !important;
+
+    --va-background-color: #fafafa !important;
+  }
 }
 </style>
