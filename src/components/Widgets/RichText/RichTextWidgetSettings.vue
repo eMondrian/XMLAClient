@@ -9,6 +9,18 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+
+interface IRichTextEditorSettings {
+  editor: string;
+}
+
+interface IRichTextEditorComponent {
+  store: Store | XMLAStore;
+  settings: IRichTextEditorSettings;
+  setSetting: (key: string, value: any) => void;
+  setStore: (store: Store | XMLAStore) => void;
+}
+
 import { ref, onMounted, watch, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
@@ -26,11 +38,13 @@ import CodeBlock from '@tiptap/extension-code-block';
 import Blockquote from '@tiptap/extension-blockquote';
 import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Underline from '@tiptap/extension-underline';
-import type { CollapseState, RichTextSharingComponentProps } from "@/@types/widgets";
+import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { CollapseState } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as RichTextSharingComponentProps;
+const { component } = defineProps<{ component: IRichTextEditorComponent }>();
+
 const opened: Ref<CollapseState> = ref({
-  textSection: false,
+  widgetSection: false,
   storeSection: false,
 });
 
@@ -38,7 +52,6 @@ const storeManager = useStoreManager();
 let stores = ref([]) as Ref<any[]>;
 
 const requestResult = ref("");
-const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -49,21 +62,21 @@ const getStores = () => {
 };
 
 const getData = async () => {
-  const store = storeManager.getStore(storeId.value) as Store;
+  const store = component.store as Store;
 
   const data = await store.getData();
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
-const updateStore = (store) => {
-  storeId.value = store;
-  props.component.storeId = store;
+const updateStore = (storeId) => {
+  const store = storeManager.getStore(storeId) as Store;
+  component.setStore(store);
   getData();
 };
 
 onMounted(() => {
   getStores();
-  if (storeId.value) {
+  if (component.store) {
     getData();
   }
 });
@@ -130,14 +143,14 @@ const editor = useEditor({
 watch(
   () => editor.value?.getHTML(), 
   (newValue) => {
-    props.component.editor = newValue;
+    component.setSetting('editor', newValue);
   }
 );
 
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" header="Rich text widget settings">
+  <va-collapse v-model="opened.widgetSection" header="Rich text widget settings">
     <div class="settings-container">
       <div v-if="editor">
         <va-button class="editor-btn" @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
@@ -219,7 +232,7 @@ watch(
         <h3 class="mb-2">Select store</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
-            :model-value="storeId"
+            :model-value="component.store?.id"
             @update:model-value="updateStore"
             :option="{
               text: `${store.caption} ${store.id}`,

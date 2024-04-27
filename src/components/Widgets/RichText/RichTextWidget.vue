@@ -9,73 +9,41 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, watch, inject, computed, type Ref, type Component } from "vue";
-import { useStoreManager } from "@/composables/storeManager";
+
+interface IRichTextEditorSettingsProps {
+  editor?: string;
+}
+
+import { computed } from "vue";
+import { useSettings } from "@/composables/widgets/settings";
+import { useStore } from "@/composables/widgets/store";
+import { useSerialization } from "@/composables/widgets/serialization";
 import type { Store } from "@/stores/Widgets/Store";
 import RichTextWidgetSettings from "./RichTextWidgetSettings.vue";
-import type { RichTextComponentProps, RichTextSharingComponentProps } from "@/@types/widgets";
-const settings: Component = RichTextWidgetSettings;
 
-const EventBus = inject("customEventBus") as any;
-const storeManager = useStoreManager();
-const storeId: Ref<string> = ref("");
-const data = ref(null as unknown);
+const settingsComponent = RichTextWidgetSettings;
 
-let store = null as unknown as Store;
+const props = withDefaults(defineProps<IRichTextEditorSettingsProps>(), {
+  editor: "",
+})
 
-const props = defineProps({
-  initialState: {
-    type: Object,
-    required: false,
-  },
-  editor: {
-    type: String,
-    required: false,
-    default: "",
-  },
-}) as RichTextComponentProps;
-
-const innerEditor: Ref<string> = ref(props.editor || "");
-
-const getState = () => {
-  return {
-    storeId: storeId.value,
-  };
-};
+const { settings, setSetting } = useSettings<typeof props>(props);
+const { store, data, setStore } = useStore<Store>();
+const { getState } = useSerialization(settings);
 
 defineExpose({
-  editor: innerEditor,
-  getState,
-  storeId,
+  setSetting,
   settings,
-}) as unknown as RichTextSharingComponentProps;
-
-const getData = async () => {
-  if (!store) return;
-  updateFn();
-};
-
-watch(
-  storeId, 
-  (newVal, oldVal) => {
-  console.log("store changed", storeId);
-  store = storeManager.getStore(storeId.value);
-
-  console.log(oldVal, newVal);
-
-  EventBus.off(`UPDATE:${oldVal}`, updateFn);
-  EventBus.on(`UPDATE:${storeId.value}`, updateFn);
-
-  getData();
+  settingsComponent,
+  getState,
+  store,
+  setStore,
 });
 
-const updateFn = async () => {
-  data.value = await store?.getData();
-  console.log(data);
-};
+
 
 const parsedEditorText = computed(() => {
-  let processedString = innerEditor.value;
+  let processedString = settings.value.editor;
   const regex = /{(.*?)}/g;
   const parts = processedString.match(regex);
 

@@ -28,7 +28,7 @@ const updateBackgroundColor = (color) => {
     color="#ffffff"
     :modelValue="modelValue"
     animated="right"
-    width="500px"
+    width="524px"
   >
     <div class="settings-sidebar">
       <div class="settings-sidebar-content">
@@ -61,12 +61,12 @@ const updateBackgroundColor = (color) => {
         >
           Close
         </va-button>
-        <va-button
+        <!-- <va-button
           class="sidebar-button-done ml-2"
-          color="#4153B5"        
+          color="#4153b5"        
         >
           Done
-        </va-button>
+        </va-button> -->
       </div>
     </div>
   </va-sidebar>
