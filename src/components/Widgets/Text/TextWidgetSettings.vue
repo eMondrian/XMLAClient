@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
@@ -32,6 +33,7 @@ interface ITextComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: ITextComponent }>();
 
 const opened = ref({
@@ -74,18 +76,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" header="Text widget settings">
+  <va-collapse v-model="opened.textSection" :header="t('TextWidget.title')">
     <div class="settings-container">
       <div class="settings-block">
         <va-input
           class="text-title"
-          label="Title"
+          :label="t('TextWidget.title')"
           :model-value="component.settings.text"
           @update:model-value="component.setSetting('text', $event)"
         />
         <va-input
           class="text-size"
-          label="Font Size"
+          :label="t('TextWidget.fontSize')"
           :model-value="component.settings.fontSize"
           @update:model-value="component.setSetting('fontSize', $event)"
         />
@@ -94,7 +96,7 @@ onMounted(() => {
       <div class="settings-block">
         <va-color-input
           class="text-color"
-          label="Font Color"
+          :label="t('TextWidget.fontColor')"
           :model-value="component.settings.fontColor"
           @update:model-value="component.setSetting('fontColor', $event)"
         />
@@ -176,10 +178,10 @@ onMounted(() => {
       /> -->      
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

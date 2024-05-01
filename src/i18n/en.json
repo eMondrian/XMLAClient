@@ -1,0 +1,178 @@
+{
+  "MainLayout": {
+    "loading": "Loading",
+    "connect": "Connect to the cube"
+  },
+
+  "DashboardNavigation": {
+    "designer": "Designer",
+    "dashboard": "Dashboard",
+    "multilevelDashboard": "Multilevel Dashboard"
+  },
+
+  "MultilevelDashboardNavigation": {
+    "edit": "Edit Mode",
+    "save": "Save",
+    "loadLayout": "Load Layout",
+    "storeList": "Store List",
+    "appSettings": "App settings",
+    "addWidgetButton": "Add"
+  },
+
+  "AppSidebarSettings": {
+    "labelAppSettings": "App Settings",
+    "backgroundColor": "Background Color",
+    "selectedLanguage": "Selected Language",
+    "switchButton": "Switch"
+
+  },
+
+  "SidebarControlSettings": {
+    "controlSettings": "Control settings"
+  },
+
+  "SidebarWidgetSettings": {
+    "widgetSettings": "Widget settings"
+  },
+
+  "SidebarSettings": {
+    "closeButton": "Close",
+    "doneButton": "Done"
+  },
+
+  "SidebarStoreSettings": {
+    "storesTitle": "Stores",
+    "addNewStore": "Add new",
+    "addNewXMLAStore": "Add new XMLA"
+  },
+
+  "SidebarStoreList": {
+    "caption": "Caption",
+    "dataEndpoint": "Data endpoint",
+    "newStore": "New Store",
+    "dataSourcesTitle": "Datasources",
+    "noAvailableStores": "No stores available",
+    "addDatasourceButton": "Add datasource",
+    "storeListItem": {
+      "params": "Params",
+      "events": "Events",
+      "addEventButton": "Add event"
+    },
+    "XMLAStoreListItem": {
+      "catalog": "Catalog",
+      "cube": "Cube",
+      "rowsHierarchy": "Rows hierarchy",
+      "colsHierarchy:": "Cols hierarchy",
+      "measure": "Measure"
+    },
+    "dataTable": {
+      "caption": "Caption",
+      "type": "Type",
+      "url": "Url",
+      "name": "Name",
+      "value": "Value"
+    }
+  },
+
+  "StoreConfigurationModal": {
+    "datasourceSelection": "Datasource selection",
+    "addNew": "Add new",
+    "okButton": "Ok",
+    "createButton": "Create",
+    "cancelButton": "Cancel",
+    "datasourceCaptionLabel": "Datasource caption",
+    "datasourceURLLabel": "Datasource URL",
+    "datasourceTypeLabel": "Datasource type"
+  },
+
+  "StoreSelectionModal": {
+    "storeSelection": "Store selection",
+    "createNewStore": "Create new store",
+    "createButton": "Create",
+    "selectButton": "Select",
+    "selectExisting": "Or select existing one"
+  },
+
+  "LayoutMovingButtons": {
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveToTop": "Move to top",
+    "moveToBottom": "Move to bottom"
+  },
+  
+  "Widgets": {
+    "selectStore": "Select store",
+    "storeSettingsTitle": "Store settings",
+    "ImageWidget": "Image Widget",
+    "TextWidget": "Text Widget",
+    "SvgWidget": "Svg Widget",
+    "RepeatableSvgWidget": "Repeatable Svg Widget",
+    "ProgressWidget": "Progress Widget",
+    "VideoWidget": "Video Widget",
+    "IconWidget": "Icon Widget",
+    "RichTextWidget": "Rich Text Widget",
+    "TableWidget": "Table Widget",
+    "PivotTableWidget" : "Pivot Table Widget",
+    "SwitchControl": "Switch Control",
+    "SelectControl" : "Select Control",
+    "DateControl" : "Date Control",
+    "TimeControl" : "Time Control",
+    "ColorControl" : "Color Control",
+    "ButtonControl" : "Button Control",
+    "InputControl" : "Input Control"
+  },
+  "ImageWidget": {
+
+  },
+  "TextWidget": {
+    "title": "Text widget settings",
+    "label": "Title",
+    "fontSize": "Font Size",
+    "fontColor": "Font Color"
+  },
+  "SvgWidget": {
+
+  },
+  "RepeatableSvgWidget": {
+
+  },
+  "ProgressWidget": {
+
+  },
+  "VideoWidget": {
+
+  },
+  "IconWidget": {
+
+  },
+  "RichTextWidget": {
+
+  },
+  "TableWidget": {
+
+  },
+  "PivotTableWidget": {
+
+  },
+  "SwitchControl": {
+
+  },
+  "SelectControl": {
+
+  },
+  "DateControl": {
+
+  },
+  "TimeControl": {
+
+  },
+  "ColorControl": {
+
+  },
+  "ButtonControl": {
+
+  },
+  "InputControl": {
+
+  }
+}

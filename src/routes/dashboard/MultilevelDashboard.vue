@@ -23,7 +23,7 @@ Contributors: Smart City Jena
             :borderColor="editEnabled ? 'enabled' : ''"
             @click="toggleEdit"
           >
-            Edit mode
+            {{ t('MultilevelDashboardNavigation.edit') }}
           </va-button>
           <va-button
             v-for="(button, index) in layoutSettingsButtons"
@@ -56,7 +56,7 @@ Contributors: Smart City Jena
                 @mouseover="mouseover"
                 @mouseleave="mouseleave"
               >
-                Add
+                {{ t('MultilevelDashboardNavigation.addWidgetButton') }}
               </va-button>
             </template>
             <va-dropdown-content class="dropdown-list">
@@ -66,7 +66,7 @@ Contributors: Smart City Jena
                 :key="widget"
               >
                 <div @click="addSelectedWidget(widget)">
-                  {{ widget }}
+                  {{ t(`Widgets.${widget}`) }}
                 </div>
               </div>
             </va-dropdown-content>
@@ -116,13 +116,17 @@ Contributors: Smart City Jena
 
               <va-dropdown-content>
                 <div class="dropdown-buttons-container">
-                  <va-button @click="moveUp(widget.id)">Move up</va-button>
-                  <va-button @click="moveDown(widget.id)">Move down</va-button>
-                  <va-button @click="moveToTop(widget.id)"
-                    >Move to top</va-button
-                  >
+                  <va-button @click="moveUp(widget.id)">
+                    {{ t('LayoutMovingButtons.moveUp') }}
+                  </va-button>
+                  <va-button @click="moveDown(widget.id)">
+                    {{ t('LayoutMovingButtons.moveDown') }}
+                  </va-button>
+                  <va-button @click="moveToTop(widget.id)">
+                    {{ t('LayoutMovingButtons.moveToTop') }}
+                  </va-button>
                   <va-button @click="moveToBottom(widget.id)">
-                    Move to bottom
+                    {{ t('LayoutMovingButtons.moveToBottom') }}
                   </va-button>
                 </div>
               </va-dropdown-content>
@@ -167,6 +171,9 @@ import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
 import { useSerialization } from "@/composables/dashboard/serialization";
 import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n();
 
 const dsManager = useDatasourceManager();
 const storeManager = useStoreManager();
@@ -206,7 +213,7 @@ const mouseleave = () => {
 const addSelectedWidget = (selectedWidget) => {
   if (selectedWidget === "") return;
 
-  const widget = widgetNames.filter((e) => e.label === selectedWidget)[0];
+  const widget = widgetNames.filter((e) => e.name === selectedWidget)[0];
   console.log(widget);
 
   const id: string = `id_${Date.now()}`;
@@ -231,7 +238,7 @@ const {
   enabledWidgets,
 } = useWidgets();
 
-const widgetOptions = widgetNames.map((widget) => widget.label);
+const widgetOptions = widgetNames.map((widget) => widget.name);
 
 const {
   layout,
@@ -325,10 +332,10 @@ const openAppSettings = () => {
 };
 
 layoutSettingsButtons.value.push(
-  { label: "Save", preset: "primary", action: saveLayout },
-  { label: "Load layout", preset: "primary", action: loadLayout },
-  { label: "Store List", preset: "primary", action: openStoreList },
-  { label: "App settings", preset: "primary", action: openAppSettings },
+  { label: t('MultilevelDashboardNavigation.save'), preset: "primary", action: saveLayout },
+  { label: t('MultilevelDashboardNavigation.loadLayout'), preset: "primary", action: loadLayout },
+  { label: t('MultilevelDashboardNavigation.storeList'), preset: "primary", action: openStoreList },
+  { label: t('MultilevelDashboardNavigation.appSettings'), preset: "primary", action: openAppSettings },
 );
 
 const updateBackgroundColor = (newColor) => {

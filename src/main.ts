@@ -12,6 +12,8 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import SOAPClient from "./plugins/SOAPClient";
 import EventBus from "./plugins/EventBus";
+import { createI18n } from "vue-i18n";
+import { languages, defaultLocale } from "./i18n";
 
 import App from "./App.vue";
 // import router from './router'
@@ -77,6 +79,15 @@ import VueSmartWidget from "vue-smart-widget";
 const app = createApp(App);
 
 const pinia = createPinia();
+
+const i18n = createI18n({
+  legacy: false,
+  locale: localStorage.getItem('language') || defaultLocale,
+  fallbackLocale: "en",
+  messages: Object.assign({}, languages),
+});
+
+app.use(i18n);
 pinia.use(SOAPClient);
 app.use(pinia);
 console.log(router);
@@ -94,7 +105,6 @@ const fonts = [
     }),
   },
 ];
-
 app.use(
   createVuesticEssential({
     components: {

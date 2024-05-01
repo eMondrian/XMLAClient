@@ -1,0 +1,180 @@
+{
+  "MainLayout": {
+    "loading": "Wird geladen",
+    "connect": "Verbinde dich mit dem Würfel"
+  },
+  
+  "DashboardNavigation": {
+    "designer": "Designerin",
+    "dashboard": "Armaturenbrett",
+    "multilevelDashboard": "Mehrstufiges Dashboard"
+  },
+
+  "MultilevelDashboardNavigation": {
+    "edit": "Bearbeitungsmodus",
+    "save": "Speichern",
+    "loadLayout": "Layout laden",
+    "storeList": "Store-Liste",
+    "appSettings": "App Einstellungen",
+    "addWidgetButton": "Hinzufügen"
+  },
+
+  "AppSidebarSettings": {
+    "labelAppSettings": "App Einstellungen",
+    "backgroundColor": "Hintergrundfarbe",
+    "selectedLanguage": "Ausgewählte Sprache",
+    "switchButton": "Schalten"
+
+  },
+
+  "SidebarControlSettings": {
+    "controlSettings": "Kontrolleinstellungen"
+  },
+
+  "SidebarWidgetSettings": {
+    "widgetSettings": "Widget-Einstellungen"
+  },
+
+  "SidebarSettings": {
+    "closeButton": "Schließen",
+    "doneButton": "Erledigt"
+  },
+
+  "SidebarStoreSettings": {
+    "storesTitle": "Datenstores",
+    "addNewStore": "Hinzufügen",
+    "addNewXMLAStore": "Hinzufügen XMLA"
+  },
+
+  "SidebarStoreList": {
+    "newStore": "Neues Geschäft",
+    "caption": "Beschriftung",
+    "dataEndpoint": "Datenendpunkt",
+    "dataSourcesTitle": "Datenquellen",
+    "noAvailableStores": "Keine verfügbaren Geschäfte",
+    "addDatasourceButton": "Datenquelle hinzufügen",
+    "storeListItem": {
+      "params": "Parameter",
+      "events": "Ereignisse",
+      "addEventButton": "Ereignis hinzufügen"
+    },
+    "XMLAStoreListItem": {
+      "catalog": "Katalog",
+      "cube": "Würfel",
+      "rowsHierarchy": "Zeilenhierarchie",
+      "colsHierarchy:": "Spaltenhierarchie",
+      "measure": "Maßnahme"
+    },
+    "dataTable": {
+      "caption": "Beschriftung",
+      "type": "Typ",
+      "url": "URL",
+      "name": "Name",
+      "value": "Wert"
+    }
+  },
+
+  "StoreConfigurationModal": {
+    "datasourceSelection": "Datenquellenauswahl",
+    "addNew": "Neue hinzufügen",
+    "okButton": "Ok",
+    "createButton": "Erstellen",
+    "cancelButton": "Abbrechen",
+    "datasourceCaptionLabel": "Beschriftung der Datenquelle",
+    "datasourceURLLabel": "Datenquellen-URL",
+    "datasourceTypeLabel": "Datenquelle-Typ"
+  },
+
+  "StoreSelectionModal": {
+    "storeSelection": "Speicher-Auswahl",
+    "createNewStore": "Neuen Speicher erstellen",
+    "createButton": "Erstellen",
+    "selectButton": "Auswählen",
+    "selectExisting": "Oder wählen Sie einen vorhandenen aus"
+  },
+
+  "LayoutMovingButtons": {
+    "moveUp": "Nach oben verschieben",
+    "moveDown": "Nach unten verschieben",
+    "moveToTop": "Nach oben bringen",
+    "moveToBottom": "Nach unten bringen"
+  },
+
+  "Widgets": {
+    "selectStore": "Speicher auswählen",
+    "storeSettingsTitle": "Speichereinstellungen",
+    "ImageWidget": "Bild Widget",
+    "TextWidget": "Text Widget",
+    "SvgWidget": "SVG Widget",
+    "RepeatableSvgWidget": "Wiederholbares SVG-Widget",
+    "ProgressWidget": "Fortschritts Widget",
+    "VideoWidget": "Video Widget",
+    "IconWidget": "Icon Widget",
+    "RichTextWidget": "Rich Text Widget",
+    "TableWidget": "Tabellen Widget",
+    "PivotTableWidget": "Pivot Tabelle Widget",
+    "SwitchControl": "Schalter Steuerung",
+    "SelectControl": "Auswahl Steuerung",
+    "DateControl": "Datums Steuerung",
+    "TimeControl": "Zeit Steuerung",
+    "ColorControl": "Farb Steuerung",
+    "ButtonControl": "Button Steuerung",
+    "InputControl": "Eingabe Steuerung"
+  }
+  ,
+  "ImageWidget": {
+
+  },
+  "TextWidget": {
+    "title": "Einstellungen für Text-Widget",
+    "label": "Titel",
+    "fontSize": "Schriftgröße",
+    "fontColor": "Schriftfarbe"
+
+  },
+  "SvgWidget": {
+
+  },
+  "RepeatableSvgWidget": {
+
+  },
+  "ProgressWidget": {
+
+  },
+  "VideoWidget": {
+
+  },
+  "IconWidget": {
+
+  },
+  "RichTextWidget": {
+
+  },
+  "TableWidget": {
+
+  },
+  "PivotTableWidget": {
+
+  },
+  "SwitchControl": {
+
+  },
+  "SelectControl": {
+
+  },
+  "DateControl": {
+
+  },
+  "TimeControl": {
+
+  },
+  "ColorControl": {
+
+  },
+  "ButtonControl": {
+
+  },
+  "InputControl": {
+
+  }
+}

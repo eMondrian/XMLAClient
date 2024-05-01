@@ -9,28 +9,30 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import StoreList from "@/components/Stores/StoreList.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import { inject } from "vue";
 
+const { t } = useI18n();
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
 
 const addNewStore = () => {
-  storeManager.initStore("New store", EventBus);
+  storeManager.initStore(t('SidebarStoreList.newStore'), EventBus);
 };
 
 const addNewXMLAStore = () => {
-  storeManager.initStore("New store", EventBus, "XMLA");
+  storeManager.initStore(t('SidebarStoreList.newStore'), EventBus, "XMLA");
 };
 </script>
 
 <template>
   <div class="sidebar-stores">
     <div class="sidebar-stores-title">
-      <h2 class="mb-2">Stores</h2>
-      <va-button @click="addNewStore">Add new</va-button>
-      <va-button class="ml-2" @click="addNewXMLAStore">Add new XMLA</va-button>
+      <h2 class="mb-2">{{ t('SidebarStoreSettings.storesTitle') }}</h2>
+      <va-button @click="addNewStore">{{ t('SidebarStoreSettings.addNewStore') }}</va-button>
+      <va-button class="ml-2" @click="addNewXMLAStore">{{ t('SidebarStoreSettings.addNewXMLAStore') }}</va-button>
     </div>
     <StoreList class="mt-2" />
   </div>
