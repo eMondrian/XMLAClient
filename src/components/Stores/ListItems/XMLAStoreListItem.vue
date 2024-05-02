@@ -9,14 +9,11 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
 import type { log } from 'console';
 import { useStoreManager } from "../../../composables/storeManager";
 import { useDatasourceManager } from "../../../composables/datasourceManager";
 import { onMounted, ref, watch, nextTick, onActivated } from "vue";
 
-
-const { t } = useI18n();
 const storeManager = useStoreManager();
 const dslist = ref([]);
 
@@ -191,15 +188,15 @@ const setMeasure = async (value) => {
   </div>
   <div v-if="isExpanded" class="store-item-content">
     <va-input
-      :label="t('SidebarStoreList.caption')"
+      label="Caption"
       v-model="item.caption"
       @blur="saveStore(item)"
     ></va-input>
 
     <div class="datasource-list">
-      <h2>{{ t('SidebarStoreList.dataSourcesTitle') }}</h2>
+      <h2>Datasources</h2>
       <va-button class="datasource-list-add-button" @click="createDatasource">
-        {{ t('SidebarStoreList.addDatasourceButton') }}
+        Add datasource
       </va-button>
       <va-data-table
         class="table-crud"
@@ -234,7 +231,7 @@ const setMeasure = async (value) => {
         </template>
       </va-data-table>
       <template v-if="getSelectedDatasources(item).length">
-        <h2 class="mt-3">{{ t('SidebarStoreList.XMLAStoreListItem.catalog') }}:</h2>
+        <h2 class="mt-3">Catalog:</h2>
         <va-select
           text-by="CATALOG_NAME"
           v-model="selectedCatalog"
@@ -242,7 +239,7 @@ const setMeasure = async (value) => {
           :options="catalogs"
         />
         <template v-if="Object.keys(selectedCatalog).length">
-          <h2 class="mt-3">{{ t('SidebarStoreList.XMLAStoreListItem.cube') }}:</h2>
+          <h2 class="mt-3">Cube:</h2>
           <va-select
             text-by="CUBE_NAME"
             v-model="selectedCube"
@@ -251,21 +248,21 @@ const setMeasure = async (value) => {
           />
         </template>
         <template v-if="Object.keys(selectedCube).length">
-          <h2 class="mt-3">{{ t('SidebarStoreList.XMLAStoreListItem.rowsHierarchy') }}:</h2>
+          <h2 class="mt-3">Rows hierarchy:</h2>
           <va-select
             :options="hierarchies"
             text-by="HIERARCHY_NAME"
             @update:modelValue="setRowHierarchy"
             v-model="selectedRow"
           />
-          <h2 class="mt-3">{{ t('SidebarStoreList.XMLAStoreListItem.colsHierarchy') }}:</h2>
+          <h2 class="mt-3">Cols hierarchy:</h2>
           <va-select
             :options="hierarchies"
             text-by="HIERARCHY_NAME"
             @update:modelValue="setColHierarchy"
             v-model="selectedCol"
           />
-          <h2 class="mt-3">{{ t('SidebarStoreList.XMLAStoreListItem.measure') }}:</h2>
+          <h2 class="mt-3">Measure:</h2>
           <va-select
             :options="measures"
             text-by="MEASURE_NAME"

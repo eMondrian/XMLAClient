@@ -9,21 +9,35 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+
+interface ISVGSettings {
+  src: string;
+  classesConfig: Config;
+}
+
+interface ISVGComponent {
+  store: Store | XMLAStore;
+  settings: ISVGSettings;
+  setSetting: (key: string, value: any) => void;
+  setStore: (store: Store | XMLAStore) => void;
+}
+
 import { ref, type Ref, watch, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import type { CollapseState, SvgSharingComponentProps, StyleFields, Config } from "@/@types/widgets";
+import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { CollapseState, StyleFields, Config } from "@/@types/widgets";
 
-const props = defineProps(["component"]) as SvgSharingComponentProps;
+const { component } = defineProps<{ component: ISVGComponent }>();
+
 const opened: Ref<CollapseState> = ref({
-  textSection: false,
+  widgetSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
 let stores: Ref<any[]> = ref([]) as Ref<any[]>;
 const requestResult: Ref<string> = ref("");
-const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -34,28 +48,29 @@ const getStores = () => {
 };
 
 const getData = async () => {
-  const store = storeManager.getStore(storeId.value) as Store;
+  const store = component.store as Store;
 
   const data = await store.getData();
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
-const updateStore = (store) => {
-  storeId.value = store;
-  props.component.storeId = store;
+const updateStore = (storeId) => {
+  const store = storeManager.getStore(storeId) as Store;
+  component.setStore(store);
   getData();
 };
 
 onMounted(() => {
   getStores();
-  if (storeId.value) {
+  if (component.store) {
     getData();
   }
 });
 
-const fields: Ref<StyleFields[]> = ref([{className: '', fill: '', stroke: '', strokeWidth: ''}]);
+const fields: Ref<StyleFields[]> = ref([{className: 'primary', fill: '#ff5733', stroke: '#1e8449', strokeWidth: '5'}]);
+
 const addItems = () => {
-  return fields.value.push({
+  fields.value.push({
     className: '',
     fill: '',
     stroke: '',
@@ -74,16 +89,20 @@ watch(
         }
       },
     {});
-    props.component.classesConfig = {...config};
+    component.settings.classesConfig = {...config};
   },
   {deep: true}
 );
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" header="SVG  widget settings">
+  <va-collapse v-model="opened.widgetSection" header="SVG  widget settings">
     <div class="settings-container">
-      <va-input v-model="props.component.src" label="SVG" />
+      <va-input
+        v-model="component.settings.src"
+        label="SVG"
+        @update:model-value="component.setSetting('url', $event)"
+      />
       <va-button
         class="add-button"
         @click="addItems"
@@ -99,24 +118,28 @@ watch(
             <va-input
               class="input-class-name"
               v-model="fields[rowIndex].className"
+              @update:model-value="component.setSetting('className', $event)"
             />
           </template>
           <template #cell(fill) = {rowIndex}>
             <va-color-input
               class="color-fill"
               v-model="fields[rowIndex].fill"
+              @update:model-value="component.setSetting('fill', $event)"
             />
           </template>
           <template #cell(stroke) = {rowIndex}>
             <va-color-input
               class="color-stroke"
               v-model="fields[rowIndex].stroke"
+              @update:model-value="component.setSetting('stroke', $event)"
             />
           </template>
           <template #cell(strokeWidth) = {rowIndex}>
             <va-input
               class="input-stroke-width"
               v-model="fields[rowIndex].strokeWidth"
+              @update:model-value="component.setSetting('strokeWidth', $event)"
             />
           </template>
         </va-data-table>
@@ -128,7 +151,7 @@ watch(
         <h3 class="mb-2">Select store</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
-            :model-value="storeId"
+            :model-value="component.store?.id"
             @update:model-value="updateStore"
             :option="{
               text: `${store.caption} ${store.id}`,

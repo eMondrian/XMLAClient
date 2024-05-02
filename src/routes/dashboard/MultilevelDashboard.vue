@@ -23,7 +23,7 @@ Contributors: Smart City Jena
             :borderColor="editEnabled ? 'enabled' : ''"
             @click="toggleEdit"
           >
-            {{ t('MultilevelDashboardNavigation.edit') }}
+            {{ t("MultilevelDashboardNavigation.edit") }}
           </va-button>
           <va-button
             v-for="(button, index) in layoutSettingsButtons"
@@ -47,16 +47,17 @@ Contributors: Smart City Jena
                 class="widgets-dropdown-button"
                 icon="add"
                 v-model="isDropdownVisible"
-                :preset="isDropdownVisible ? 'primary' : ''"
-                :border-color="isDropdownVisible ? '#4153B5' : ''"
-                :iconColor="isMouseOver ? '#4153B5' : ''"
-                color="#4153B5"
+                :preset="isDropdownVisible || isMouseOver ? 'primary' : ''"
+                :border-color="isDropdownVisible ? '#4153b5' : ''"
+                :iconColor="isMouseOver || isActiveButton ? '#4153b5' : ''"
+                :background-opacity="isDropdownVisible ? 0 : 1"
+                color="#4153b5"
                 @mousedown="mousedown"
                 @mouseup="mouseup"
                 @mouseover="mouseover"
                 @mouseleave="mouseleave"
               >
-                {{ t('MultilevelDashboardNavigation.addWidgetButton') }}
+                {{ t("MultilevelDashboardNavigation.addWidgetButton") }}
               </va-button>
             </template>
             <va-dropdown-content class="dropdown-list">
@@ -117,16 +118,16 @@ Contributors: Smart City Jena
               <va-dropdown-content>
                 <div class="dropdown-buttons-container">
                   <va-button @click="moveUp(widget.id)">
-                    {{ t('LayoutMovingButtons.moveUp') }}
+                    {{ t("LayoutMovingButtons.moveUp") }}
                   </va-button>
                   <va-button @click="moveDown(widget.id)">
-                    {{ t('LayoutMovingButtons.moveDown') }}
+                    {{ t("LayoutMovingButtons.moveDown") }}
                   </va-button>
                   <va-button @click="moveToTop(widget.id)">
-                    {{ t('LayoutMovingButtons.moveToTop') }}
+                    {{ t("LayoutMovingButtons.moveToTop") }}
                   </va-button>
                   <va-button @click="moveToBottom(widget.id)">
-                    {{ t('LayoutMovingButtons.moveToBottom') }}
+                    {{ t("LayoutMovingButtons.moveToBottom") }}
                   </va-button>
                 </div>
               </va-dropdown-content>
@@ -171,7 +172,7 @@ import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
 import { useSerialization } from "@/composables/dashboard/serialization";
 import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -332,10 +333,26 @@ const openAppSettings = () => {
 };
 
 layoutSettingsButtons.value.push(
-  { label: t('MultilevelDashboardNavigation.save'), preset: "primary", action: saveLayout },
-  { label: t('MultilevelDashboardNavigation.loadLayout'), preset: "primary", action: loadLayout },
-  { label: t('MultilevelDashboardNavigation.storeList'), preset: "primary", action: openStoreList },
-  { label: t('MultilevelDashboardNavigation.appSettings'), preset: "primary", action: openAppSettings },
+  {
+    label: t("MultilevelDashboardNavigation.save"),
+    preset: "primary",
+    action: saveLayout,
+  },
+  {
+    label: t("MultilevelDashboardNavigation.loadLayout"),
+    preset: "primary",
+    action: loadLayout,
+  },
+  {
+    label: t("MultilevelDashboardNavigation.storeList"),
+    preset: "primary",
+    action: openStoreList,
+  },
+  {
+    label: t("MultilevelDashboardNavigation.appSettings"),
+    preset: "primary",
+    action: openAppSettings,
+  },
 );
 
 const updateBackgroundColor = (newColor) => {

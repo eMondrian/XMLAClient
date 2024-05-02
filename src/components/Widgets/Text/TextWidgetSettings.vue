@@ -15,12 +15,14 @@ import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { CollapseState } from "@/@types/widgets";
 
 interface ITextSettings {
   text: string;
   fontSize: number;
   fontColor: string;
   fontWeight: string;
+  fontStyle: string;
   textDecoration: string;
   horizontalAlign: string;
   verticalAlign: string;
@@ -33,11 +35,10 @@ interface ITextComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
-const { t } = useI18n();
 const { component } = defineProps<{ component: ITextComponent }>();
 
-const opened = ref({
-  textSection: false,
+const opened: Ref<CollapseState> = ref({
+  widgetSection: false,
   storeSection: false,
 });
 
@@ -76,18 +77,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" :header="t('TextWidget.title')">
+  <va-collapse v-model="opened.widgetSection" header="Text widget settings">
     <div class="settings-container">
       <div class="settings-block">
         <va-input
           class="text-title"
-          :label="t('TextWidget.title')"
+          label="Title"
           :model-value="component.settings.text"
           @update:model-value="component.setSetting('text', $event)"
         />
         <va-input
           class="text-size"
-          :label="t('TextWidget.fontSize')"
+          label="Font Size"
           :model-value="component.settings.fontSize"
           @update:model-value="component.setSetting('fontSize', $event)"
         />
@@ -96,86 +97,100 @@ onMounted(() => {
       <div class="settings-block">
         <va-color-input
           class="text-color"
-          :label="t('TextWidget.fontColor')"
+          label="Font Color"
           :model-value="component.settings.fontColor"
           @update:model-value="component.setSetting('fontColor', $event)"
         />
+        <div class="align-buttons-group align-buttons-group__format">
+          <VaButton 
+            color="#fafafa"
+            class="align-button" 
+            icon="format_bold" 
+            size="small"
+            icon-color="#000000"
+            :model-value="component.settings.fontWeight"
+            @click="component.settings.fontWeight === 'bold' ? component.setSetting('fontWeight', 'normal') : component.setSetting('fontWeight', 'bold')"
+          />
+          <VaButton 
+            color="#fafafa"
+            class="align-button" 
+            icon="format_italic" 
+            size="small"
+            icon-color="#000000"
+            :model-value="component.settings.fontStyle"
+            @click="component.settings.fontStyle === 'italic' ? component.setSetting('fontStyle', 'normal') : component.setSetting('fontStyle', 'italic')"
+          />
+          <VaButton 
+            color="#fafafa"
+            class="align-button" 
+            icon="format_underline"
+            size="small"
+            icon-color="#000000"
+            :model-value="component.settings.textDecoration"
+            @click="component.settings.textDecoration === 'underline' ? component.setSetting('textDecoration', 'None') : component.setSetting('textDecoration', 'underline')"
+          />
+        </div>
         <div class="align-buttons-group">
-          <VaButtonGroup
-            class="button-group"
-            size="medium"
-            grow
-            preset="plain"
-            border-color="#CDCFDB"
-          >
+          <div class="align-horizontal-buttons">
             <VaButton 
-              color="#000000"
-              class="align-button ml-2" 
+              color="#fafafa"
+              class="align-button" 
               icon="align_horizontal_left" 
+              size="small"
+              icon-color="#000000"
               :model-value="component.settings.horizontalAlign"
               @click="component.setSetting('horizontalAlign', 'Left')"
             />
             <VaButton 
-              color="#000000"
+              color="#fafafa"
               class="align-button" 
               icon="align_horizontal_center" 
+              size="small"
+              icon-color="#000000"
               :model-value="component.settings.horizontalAlign"
               @click="component.setSetting('horizontalAlign', 'Center')"
             />
             <VaButton 
-              color="#000000"
+              color="#fafafa"
               class="align-button" 
               icon="align_horizontal_right"
+              size="small"
+              icon-color="#000000"
               :model-value="component.settings.horizontalAlign"
               @click="component.setSetting('horizontalAlign', 'Right')"
             />
+          </div>
+          <div class="align-vertical-buttons ml-2">
             <VaButton 
-              color="#000000"
+              color="#fafafa"
               class="align-button" 
-              icon="align_vertical_top" 
+              icon="align_vertical_top"
+              size="small"
+              icon-color="#000000" 
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Top')"
             />
             <VaButton 
-              color="#000000"
+              color="#fafafa"
               class="align-button" 
               icon="align_vertical_center" 
+              size="small"
+              icon-color="#000000"
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Center')"
             />
             <VaButton 
-              color="#000000"
+              color="#fafafa"
               class="align-button" 
               icon="align_vertical_bottom" 
+              size="small"
+              icon-color="#000000"
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Bottom')"
-            />
-          </VaButtonGroup>
-          
+            />          
+          </div>
         </div>
-        <va-input
-            class="text-weight ml-2"
-            label="Font Weight"
-            :model-value="component.settings.fontWeight"
-            @update:model-value="component.setSetting('fontWeight', $event)"
-          />
-    </div>
-    <div class="settings-block">
-        
       </div>
-      <!-- <va-select
-        label="Text decoration"
-        :options="[
-          'Underline solid',
-          'Underline dashed',
-          'Underline wavy',
-          'Line-through',
-          'Overline',
-          'None',
-        ]"
-        :model-value="component.settings.textDecoration"
-        @update:model-value="component.setSetting('textDecoration', $event)"
-      /> -->      
     </div>
   </va-collapse>
   <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
@@ -231,20 +246,27 @@ onMounted(() => {
 
 .align-buttons-group {
   display: flex;
-  align-items: flex-end;
+  align-self: flex-end;
+  border: 2px solid #CDCFDB;
+  border-radius: 4px;
+  margin-left: 12px;
 
-  .button-group {
-    padding: 2px;
+  &__format {
+    width: 100%;
+  }
+
+  .align-vertical-buttons, 
+  .align-horizontal-buttons {
+    display: flex;
   }
 
   .align-button {
+    width: 100%;
+    height: 32px;
+    padding: 0 7.5px;
 
     &:hover  {
       --va-background-color: rgb(162, 181, 218) !important;
-    }
-
-    &:nth-child(4) {
-      // padding-left: 10px;
     }
   }
 }

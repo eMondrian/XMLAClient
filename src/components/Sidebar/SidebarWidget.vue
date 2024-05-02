@@ -19,7 +19,7 @@ const props = defineProps(["component", "wrapper"]);
 <template>
   <div class="sidebar-settings">
     <div class="sidebar-settings-title">
-      <h2>{{ t('SidebarWidgetSettings.widgetSettings') }}</h2>
+      <h2>Widget settings</h2>
     </div>
     <div class="sidebar-settings-content">
       <WidgetWrapperSettings :wrapper="props.wrapper"></WidgetWrapperSettings>
