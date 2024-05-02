@@ -9,26 +9,38 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-import { inject, ref, type Ref, type Component } from "vue";
+
+interface ITimeSettingsProps {
+  label?: string;
+  availableEvents?: string[];
+  events?: EventItem[];
+}
+
+import { inject, ref, type Ref } from "vue";
+import { useSettings } from "@/composables/widgets/settings";
+import { useSerialization } from "@/composables/widgets/serialization";
 import TimeSettings from "@/components/Controls/TimeInput/TimeSettings.vue";
-import type { EventItem, ComponentProps } from "@/@types/controls";
+import type { EventItem } from "@/@types/controls";
 
 const EventBus = inject("customEventBus") as any;
-const settings: Component = TimeSettings;
+const settingsComponent = TimeSettings;
 
-const label: Ref<string> = ref<string>('Test');
 const selectValue: Ref<Date> = ref<Date>(new Date());
-const availableEvents: string[] = ["Click", "Clear", "Blur", "Focus"];
 
-const events: Ref<EventItem[]> = ref([
-  {
+const props = withDefaults(defineProps<ITimeSettingsProps>(), {
+  label: "Test",
+  availableEvents: (): string[] => ["Click", "Clear", "Blur", "Focus"],
+  events: (): EventItem[] => [{
     name: "Next page",
     trigger: "Click",
-  },
-]);
+  }]
+});
+
+const { settings, setSetting } = useSettings<typeof props>(props);
+const { getState } = useSerialization(settings);
 
 const click = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if (e.trigger === "Click") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name, selectValue.value);
@@ -37,7 +49,7 @@ const click = () => {
 };
 
 const clear = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if(e.trigger === "Clear") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
@@ -46,7 +58,7 @@ const clear = () => {
 };
 
 const focus = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if(e.trigger === "Focus") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
@@ -55,7 +67,7 @@ const focus = () => {
 };
 
 const blur = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if(e.trigger === "Blur") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
@@ -63,14 +75,14 @@ const blur = () => {
   });
 };
 
-defineExpose({ label, events, availableEvents, settings }) as unknown as ComponentProps;
+defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
 <template> 
   <va-time-input
     class="time-control"
     v-model="selectValue"
-    :label="label"
+    :label="settings.label"
     @update:modelValue="click"
     @clear="clear"
     @blur="blur"

@@ -9,27 +9,39 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-import { inject, ref, type Ref, type Component } from "vue";
+
+interface ISwitchSettingsProps {
+  label?: string;
+  availableEvents?: string[];
+  events?: EventItem[];
+}
+
+import { inject, ref, type Ref } from "vue";
+import { useSettings } from "@/composables/widgets/settings";
+import { useSerialization } from "@/composables/widgets/serialization";
 import SwitchSettings from "@/components/Controls/Switch/SwitchSettings.vue";
-import type { ComponentProps, EventItem } from "@/@types/controls";
+import type { EventItem } from "@/@types/controls";
 
 const EventBus = inject("customEventBus") as any;
-const settings: Component = SwitchSettings;
+const settingsComponent = SwitchSettings;
 
-const label: Ref<string> = ref('Test');
 const isChecked: Ref<boolean> = ref(false);
-const availableEvents: string[] = ["Blur", "Focus", "Update", "Click"];
 
-const events: Ref<EventItem[]> = ref([
-  {
+const props = withDefaults(defineProps<ISwitchSettingsProps>(), {
+  label: "Test",
+  availableEvents: (): string[] => ["Blur", "Focus", "Update", "Click"],
+  events: (): EventItem[] => [{
     name: "Next page",
     trigger: "Update",
-  },
-]);
+  }]
+});
+
+const { settings, setSetting } = useSettings<typeof props>(props);
+const { getState } = useSerialization(settings);
 
 const click = () => {
   isChecked.value = !isChecked.value;
-  events.value.forEach((e) => {
+  settings.value.events.forEach((e: EventItem) => {
     if (e.trigger === "Click") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
@@ -38,7 +50,7 @@ const click = () => {
 };
 
 const update = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if (e.trigger === "Update") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name, isChecked.value);
@@ -47,7 +59,7 @@ const update = () => {
 };
 
 const blur = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if (e.trigger === "Blur") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name, isChecked.value);
@@ -56,7 +68,7 @@ const blur = () => {
 };
 
 const focus = () => {
-  events.value.forEach((e: EventItem) => {
+  settings.value.events.forEach((e: EventItem) => {
     if (e.trigger === "Focus") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
@@ -64,14 +76,14 @@ const focus = () => {
   });
 };
 
-defineExpose({ label, events, availableEvents, settings }) as unknown as ComponentProps;
+defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
 <template> 
   <va-switch 
     class="custom-switch"
     v-model="isChecked" 
-    :label="label"
+    :label="settings.label"
     @click="click"
     @update:modelValue="update"
     @blur="blur"

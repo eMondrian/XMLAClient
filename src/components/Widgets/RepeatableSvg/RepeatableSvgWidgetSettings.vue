@@ -9,21 +9,44 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+
+interface IRepeatableSVGSettings {
+  src: string;
+  activeItemStyles: {
+    fill: string,
+    stroke: string,
+  };
+  defaultItemStyles: {
+    fill: string,
+    stroke: string,
+  };
+  repeations: string;
+  progress: string;
+}
+
+interface IRepeatableSVGComponent {
+  store: Store | XMLAStore;
+  settings: IRepeatableSVGSettings;
+  setSetting: (key: string, value: any) => void;
+  setStore: (store: Store | XMLAStore) => void;
+}
+
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
-import type { CollapseState, RepeatableSvgSharingComponentProps } from "@/@types/widgets";
+import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { CollapseState } from "@/@types/widgets";
 
-const props  = defineProps(["component"]) as RepeatableSvgSharingComponentProps;
+const { component } = defineProps<{ component: IRepeatableSVGComponent }>();
+
 const opened: Ref<CollapseState> = ref({
-  textSection: false,
+  widgetSection: false,
   storeSection: false,
 });
 
 const storeManager = useStoreManager();
 const stores: Ref<any[]> = ref([]) as Ref<any[]>;
 const requestResult: Ref<string> = ref("");
-const storeId: Ref<string> = ref(props.component.storeId);
 
 const getStores = () => {
   const storeList = storeManager.getStoreList();
@@ -34,54 +57,71 @@ const getStores = () => {
 };
 
 const getData = async () => {
-  const store = storeManager.getStore(storeId.value) as Store;
+  const store = component.store as Store;
 
   const data = await store.getData();
   requestResult.value = JSON.stringify(data, null, 2);
 };
 
-const updateStore = (store) => {
-  storeId.value = store;
-  props.component.storeId = store;
+const updateStore = (storeId) => {
+  const store = storeManager.getStore(storeId) as Store;
+  component.setStore(store);
+  console.log(component);
   getData();
 };
 
 onMounted(() => {
   getStores();
-  if (storeId.value) {
+  if (component.store) {
     getData();
   }
 });
 </script>
 
 <template>
-  <va-collapse v-model="opened.textSection" header="Repeatable SVG  widget settings">
+  <va-collapse v-model="opened.widgetSection" header="Repeatable SVG  widget settings">
     <div class="settings-container">
-      <va-input v-model="props.component.src" label="src"/>
-      <va-input v-model="props.component.repeations" label="repeations"/>
-      <va-input v-model="props.component.progress" label="progress"/>
+      <va-input
+        v-model="component.settings.src"
+        label="src"
+        @update:model-value="component.setSetting('src', $event)"
+      />
+      <va-input
+        v-model="component.settings.repeations"
+        label="repeations"
+        @update:model-value="component.setSetting('repeations', $event)"
+      />
+      <va-input
+        v-model="component.settings.progress"
+        label="progress"
+        @update:model-value="component.setSetting('progress', $event)"
+      />
       <div class="colors">
         <va-color-input
           class="color-input"
-          v-model="props.component.activeItemStyles.fill"
+          v-model="component.settings.activeItemStyles.fill"
           label="Active item fill"
+          @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
-          v-model="props.component.activeItemStyles.stroke"
+          v-model="component.settings.activeItemStyles.stroke"
           label="Active item stroke"
+          @update:model-value="component.setSetting('stroke', $event)"
         />
       </div>
       <div class="colors">
         <va-color-input
           class="color-input"
-          v-model="props.component.defaultItemStyles.fill"
+          v-model="component.settings.defaultItemStyles.fill"
           label="Default item fill"
+          @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
-          v-model="props.component.defaultItemStyles.stroke"
+          v-model="component.settings.defaultItemStyles.stroke"
           label="Default item stroke"
+          @update:model-value="component.setSetting('stroke', $event)"
         />
       </div>
     </div>
@@ -93,7 +133,7 @@ onMounted(() => {
         <h3 class="mb-2">Select store</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
-            :model-value="storeId"
+            :model-value="component.store?.id"
             @update:model-value="updateStore"
             :option="{
               text: `${store.caption} ${store.id}`,
