@@ -9,7 +9,6 @@
 
 */
 import { ref, getCurrentInstance } from "vue";
-import { type ISerializable } from "@/composables/dashboard/serialization";
 
 declare interface LayoutItem {
   x: number;

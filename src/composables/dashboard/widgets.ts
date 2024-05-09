@@ -9,7 +9,6 @@
 
 */
 import { ref, getCurrentInstance } from "vue";
-// import type { ISerializable } from "./serialization";
 import { enabledWidgets, widgetNames } from "@/components/Widgets";
 
 declare interface Widget {
