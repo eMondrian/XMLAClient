@@ -23,9 +23,11 @@ interface ISelectComponent {
   setSetting: (key: string, value: any) => void;
 }
 
+import { useI18n } from 'vue-i18n';
 import type { EventItem } from "@/@types/controls";
 import { ref, type Ref } from "vue";
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: ISelectComponent }>();
 
 const options: Ref<string[]> = ref(component.settings.availableEvents);
@@ -59,27 +61,25 @@ const deleteOption = (id: number, option: string) => {
   <va-input
     class="event-input"
     v-model="component.settings.label"
-    label="Label text"
+    :label="t('SelectControl.label')"
     @update:model-value="component.setSetting('label', $event)"
   />
   <div class="events-list-label">
-    <h3>Options list</h3>
-    <va-button @click="addOption">Add</va-button>
+    <h3>{{ t('SelectControl.optionsList') }}</h3>
+    <va-button @click="addOption">{{ t('SelectControl.addOptionButton') }}</va-button>
   </div>
-  <!-- <div> -->
     <div class="options-list" v-for="(option, index) in selectOptions" :key="index">
-      <va-input v-model="selectOptions[index]" label="Option" />
+      <va-input v-model="selectOptions[index]" :label="t('SelectControl.option')" />
       <va-button
         preset="plain"
         icon="delete"
         @click="deleteOption(index, option)"
       />
     </div>
-  <!-- </div> -->
   <div class="events-list">
     <div class="events-list-label">
-      <h3>Events list</h3>
-      <va-button @click="addEvent">Add</va-button>
+      <h3>{{ t('Controls.eventsList') }}</h3>
+      <va-button @click="addEvent">{{ t('Controls.addButton') }}</va-button>
     </div>
     <div class="events-list-content">
       <va-data-table

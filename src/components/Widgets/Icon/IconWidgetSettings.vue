@@ -14,6 +14,7 @@ import type { CollapseState, MaterialIcon } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import MaterialIcons from '@/assets/icons/MaterialIcons.json';
+import { useI18n } from 'vue-i18n';
 
 interface IIconSettings {
   currentIcon: string,
@@ -32,6 +33,7 @@ interface IIconComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: IIconComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -72,13 +74,13 @@ onMounted(() => {
 <template>
   <va-collapse 
     v-model="opened.widgetSection" 
-    header="Icon widget settings"
+    :header="t('IconWidget.title')"
   >
     <div class="settings-container">
       <va-input 
         v-model="searchQuery" 
         placeholder="Search icon..." 
-        label="Search icons"
+        :label="t('IconWidget.iconSearch')"
       />
       <div class="icons-container" style="font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 100, 'opsz' 48;">
         <span
@@ -93,17 +95,17 @@ onMounted(() => {
       </div>
       <va-checkbox 
         v-model="component.settings.isIconFilled" 
-        label="Icon filled"
+        :label="t('IconWidget.iconFilled')"
         @update:model-value="component.setSetting('isIconFilled', $event)"
       />
       <va-color-input 
         v-model="component.settings.iconColor" 
-        label="Icon color"
+        :label="t('IconWidget.iconColor')"
         @update:model-value="component.setSetting('iconColor', $event)"
       />
       <va-input
         v-model="component.settings.iconSize" 
-        label="Icon size"
+        :label="t('IconWidget.iconSize')"
         @update:model-value="component.setSetting('iconSize', $event)"
       />
       <va-slider 
@@ -113,7 +115,7 @@ onMounted(() => {
         :min="100" 
         :max="700" 
         :step="100"
-        label="Stroke weight"
+        :label="t('IconWidget.strokeWeight')"
         @update:model-value="component.setSetting('strokeWeight', $event)"
       />
       <va-slider 
@@ -122,7 +124,7 @@ onMounted(() => {
         track-label-visible
         :min="20" 
         :max="48" 
-        label="Optic size"
+        :label="t('IconWidget.opticSize')"
         @update:model-value="component.setSetting('opticSize', $event)"
       />
       <va-slider 
@@ -132,7 +134,7 @@ onMounted(() => {
         :min="-25" 
         :max="200"
         :step="15"
-        label="Grade"
+        :label="t('IconWidget.grade')"
         @update:model-value="component.setSetting('grade', $event)"
       />
     </div>

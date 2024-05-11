@@ -35,6 +35,7 @@ interface ITextComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: ITextComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -77,18 +78,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="Text widget settings">
+  <va-collapse v-model="opened.widgetSection" :header="t('TextWidget.title')">
     <div class="settings-container">
       <div class="settings-block">
         <va-input
           class="text-title"
-          label="Title"
+          :label="t('TextWidget.label')"
           :model-value="component.settings.text"
           @update:model-value="component.setSetting('text', $event)"
         />
         <va-input
           class="text-size"
-          label="Font Size"
+          :label="t('TextWidget.fontSize')"
           :model-value="component.settings.fontSize"
           @update:model-value="component.setSetting('fontSize', $event)"
         />
@@ -97,7 +98,7 @@ onMounted(() => {
       <div class="settings-block">
         <va-color-input
           class="text-color"
-          label="Font Color"
+          :label="t('TextWidget.fontColor')"
           :model-value="component.settings.fontColor"
           @update:model-value="component.setSetting('fontColor', $event)"
         />

@@ -30,12 +30,27 @@ const switchLanguage = () => {
 <template>
   <div class="app-settings">
     <div class="app-settings-title">
-      <h2>App settings</h2>
+      <h2>{{ t('AppSidebarSettings.backgroundColor') }}</h2>
       <va-color-input
         v-model="innerBackground"
         @input="updateBackgroundColor"
-        label="Background color"
+        :label="t('AppSidebarSettings.backgroundColor')"
       />
+      <div class="available-languages mt-4">
+        <va-select
+          v-model="selectLanguage"
+          :options="Object.keys(languages)"
+          placeholder="Select an option"
+          :label="t('AppSidebarSettings.selectedLanguage')"
+        />
+        <va-button
+          class="button-languages"
+          @click="switchLanguage"
+        >
+          {{ t('AppSidebarSettings.switchButton') }}
+        </va-button>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -59,5 +74,16 @@ const switchLanguage = () => {
   font-size: 24px;
   flex-grow: 1;
   margin-bottom: 32px;
+}
+
+.available-languages {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.button-languages {
+  height: 36px;
+  margin-left: 20px;
 }
 </style>

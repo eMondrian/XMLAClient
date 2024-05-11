@@ -9,16 +9,17 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import { v4 } from "uuid";
 import { ref, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
-import type { CollapseState, ImageGalleryItem, ImageSettings } from "@/@types/widgets";
+import type { CollapseState, ImageGalleryItem, GallerySettings } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 
 interface ImageSettings {
   images: ImageGalleryItem[];
-  imagesSettings: ImageSettings;
+  imagesSettings: GallerySettings;
 }
 
 interface ImageComponent {
@@ -28,6 +29,7 @@ interface ImageComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: ImageComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -79,7 +81,7 @@ onMounted(() => {
 <template>
   <va-collapse v-model="opened.widgetSection" header="Image widget settings">
     <div class="settings-container">
-      <va-button @click="addNew">Add image</va-button>
+      <va-button @click="addNew">{{ t('ImageWidget.addButton') }}</va-button>
       <div class="image-list-container">
         <div
           v-for="(image, index) in component.settings.images"
@@ -88,7 +90,7 @@ onMounted(() => {
         >
           <va-input
             v-model="image.url"
-            label="Image src"
+            :label="t('ImageWidget.imageUrl')"
             class="image-settings-remove-input"
             @update:model-value="component.setSetting('url', $event)"
           />
@@ -102,23 +104,23 @@ onMounted(() => {
       </div>
       <va-select
         v-model="component.settings.imagesSettings.fit"
-        label="Fit"
+        :label="t('ImageWidget.imageFit')"
         :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
         @update:model-value="component.setSetting('fit', $event)"
       >
       </va-select>
       <va-input
         v-model="component.settings.imagesSettings.diashowInterval"
-        label="Diashow interval"
+        :label="t('ImageWidget.imageDiashowInterval')"
         @update:model-value="component.setSetting('diashowInterval', $event)"
       >
       </va-input>
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

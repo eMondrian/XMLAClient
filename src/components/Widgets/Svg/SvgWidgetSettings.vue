@@ -22,12 +22,14 @@ interface ISVGComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+import { useI18n } from 'vue-i18n';
 import { ref, type Ref, watch, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState, StyleFields, Config } from "@/@types/widgets";
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: ISVGComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -96,18 +98,18 @@ watch(
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="SVG  widget settings">
+  <va-collapse v-model="opened.widgetSection" :header="t('SvgWidget.title')">
     <div class="settings-container">
       <va-input
         v-model="component.settings.src"
-        label="SVG"
+        :label="t('SvgWidget.svgSrc')"
         @update:model-value="component.setSetting('url', $event)"
       />
       <va-button
         class="add-button"
         @click="addItems"
       >
-        Add items
+        {{ t('SvgWidget.addButton') }}
       </va-button>
         <va-data-table
           class="table-config"
@@ -145,10 +147,10 @@ watch(
         </va-data-table>
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

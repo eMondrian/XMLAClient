@@ -40,7 +40,9 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Underline from '@tiptap/extension-underline';
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState } from "@/@types/widgets";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: IRichTextEditorComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -150,32 +152,32 @@ watch(
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="Rich text widget settings">
+  <va-collapse v-model="opened.widgetSection" :header="t('RichTextWidget.title')">
     <div class="settings-container">
       <div v-if="editor">
         <va-button class="editor-btn" @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-          bold
+          {{ t('RichTextWidget.bold') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-          italic
+          {{ t('RichTextWidget.italic') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-          strike
+          {{ t('RichTextWidget.strike') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleUnderline().run()" :disabled="!editor.can().chain().focus().toggleUnderline().run()" :class="{ 'is-active': editor.isActive('underline') }">
-          underline
+          {{ t('RichTextWidget.underline') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleCode().run()" :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-          code
+          {{ t('RichTextWidget.code') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().unsetAllMarks().run()">
-          clear marks
+          {{ t('RichTextWidget.clearMarks') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().clearNodes().run()">
-          clear nodes
+          {{ t('RichTextWidget.clearNodes') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
-          paragraph
+          {{ t('RichTextWidget.paragraph') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
           h1
@@ -196,28 +198,28 @@ watch(
           h6
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-          bullet list
+          {{ t('RichTextWidget.bulletList') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-          ordered list
+          {{ t('RichTextWidget.orderedList') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-          code block
+          {{ t('RichTextWidget.codeBlock') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
-          blockquote
+          {{ t('RichTextWidget.blockQuote') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().setHorizontalRule().run()">
-          horizontal rule
+          {{ t('RichTextWidget.horizontalRule') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().setHardBreak().run()">
-          hard break
+          {{ t('RichTextWidget.hardBreak') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
-          undo
+          {{ t('RichTextWidget.undo') }}
         </va-button>
         <va-button class="editor-btn" @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
-          redo
+          {{ t('RichTextWidget.redo') }}
         </va-button>
       </div> 
       <div class="editor">
@@ -225,11 +227,11 @@ watch(
       </div>
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

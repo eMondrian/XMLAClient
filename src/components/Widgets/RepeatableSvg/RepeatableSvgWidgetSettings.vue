@@ -31,12 +31,14 @@ interface IRepeatableSVGComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+import { useI18n } from 'vue-i18n';
 import { ref, type Ref, onMounted } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState } from "@/@types/widgets";
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: IRepeatableSVGComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -79,34 +81,34 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="Repeatable SVG  widget settings">
+  <va-collapse v-model="opened.widgetSection" :header="t('RepeatableSvgWidget.title')">
     <div class="settings-container">
       <va-input
         v-model="component.settings.src"
-        label="src"
+        :label="t('RepeatableSvgWidget.label')"
         @update:model-value="component.setSetting('src', $event)"
       />
       <va-input
         v-model="component.settings.repeations"
-        label="repeations"
+        :label="t('RepeatableSvgWidget.repeations')"
         @update:model-value="component.setSetting('repeations', $event)"
       />
       <va-input
         v-model="component.settings.progress"
-        label="progress"
+        :label="t('RepeatableSvgWidget.progress')"
         @update:model-value="component.setSetting('progress', $event)"
       />
       <div class="colors">
         <va-color-input
           class="color-input"
           v-model="component.settings.activeItemStyles.fill"
-          label="Active item fill"
+          :label="t('RepeatableSvgWidget.activeItemFill')"
           @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
           v-model="component.settings.activeItemStyles.stroke"
-          label="Active item stroke"
+          :label="t('RepeatableSvgWidget.activeItemStroke')"
           @update:model-value="component.setSetting('stroke', $event)"
         />
       </div>
@@ -114,23 +116,23 @@ onMounted(() => {
         <va-color-input
           class="color-input"
           v-model="component.settings.defaultItemStyles.fill"
-          label="Default item fill"
+          :label="t('RepeatableSvgWidget.defaultItemFill')"
           @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
           v-model="component.settings.defaultItemStyles.stroke"
-          label="Default item stroke"
+          :label="t('RepeatableSvgWidget.defaultItemStroke')"
           @update:model-value="component.setSetting('stroke', $event)"
         />
       </div>
     </div>
   </va-collapse>
 
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

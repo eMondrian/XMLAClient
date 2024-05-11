@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 
 interface IImageSettingsProps {
-  imagesSettings?: ImageSettings;
+  imagesSettings?: GallerySettings;
   images?: ImageGalleryItem[];
 }
 
@@ -20,7 +20,7 @@ import { useSettings } from "@/composables/widgets/settings";
 import { useStore } from "@/composables/widgets/store";
 import { useSerialization } from "@/composables/widgets/serialization";
 import type { Store } from "@/stores/Widgets/Store";
-import type { ImageGalleryItem, ImageSettings } from "@/@types/widgets";
+import type { ImageGalleryItem, GallerySettings } from "@/@types/widgets";
 import ImageWidgetSettings from "./ImageWidgetSettings.vue";
 
 const settingsComponent = ImageWidgetSettings;

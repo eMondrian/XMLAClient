@@ -20,7 +20,8 @@ Contributors: Smart City Jena
           <va-button
             preset="primary"
             class="settings-button"
-            :borderColor="editEnabled ? 'enabled' : ''"
+            :borderColor="editEnabled ? '#4153b5' : ''"
+            icon="edit"
             @click="toggleEdit"
           >
             {{ t("MultilevelDashboardNavigation.edit") }}
@@ -30,6 +31,7 @@ Contributors: Smart City Jena
             :key="index"
             :preset="button.preset"
             class="settings-button"
+            :icon="button.icon"
             @click="button.action"
           >
             {{ button.label }}
@@ -188,7 +190,7 @@ const isDropdownVisible = ref(false);
 const isActiveButton = ref(false);
 const isMouseOver = ref(false);
 const layoutSettingsButtons = ref<
-  Array<{ label: string; preset: string; action: () => void }>
+  Array<{ label: string; preset: string; action: () => void; icon: string }>
 >([]);
 
 const instance = getCurrentInstance();
@@ -337,21 +339,25 @@ layoutSettingsButtons.value.push(
     label: t("MultilevelDashboardNavigation.save"),
     preset: "primary",
     action: saveLayout,
+    icon: "save",
   },
   {
     label: t("MultilevelDashboardNavigation.loadLayout"),
     preset: "primary",
     action: loadLayout,
+    icon: "upload",
   },
   {
     label: t("MultilevelDashboardNavigation.storeList"),
     preset: "primary",
     action: openStoreList,
+    icon: "list",
   },
   {
     label: t("MultilevelDashboardNavigation.appSettings"),
     preset: "primary",
     action: openAppSettings,
+    icon: "settings",
   },
 );
 

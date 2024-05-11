@@ -12,7 +12,9 @@ Contributors: Smart City Jena
 import { onMounted, ref, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps(["component"]) as any;
 const requestResult = ref("");
 const catalogs = ref([]) as Ref<any[]>;
@@ -82,7 +84,7 @@ onMounted(() => {
 
 <template>
   <div class="mt-4 mb-4">
-    <h3 class="mb-2">Select store</h3>
+    <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
     <div v-for="store in stores" :key="store.id">
       <va-radio
         :model-value="storeId"
@@ -105,7 +107,7 @@ onMounted(() => {
       value-by="CATALOG_NAME"
       :options="catalogs"
       placeholder="Select catalog"
-      label="Select catalog"
+      :label="t('PivotTableWidget.selectCatalog')"
     />
   </div>
   <div v-if="props.component.catalog">
@@ -117,11 +119,11 @@ onMounted(() => {
       value-by="CUBE_NAME"
       :options="cubes"
       placeholder="Select cube"
-      label="Select cube"
+      :label="t('PivotTableWidget.selectCube')"
     />
   </div>
   <div>
-    <h3 class="mb-2">MDX</h3>
+    <h3 class="mb-2">{{ t('PivotTableWidget.mdx') }}</h3>
     <va-textarea
       style="width: 100%; height: 500px"
       v-model="props.component.mdx"

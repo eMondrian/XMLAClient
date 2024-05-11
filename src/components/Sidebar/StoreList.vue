@@ -25,18 +25,14 @@ const addNewStore = () => {
 const addNewXMLAStore = () => {
   storeManager.initStore(t('SidebarStoreList.newStore'), EventBus, "XMLA");
 };
-
-const addNewXMLAStore = () => {
-  storeManager.initStore("New store", EventBus, "XMLA");
-};
 </script>
 
 <template>
   <div class="sidebar-stores">
     <div class="sidebar-stores-title">
-      <h2 class="mb-2">Stores</h2>
-      <va-button @click="addNewStore">Add new</va-button>
-      <va-button class="ml-2" @click="addNewXMLAStore">Add new XMLA</va-button>
+      <h2 class="mb-2">{{ t('SidebarStoreSettings.storesTitle') }}</h2>
+      <va-button @click="addNewStore">{{ t('SidebarStoreSettings.addNewStore') }}</va-button>
+      <va-button class="ml-2" @click="addNewXMLAStore">{{ t('SidebarStoreSettings.addNewXMLAStore') }}</va-button>
     </div>
     <StoreList class="mt-2" />
   </div>

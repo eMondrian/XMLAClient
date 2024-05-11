@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import { ref, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
@@ -27,6 +28,7 @@ interface IVideoComponent {
   setStore: (store: Store | XMLAStore) => void;
 }
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: IVideoComponent }>();
 
 const opened: Ref<CollapseState> = ref({
@@ -69,27 +71,27 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="Video widget settings">
+  <va-collapse v-model="opened.widgetSection" :header="t('VideoWidget.title')">
     <div class="settings-container">
       <va-input
         v-model="component.settings.videoUrl"
-        label="Video url"
+        :label="t('VideoWidget.videoUrl')"
         @update:model-value="component.setSetting('videoUrl', $event)"
       />
       <va-select
         class="mt-2"
         v-model="component.settings.videoSettings.fit"
-        label="Fit"
+        :label="t('VideoWidget.videoFit')"
         :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
         @update:model-value="component.setSetting('fit', $event)"
       >
       </va-select>
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" header="Store settings">
+  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
     <div class="settings-container">
       <div>
-        <h3 class="mb-2">Select store</h3>
+        <h3 class="mb-2">{{ t('Widgets.selectStore') }}</h3>
         <div class="mb-2" v-for="store in stores" :key="store.id">
           <va-radio
             :model-value="component.store?.id"

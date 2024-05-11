@@ -61,13 +61,13 @@ const updateBackgroundColor = (color) => {
           preset="primary"        
           @click="$emit('update:modelValue', !modelValue)"
         >
-          Close
+          {{ t('SidebarSettings.closeButton') }}
         </va-button>
         <!-- <va-button
           class="sidebar-button-done ml-2"
           color="#4153b5"        
         >
-          Done
+        {{ t('SidebarSettings.doneButton') }}
         </va-button> -->
       </div>
     </div>

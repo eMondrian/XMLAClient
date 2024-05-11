@@ -21,9 +21,11 @@ interface IDateComponent {
   setSetting: (key: string, value: any) => void;
 }
 
+import { useI18n } from 'vue-i18n';
 import type { EventItem } from "@/@types/controls";
 import { ref, type Ref } from "vue";
 
+const { t } = useI18n();
 const { component } = defineProps<{ component: IDateComponent }>();
 
 const options: Ref<string[]> = ref(component.settings.availableEvents);
@@ -45,13 +47,13 @@ const deleteEvent = (id: number) => {
   <va-input
     class="event-input"
     v-model="component.settings.label"
-    label="Label text"
+    :label="t('DateControl.label')"
     @update:model-value="component.setSetting('label', $event)"
   />
   <div class="events-list">
     <div class="events-list-label">
-      <h3>Events list</h3>
-      <va-button @click="addEvent">Add</va-button>
+      <h3>{{ t('Controls.eventsList') }}</h3>
+      <va-button @click="addEvent">{{ t('Controls.addButton') }}</va-button>
     </div>
     <div class="events-list-content">
       <va-data-table
