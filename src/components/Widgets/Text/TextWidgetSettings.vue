@@ -16,7 +16,7 @@ import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState } from "@/@types/widgets";
 
-interface ITextSettings {
+export interface ITextSettings {
   text: string;
   fontSize: number;
   fontColor: string;
@@ -27,7 +27,7 @@ interface ITextSettings {
   verticalAlign: string;
 }
 
-interface ITextComponent {
+export interface ITextComponent {
   store: Store | XMLAStore;
   settings: ITextSettings;
   setSetting: (key: string, value: any) => void;
@@ -43,7 +43,7 @@ const opened: Ref<CollapseState> = ref({
 
 // TODO: Move to store selection component
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<Store[]>;
+let stores = ref([]) as Ref<IStore[]>;
 const requestResult = ref("");
 
 const getStores = () => {
@@ -91,7 +91,6 @@ onMounted(() => {
           :model-value="component.settings.fontSize"
           @update:model-value="component.setSetting('fontSize', $event)"
         />
-        
       </div>
       <div class="settings-block">
         <va-color-input
@@ -101,57 +100,69 @@ onMounted(() => {
           @update:model-value="component.setSetting('fontColor', $event)"
         />
         <div class="align-buttons-group align-buttons-group__format">
-          <VaButton 
+          <VaButton
             color="#fafafa"
-            class="align-button" 
-            icon="format_bold" 
+            class="align-button"
+            icon="format_bold"
             size="small"
             icon-color="#000000"
             :model-value="component.settings.fontWeight"
-            @click="component.settings.fontWeight === 'bold' ? component.setSetting('fontWeight', 'normal') : component.setSetting('fontWeight', 'bold')"
+            @click="
+              component.settings.fontWeight === 'bold'
+                ? component.setSetting('fontWeight', 'normal')
+                : component.setSetting('fontWeight', 'bold')
+            "
           />
-          <VaButton 
+          <VaButton
             color="#fafafa"
-            class="align-button" 
-            icon="format_italic" 
+            class="align-button"
+            icon="format_italic"
             size="small"
             icon-color="#000000"
             :model-value="component.settings.fontStyle"
-            @click="component.settings.fontStyle === 'italic' ? component.setSetting('fontStyle', 'normal') : component.setSetting('fontStyle', 'italic')"
+            @click="
+              component.settings.fontStyle === 'italic'
+                ? component.setSetting('fontStyle', 'normal')
+                : component.setSetting('fontStyle', 'italic')
+            "
           />
-          <VaButton 
+          <VaButton
             color="#fafafa"
-            class="align-button" 
+            class="align-button"
             icon="format_underline"
             size="small"
             icon-color="#000000"
             :model-value="component.settings.textDecoration"
-            @click="component.settings.textDecoration === 'underline' ? component.setSetting('textDecoration', 'None') : component.setSetting('textDecoration', 'underline')"
+            @click="
+              component.settings.textDecoration === 'underline'
+                ? component.setSetting('textDecoration', 'None')
+                : component.setSetting('textDecoration', 'underline')
+            "
           />
         </div>
         <div class="align-buttons-group">
           <div class="align-horizontal-buttons">
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
-              icon="align_horizontal_left" 
+              class="align-button"
+              icon="align_horizontal_left"
               size="small"
               icon-color="#000000"
               :model-value="component.settings.horizontalAlign"
               @click="component.setSetting('horizontalAlign', 'Left')"
             />
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
-              icon="align_horizontal_center" 
+              class="align-button"
+              icon="align_horizontal_center"
               size="small"
               icon-color="#000000"
               :model-value="component.settings.horizontalAlign"
               @click="component.setSetting('horizontalAlign', 'Center')"
             />
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
+              class="align-button"
               icon="align_horizontal_right"
               size="small"
               icon-color="#000000"
@@ -160,33 +171,33 @@ onMounted(() => {
             />
           </div>
           <div class="align-vertical-buttons ml-2">
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
+              class="align-button"
               icon="align_vertical_top"
               size="small"
-              icon-color="#000000" 
+              icon-color="#000000"
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Top')"
             />
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
-              icon="align_vertical_center" 
+              class="align-button"
+              icon="align_vertical_center"
               size="small"
               icon-color="#000000"
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Center')"
             />
-            <VaButton 
+            <VaButton
               color="#fafafa"
-              class="align-button" 
-              icon="align_vertical_bottom" 
+              class="align-button"
+              icon="align_vertical_bottom"
               size="small"
               icon-color="#000000"
               :model-value="component.settings.verticalAlign"
               @click="component.setSetting('verticalAlign', 'Bottom')"
-            />          
+            />
           </div>
         </div>
       </div>
@@ -246,7 +257,7 @@ onMounted(() => {
 .align-buttons-group {
   display: flex;
   align-self: flex-end;
-  border: 2px solid #CDCFDB;
+  border: 2px solid #cdcfdb;
   border-radius: 4px;
   margin-left: 12px;
 
@@ -254,7 +265,7 @@ onMounted(() => {
     width: 100%;
   }
 
-  .align-vertical-buttons, 
+  .align-vertical-buttons,
   .align-horizontal-buttons {
     display: flex;
   }
@@ -264,7 +275,7 @@ onMounted(() => {
     height: 32px;
     padding: 0 7.5px;
 
-    &:hover  {
+    &:hover {
       --va-background-color: rgb(162, 181, 218) !important;
     }
   }

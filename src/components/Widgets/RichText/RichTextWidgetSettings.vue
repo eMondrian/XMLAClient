@@ -9,11 +9,11 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-interface IRichTextEditorSettings {
+export interface IRichTextEditorSettings {
   editor: string;
 }
 
-interface IRichTextEditorComponent {
+export interface IRichTextEditorComponent {
   store: Store | XMLAStore;
   settings: IRichTextEditorSettings;
   setSetting: (key: string, value: any) => void;

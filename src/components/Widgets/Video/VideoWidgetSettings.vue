@@ -15,12 +15,12 @@ import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState, ObjectFitSetting } from "@/@types/widgets";
 
-interface IVideoSettings{
+export interface IVideoSettings {
   videoSettings: ObjectFitSetting;
   videoUrl: string;
 }
 
-interface IVideoComponent {
+export interface IVideoComponent {
   store: Store | XMLAStore;
   settings: IVideoSettings;
   setSetting: (key: string, value: any) => void;
@@ -72,13 +72,13 @@ onMounted(() => {
   <va-collapse v-model="opened.widgetSection" header="Video widget settings">
     <div class="settings-container">
       <va-input
-        v-model="component.settings.videoUrl"
+        :model-value="component.settings.videoUrl"
         label="Video url"
         @update:model-value="component.setSetting('videoUrl', $event)"
       />
       <va-select
         class="mt-2"
-        v-model="component.settings.videoSettings.fit"
+        :model-value="component.settings.videoSettings.fit"
         label="Fit"
         :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
         @update:model-value="component.setSetting('fit', $event)"
@@ -114,5 +114,4 @@ onMounted(() => {
   align-items: stretch;
   gap: 1rem;
 }
-
 </style>

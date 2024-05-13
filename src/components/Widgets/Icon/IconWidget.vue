@@ -9,19 +9,18 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IIconSettingsProps {
-  initialState?: any,
-  currentIcon?: string,
-  iconColor?: string,
-  iconSize?: number,
-  isIconFilled?: boolean,
-  strokeWeight?: number,
-  opticSize?: number,
-  grade?: number,
+export interface IIconSettingsProps {
+  initialState?: any;
+  currentIcon?: string;
+  iconColor?: string;
+  iconSize?: number;
+  isIconFilled?: boolean;
+  strokeWeight?: number;
+  opticSize?: number;
+  grade?: number;
 }
 
-import { computed} from "vue";
+import { computed } from "vue";
 import { useSettings } from "@/composables/widgets/settings";
 import { useStore } from "@/composables/widgets/store";
 import { useSerialization } from "@/composables/widgets/serialization";
@@ -38,7 +37,7 @@ const props = withDefaults(defineProps<IIconSettingsProps>(), {
   strokeWeight: 100,
   opticSize: 48,
   grade: 48,
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, setStore } = useStore<Store>();
@@ -51,7 +50,7 @@ const iconStyle = computed(() => {
       'wght' ${settings.value.strokeWeight}, 
       'GRAD' ${settings.value.grade}, 
       'opsz' ${settings.value.opticSize};
-  `
+  `;
 });
 
 defineExpose({
@@ -65,7 +64,10 @@ defineExpose({
 </script>
 
 <template>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet"
+  />
   <div class="icon">
     <div :style="iconStyle">
       <span class="material-symbols-outlined">{{ settings.currentIcon }}</span>
@@ -82,7 +84,7 @@ defineExpose({
   align-items: center;
 }
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
   font-size: v-bind(`${settings.iconSize}px`);

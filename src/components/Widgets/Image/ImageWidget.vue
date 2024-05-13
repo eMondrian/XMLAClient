@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IImageSettingsProps {
+export interface IImageSettingsProps {
   imagesSettings?: ImageSettings;
   images?: ImageGalleryItem[];
 }
@@ -31,7 +30,7 @@ const props = withDefaults(defineProps<IImageSettingsProps>(), {
     diashowInterval: 0,
   }),
   images: (): ImageGalleryItem[] => [],
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
@@ -87,7 +86,7 @@ const parsedUrl = (url: string): string => {
   const parts = url?.match(regex);
 
   if (!parts || !data.value) {
-    return url
+    return url;
   }
 
   let parsedUrl = url;
@@ -106,18 +105,20 @@ const parsedUrl = (url: string): string => {
 };
 
 watch(
-  () => settings.value.images.length, 
+  () => settings.value.images.length,
   (newLength, oldLength) => {
     if (oldLength > newLength) {
       if (currentImage.value >= newLength) {
         currentImage.value = newLength - 1;
       }
     }
-  }
+  },
 );
 
 const lastImageIndex = computed(() => {
-  return settings.value.images.length > 0 ? settings.value.images.length - 1 : 0;
+  return settings.value.images.length > 0
+    ? settings.value.images.length - 1
+    : 0;
 });
 
 watch(lastImageIndex, () => {
@@ -200,7 +201,8 @@ watch(lastImageIndex, () => {
   left: 10px;
 }
 
-.button-next, .button-prev {
+.button-next,
+.button-prev {
   position: absolute;
   top: 50%;
   width: 2rem;

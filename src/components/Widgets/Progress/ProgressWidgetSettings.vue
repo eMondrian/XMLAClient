@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IProgressSettings {
+export interface IProgressSettings {
   progress: string;
   fillColor: string;
   gradientColor: string;
@@ -20,7 +19,7 @@ interface IProgressSettings {
   rotation: number;
 }
 
-interface IProgressComponent {
+export interface IProgressComponent {
   store: Store | XMLAStore;
   settings: IProgressSettings;
   setSetting: (key: string, value: any) => void;
@@ -76,9 +75,11 @@ onMounted(() => {
 
 const addItem = () => {
   return gradientFields.value.push({
-    color: '#' + ('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6),
+    color:
+      "#" +
+      ("000000" + Math.floor(Math.random() * 16777215).toString(16)).slice(-6),
     location: Math.floor(Math.random() * 101),
-  })
+  });
 };
 
 watch(
@@ -86,110 +87,109 @@ watch(
   ([color, fields]) => {
     if (component.settings.isGradient) {
       fields.length < 1
-      ? component.setSetting('gradientColor', `${color} 0%, #FAFAFA 85%`)
-      : component.setSetting('gradientColor', fields.map((v: GradientPart) => `${v.color} ${v.location}%`).join(', '));
+        ? component.setSetting("gradientColor", `${color} 0%, #FAFAFA 85%`)
+        : component.setSetting(
+            "gradientColor",
+            fields
+              .map((v: GradientPart) => `${v.color} ${v.location}%`)
+              .join(", "),
+          );
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(
   () => component.settings.isGradient,
   (newValue) => {
-    newValue === true 
-      ? gradientFields.value.push({color: `${component.settings.fillColor}`, location: 0}, {color: "#FAFAFA", location: 85})
-      : gradientFields.value = [];
-  }
-)
+    newValue === true
+      ? gradientFields.value.push(
+          { color: `${component.settings.fillColor}`, location: 0 },
+          { color: "#FAFAFA", location: 85 },
+        )
+      : (gradientFields.value = []);
+  },
+);
 
 const deleteField = (id: number) => {
-  gradientFields.value = gradientFields.value.filter((_,i) => i !== id)
-}
+  gradientFields.value = gradientFields.value.filter((_, i) => i !== id);
+};
 
 watch(
   () => component.settings.progress,
   (newValue) => {
-    if (typeof newValue === 'string') {
-      const allowDot = !newValue.includes('.');
-      const sanitizedValue = newValue.replace(/,/g, '.');
+    if (typeof newValue === "string") {
+      const allowDot = !newValue.includes(".");
+      const sanitizedValue = newValue.replace(/,/g, ".");
       const numericValue = parseFloat(sanitizedValue);
 
       if (!isNaN(numericValue) && allowDot) {
         const clampedValue = Math.max(0, Math.min(1, numericValue));
-        component.setSetting('progress', String(clampedValue));
+        component.setSetting("progress", String(clampedValue));
       } else {
-        component.setSetting('progress', newValue);
+        component.setSetting("progress", newValue);
       }
     }
-  }
+  },
 );
-
 </script>
 
 <template>
   <va-collapse v-model="opened.widgetSection" header="Progress widget settings">
     <div class="settings-container">
       <va-input
-        v-model="component.settings.progress"
+        :model-value="component.settings.progress"
         label="Progress"
         @update:model-value="component.setSetting('progress', $event)"
       />
       <va-color-input
-        v-model="component.settings.fillColor"
+        :model-value="component.settings.fillColor"
         label="Progress fill color"
         @update:model-value="component.setSetting('fillColor', $event)"
       />
       <va-color-input
-        v-model="component.settings.backgroundColor"
+        :model-value="component.settings.backgroundColor"
         label="Progress background color"
         @update:model-value="component.setSetting('backgroundColor', $event)"
       />
       <va-checkbox
-        v-model="component.settings.isVertical"
+        :model-value="component.settings.isVertical"
         label="Vertical"
         @update:model-value="component.setSetting('isVertical', $event)"
       />
       <va-checkbox
-        v-model="component.settings.isGradient"
+        :model-value="component.settings.isGradient"
         label="Gradient"
         @update:model-value="component.setSetting('isGradient', $event)"
       />
     </div>
-    <div
-      class="mt-3"
-      v-if="component.settings.isGradient"
-    >
-      <va-button
-        class="add-btn"
-        @click="addItem"
-      >
-        Add color
-      </va-button>
+    <div class="mt-3" v-if="component.settings.isGradient">
+      <va-button class="add-btn" @click="addItem"> Add color </va-button>
       <div>
         <va-input
           class="mt-2"
-          v-model="component.settings.rotation"
+          :model-value="component.settings.rotation"
           label="Rotation"
           @update:model-value="component.setSetting('rotation', $event)"
         />
         <va-data-table
           class="table-config"
           :items="gradientFields"
-          :columns="[{ key: 'color' }, {key: 'location'}, {key: 'actions'}]"
+          :columns="[{ key: 'color' }, { key: 'location' }, { key: 'actions' }]"
         >
-          <template #cell(color) = {rowIndex}>
+          <template #cell(color)="{ rowIndex }">
             <va-color-input
               class="input-color"
               v-model="gradientFields[rowIndex].color"
             />
           </template>
-          <template #cell(location) = {rowIndex}>
+          <template #cell(location)="{ rowIndex }">
             <va-input
               class="input"
               v-model="gradientFields[rowIndex].location"
             />
           </template>
-          <template #cell(actions) = {rowIndex}>
+          <template #cell(actions)="{ rowIndex }">
             <va-button
               icon="delete"
               color="danger"

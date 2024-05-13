@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface ISwitchSettingsProps {
+export interface ISwitchSettingsProps {
   label?: string;
   availableEvents?: string[];
   events?: EventItem[];
@@ -30,10 +29,12 @@ const isChecked: Ref<boolean> = ref(false);
 const props = withDefaults(defineProps<ISwitchSettingsProps>(), {
   label: "Test",
   availableEvents: (): string[] => ["Blur", "Focus", "Update", "Click"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Update",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Update",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -79,10 +80,10 @@ const focus = () => {
 defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
-<template> 
-  <va-switch 
+<template>
+  <va-switch
     class="custom-switch"
-    v-model="isChecked" 
+    v-model="isChecked"
     :label="settings.label"
     @click="click"
     @update:modelValue="update"

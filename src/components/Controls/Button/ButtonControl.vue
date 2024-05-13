@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface IButtonSettingsProps {
+export interface IButtonSettingsProps {
   title?: string;
   availableEvents?: string[];
   events?: EventItem[];
@@ -28,10 +27,12 @@ const EventBus = inject("customEventBus") as any;
 const props = withDefaults(defineProps<IButtonSettingsProps>(), {
   title: "Next page",
   availableEvents: (): string[] => ["Click"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Click",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Click",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -50,7 +51,9 @@ defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
 <template>
-  <va-button class="button-control" @click="click"> {{ settings.title }} </va-button>
+  <va-button class="button-control" @click="click">
+    {{ settings.title }}
+  </va-button>
 </template>
 
 <style scoped>

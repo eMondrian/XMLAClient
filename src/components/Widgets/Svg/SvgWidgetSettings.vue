@@ -9,13 +9,12 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface ISVGSettings {
+export interface ISVGSettings {
   src: string;
   classesConfig: Config;
 }
 
-interface ISVGComponent {
+export interface ISVGComponent {
   store: Store | XMLAStore;
   settings: ISVGSettings;
   setSetting: (key: string, value: any) => void;
@@ -67,31 +66,36 @@ onMounted(() => {
   }
 });
 
-const fields: Ref<StyleFields[]> = ref([{className: 'primary', fill: '#ff5733', stroke: '#1e8449', strokeWidth: '5'}]);
+const fields: Ref<StyleFields[]> = ref([
+  {
+    className: "primary",
+    fill: "#ff5733",
+    stroke: "#1e8449",
+    strokeWidth: "5",
+  },
+]);
 
 const addItems = () => {
   fields.value.push({
-    className: '',
-    fill: '',
-    stroke: '',
-    strokeWidth: '',
-  })
+    className: "",
+    fill: "",
+    stroke: "",
+    strokeWidth: "",
+  });
 };
 
 watch(
   fields,
   () => {
     const config: Config = {};
-    fields.value.forEach(
-      ({ className, fill, stroke, strokeWidth }) => {
-        if (!config[className]) {
-          config[className] = { fill, stroke, strokeWidth };
-        }
-      },
-    {});
-    component.settings.classesConfig = {...config};
+    fields.value.forEach(({ className, fill, stroke, strokeWidth }) => {
+      if (!config[className]) {
+        config[className] = { fill, stroke, strokeWidth };
+      }
+    }, {});
+    component.settings.classesConfig = { ...config };
   },
-  {deep: true}
+  { deep: true },
 );
 </script>
 
@@ -99,50 +103,50 @@ watch(
   <va-collapse v-model="opened.widgetSection" header="SVG  widget settings">
     <div class="settings-container">
       <va-input
-        v-model="component.settings.src"
+        :model-value="component.settings.src"
         label="SVG"
         @update:model-value="component.setSetting('url', $event)"
       />
-      <va-button
-        class="add-button"
-        @click="addItems"
+      <va-button class="add-button" @click="addItems"> Add items </va-button>
+      <va-data-table
+        class="table-config"
+        :items="fields"
+        :columns="[
+          { key: 'className' },
+          { key: 'fill' },
+          { key: 'stroke' },
+          { key: 'strokeWidth' },
+        ]"
       >
-        Add items
-      </va-button>
-        <va-data-table
-          class="table-config"
-          :items="fields"
-          :columns="[{ key: 'className' }, { key: 'fill' }, { key: 'stroke' }, { key: 'strokeWidth'}]"
-        >
-          <template #cell(className) = {rowIndex}>
-            <va-input
-              class="input-class-name"
-              v-model="fields[rowIndex].className"
-              @update:model-value="component.setSetting('className', $event)"
-            />
-          </template>
-          <template #cell(fill) = {rowIndex}>
-            <va-color-input
-              class="color-fill"
-              v-model="fields[rowIndex].fill"
-              @update:model-value="component.setSetting('fill', $event)"
-            />
-          </template>
-          <template #cell(stroke) = {rowIndex}>
-            <va-color-input
-              class="color-stroke"
-              v-model="fields[rowIndex].stroke"
-              @update:model-value="component.setSetting('stroke', $event)"
-            />
-          </template>
-          <template #cell(strokeWidth) = {rowIndex}>
-            <va-input
-              class="input-stroke-width"
-              v-model="fields[rowIndex].strokeWidth"
-              @update:model-value="component.setSetting('strokeWidth', $event)"
-            />
-          </template>
-        </va-data-table>
+        <template #cell(className)="{ rowIndex }">
+          <va-input
+            class="input-class-name"
+            v-model="fields[rowIndex].className"
+            @update:model-value="component.setSetting('className', $event)"
+          />
+        </template>
+        <template #cell(fill)="{ rowIndex }">
+          <va-color-input
+            class="color-fill"
+            v-model="fields[rowIndex].fill"
+            @update:model-value="component.setSetting('fill', $event)"
+          />
+        </template>
+        <template #cell(stroke)="{ rowIndex }">
+          <va-color-input
+            class="color-stroke"
+            v-model="fields[rowIndex].stroke"
+            @update:model-value="component.setSetting('stroke', $event)"
+          />
+        </template>
+        <template #cell(strokeWidth)="{ rowIndex }">
+          <va-input
+            class="input-stroke-width"
+            v-model="fields[rowIndex].strokeWidth"
+            @update:model-value="component.setSetting('strokeWidth', $event)"
+          />
+        </template>
+      </va-data-table>
     </div>
   </va-collapse>
   <va-collapse v-model="opened.storeSection" header="Store settings">

@@ -9,14 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface ITimeSettings {
+export interface ITimeSettings {
   label: string;
   availableEvents: string[];
   events: EventItem[];
 }
 
-interface ITimeComponent {
+export interface ITimeComponent {
   settings: ITimeSettings;
   setSetting: (key: string, value: any) => void;
 }
@@ -30,21 +29,23 @@ const options: Ref<string[]> = ref(component.settings.availableEvents);
 const events: Ref<EventItem[]> = ref(component.settings.events);
 
 const addEvent = () => {
-  component.settings.events.push({
+  const events = component.settings.events;
+  events.push({
     name: "",
     trigger: "",
   });
 };
 
 const deleteEvent = (id: number) => {
-  component.settings.events.splice(id, 1)
+  const events = component.settings.events;
+  events.splice(id, 1);
 };
 </script>
 
 <template>
   <va-input
     class="event-input"
-    v-model="component.settings.label"
+    :model-value="component.settings.label"
     label="Label text"
     @update:model-value="component.setSetting('label', $event)"
   />

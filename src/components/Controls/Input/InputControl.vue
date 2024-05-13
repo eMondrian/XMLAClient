@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface IInputSettingsProps {
+export interface IInputSettingsProps {
   label?: string;
   availableEvents?: string[];
   events?: EventItem[];
@@ -26,14 +25,16 @@ const settingsComponent = InputSettings;
 const EventBus = inject("customEventBus") as any;
 
 const inputVal: Ref<string> = ref("");
-  
+
 const props = withDefaults(defineProps<IInputSettingsProps>(), {
   label: "Next page",
   availableEvents: (): string[] => ["Blur", "Input"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Input",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Input",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);

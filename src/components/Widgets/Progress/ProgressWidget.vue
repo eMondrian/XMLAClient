@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IProgressSettingsProps {
+export interface IProgressSettingsProps {
   progress?: string;
   fillColor?: string;
   gradientColor?: string;
@@ -37,7 +36,7 @@ const props = withDefaults(defineProps<IProgressSettingsProps>(), {
   isGradient: false,
   isVertical: false,
   rotation: 90,
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
@@ -53,8 +52,9 @@ defineExpose({
 });
 
 const parsedProgress = computed(() => {
-  if (!isNaN(parseFloat(settings.value.progress))) return `${(parseFloat(settings.value.progress) * 100).toFixed(2)}%`;
-  
+  if (!isNaN(parseFloat(settings.value.progress)))
+    return `${(parseFloat(settings.value.progress) * 100).toFixed(2)}%`;
+
   let processedString = settings.value.progress;
   const regex = /{(.*?)}/g;
   const parts = processedString.match(regex);
@@ -71,12 +71,12 @@ const parsedProgress = computed(() => {
 
     processedString = processedString.replace(element, res);
   });
-  
-  return !isNaN(parseFloat(processedString)) 
-    ? parseFloat(processedString) > 100 
+
+  return !isNaN(parseFloat(processedString))
+    ? parseFloat(processedString) > 100
       ? "100%"
       : `${processedString}%`
-        : `${processedString}%` ;
+    : `${processedString}%`;
 });
 
 const backgroundProgressColor = computed(() => {
@@ -86,23 +86,27 @@ const backgroundProgressColor = computed(() => {
 });
 
 const transition = computed(() => {
-  return settings.value.isVertical ? 'height .7s ease' : 'width .7s ease';
+  return settings.value.isVertical ? "height .7s ease" : "width .7s ease";
 });
 
 const verticalPositionFiller = computed(() => {
-  return settings.value.isVertical ? `${parseFloat(parsedProgress.value)}%` : '35px';
+  return settings.value.isVertical
+    ? `${parseFloat(parsedProgress.value)}%`
+    : "35px";
 });
 
 const horizontalPositionFiller = computed(() => {
-  return !settings.value.isVertical ? `${parseFloat(parsedProgress.value)}%` : '35px';
+  return !settings.value.isVertical
+    ? `${parseFloat(parsedProgress.value)}%`
+    : "35px";
 });
 
 const verticalPositionBackground = computed(() => {
-  return settings.value.isVertical ? '35px' : '100%';
+  return settings.value.isVertical ? "35px" : "100%";
 });
 
 const horizontalPositionBackground = computed(() => {
-  return !settings.value.isVertical ? '35px' : '100%';
+  return !settings.value.isVertical ? "35px" : "100%";
 });
 </script>
 

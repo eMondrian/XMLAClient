@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IVideoSettingsProps {
+export interface IVideoSettingsProps {
   videoSettings?: ObjectFitSetting;
   videoUrl?: string;
 }
@@ -30,12 +29,11 @@ const props = withDefaults(defineProps<IVideoSettingsProps>(), {
     fit: "None",
   }),
   videoUrl: "",
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
 const { getState } = useSerialization(settings);
-
 
 defineExpose({
   setSetting,

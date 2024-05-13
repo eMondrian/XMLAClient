@@ -9,14 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IColorSettings {
+export interface IColorSettings {
   label: string;
   availableEvents: string[];
   events: EventItem[];
 }
 
-interface IColorComponent {
+export interface IColorComponent {
   settings: IColorSettings;
   setSetting: (key: string, value: any) => void;
 }
@@ -37,14 +36,14 @@ const addEvent = () => {
 };
 
 const deleteEvent = (id: number) => {
-  events.value.splice(id, 1)
+  events.value.splice(id, 1);
 };
 </script>
 
 <template>
   <va-input
     class="event-input"
-    v-model="component.settings.label"
+    :model-value="component.settings.label"
     label="Label text"
     @update:model-value="component.setSetting('label', $event)"
   />

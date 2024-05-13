@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface ISVGSettingsProps {
+export interface ISVGSettingsProps {
   initialState?: any;
   src?: string;
   classesConfig?: Config;
@@ -33,18 +32,17 @@ const scope = inst?.type.__scopeId;
 const props = withDefaults(defineProps<ISVGSettingsProps>(), {
   src: "/demo/test.svg",
   classesConfig: () => ({
-    'primary': {
-      fill: '#ff5733',
-      stroke: '#1e8449',
-      strokeWidth: '5px'
+    primary: {
+      fill: "#ff5733",
+      stroke: "#1e8449",
+      strokeWidth: "5px",
     },
   }),
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
 const { getState } = useSerialization(settings);
-
 
 const styles: Ref<string> = computed(() => {
   let string: string = "";
@@ -67,7 +65,7 @@ const styles: Ref<string> = computed(() => {
 });
 
 onMounted(async () => {
-  if(!settings.value.src) return;
+  if (!settings.value.src) return;
   const req = await fetch(settings.value.src);
   const svgObject = await req.text();
   svgSource.value = svgObject;

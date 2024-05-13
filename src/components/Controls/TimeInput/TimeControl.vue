@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface ITimeSettingsProps {
+export interface ITimeSettingsProps {
   label?: string;
   availableEvents?: string[];
   events?: EventItem[];
@@ -30,10 +29,12 @@ const selectValue: Ref<Date> = ref<Date>(new Date());
 const props = withDefaults(defineProps<ITimeSettingsProps>(), {
   label: "Test",
   availableEvents: (): string[] => ["Click", "Clear", "Blur", "Focus"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Click",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Click",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -50,16 +51,16 @@ const click = () => {
 
 const clear = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Clear") {
+    if (e.trigger === "Clear") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
-    }  
+    }
   });
 };
 
 const focus = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Focus") {
+    if (e.trigger === "Focus") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
     }
@@ -68,7 +69,7 @@ const focus = () => {
 
 const blur = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Blur") {
+    if (e.trigger === "Blur") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
     }
@@ -78,7 +79,7 @@ const blur = () => {
 defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
-<template> 
+<template>
   <va-time-input
     class="time-control"
     v-model="selectValue"

@@ -219,7 +219,7 @@ const totalContentSize = computed(() => {
 });
 
 const getPivotTableData = debounce(async () => {
-  const store = storeManager.getStore(storeId.value) as XMLAStore;
+  const store = storeManager.getStore(storeId.value) as unknown as XMLAStore;
 
   const mdxResponce = await store.getData();
   console.log(mdxResponce);

@@ -9,14 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IButtonSettings{
+export interface IButtonSettings {
   title: string;
   availableEvents: string[];
   events: EventItem[];
 }
 
-interface IButtonComponent {
+export interface IButtonComponent {
   settings: IButtonSettings;
   setSetting: (key: string, value: any) => void;
 }
@@ -44,7 +43,7 @@ const deleteEvent = (id: number) => {
 <template>
   <va-input
     class="event-input"
-    v-model="component.settings.title"
+    :model-value="component.settings.title"
     label="Button text"
     @update:model-value="component.setSetting('title', $event)"
   />

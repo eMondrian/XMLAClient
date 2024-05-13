@@ -12,18 +12,22 @@ Contributors: Smart City Jena
 import { v4 } from "uuid";
 import { ref, onMounted, type Ref } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
-import type { CollapseState, ImageGalleryItem, ImageSettings } from "@/@types/widgets";
+import type {
+  CollapseState,
+  ImageGalleryItem,
+  ImageSettings,
+} from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 
-interface ImageSettings {
+export interface ImageComponentSettings {
   images: ImageGalleryItem[];
   imagesSettings: ImageSettings;
 }
 
-interface ImageComponent {
+export interface ImageComponent {
   store: Store | XMLAStore;
-  settings: ImageSettings;
+  settings: ImageComponentSettings;
   setSetting: (key: string, value: any) => void;
   setStore: (store: Store | XMLAStore) => void;
 }
@@ -40,7 +44,8 @@ let stores: Ref<any[]> = ref([]) as Ref<any[]>;
 const requestResult: Ref<string> = ref("");
 
 const addNew = () => {
-  component.settings.images?.push({
+  const images = component.settings.images;
+  images?.push({
     id: v4(),
     url: "Test",
   });
@@ -101,14 +106,14 @@ onMounted(() => {
         </div>
       </div>
       <va-select
-        v-model="component.settings.imagesSettings.fit"
+        :model-value="component.settings.imagesSettings.fit"
         label="Fit"
         :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
         @update:model-value="component.setSetting('fit', $event)"
       >
       </va-select>
       <va-input
-        v-model="component.settings.imagesSettings.diashowInterval"
+        :model-value="component.settings.imagesSettings.diashowInterval"
         label="Diashow interval"
         @update:model-value="component.setSetting('diashowInterval', $event)"
       >

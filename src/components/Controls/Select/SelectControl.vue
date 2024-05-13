@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface ISelectSettingsProps {
+export interface ISelectSettingsProps {
   label?: string;
   options?: string[];
   selectedValue?: string;
@@ -32,10 +31,12 @@ const props = withDefaults(defineProps<ISelectSettingsProps>(), {
   options: (): string[] => ["Test"],
   selectedValue: "",
   availableEvents: (): string[] => ["Click", "Clear", "Scroll Bottom"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Click",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Click",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -52,16 +53,16 @@ const click = () => {
 
 const clear = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Clear") {
+    if (e.trigger === "Clear") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name, settings.value.selectedValue);
-    }  
+    }
   });
 };
 
 const scrollBottom = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Scroll Bottom") {
+    if (e.trigger === "Scroll Bottom") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
     }
@@ -71,9 +72,9 @@ const scrollBottom = () => {
 defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
-<template> 
+<template>
   <va-select
-    v-model="settings.selectedValue"
+    :model-value="settings.selectedValue"
     :label="settings.label"
     :options="settings.options"
     placeholder="Select an option"
@@ -83,4 +84,3 @@ defineExpose({ setSetting, settings, settingsComponent, getState });
     clearable
   />
 </template>
-

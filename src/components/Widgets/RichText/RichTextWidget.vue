@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IRichTextEditorSettingsProps {
+export interface IRichTextEditorSettingsProps {
   editor?: string;
 }
 
@@ -25,7 +24,7 @@ const settingsComponent = RichTextWidgetSettings;
 
 const props = withDefaults(defineProps<IRichTextEditorSettingsProps>(), {
   editor: "",
-})
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
@@ -39,8 +38,6 @@ defineExpose({
   store,
   setStore,
 });
-
-
 
 const parsedEditorText = computed(() => {
   let processedString = settings.value.editor;
@@ -64,7 +61,7 @@ const parsedEditorText = computed(() => {
 
 <template>
   <div class="text-container">
-    <div class="editor-content" v-html="parsedEditorText"/>
+    <div class="editor-content" v-html="parsedEditorText" />
   </div>
 </template>
 
@@ -87,27 +84,27 @@ const parsedEditorText = computed(() => {
     font-size: 2rem;
     margin-bottom: 1rem;
   }
-  
+
   h2 {
     font-size: 1.75rem;
     margin-bottom: 1rem;
   }
-  
+
   h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  
+
   h4 {
     font-size: 1.25rem;
     margin-bottom: 1rem;
   }
-  
+
   h5 {
     font-size: 1.11rem;
     margin-bottom: 1rem;
   }
-  
+
   h6 {
     font-size: 0.9rem;
     margin-bottom: 1rem;

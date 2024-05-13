@@ -9,14 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface IDateSettingsProps {
+export interface IDateSettingsProps {
   label?: string;
   availableEvents?: string[];
   events?: EventItem[];
 }
 
-import { inject, ref, type Ref} from "vue";
+import { inject, ref, type Ref } from "vue";
 import { useSettings } from "@/composables/widgets/settings";
 import { useSerialization } from "@/composables/widgets/serialization";
 import DateSettings from "@/components/Controls/DateInput/DateSettings.vue";
@@ -30,10 +29,12 @@ const selectValue: Ref<Date> = ref(new Date(2024, 0, 1));
 const props = withDefaults(defineProps<IDateSettingsProps>(), {
   title: "Next page",
   availableEvents: (): string[] => ["Click", "Clear", "Blur", "Focus"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Click",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Click",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -50,16 +51,16 @@ const click = () => {
 
 const clear = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "Clear") {
+    if (e.trigger === "Clear") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
-    }  
+    }
   });
 };
 
 const focus = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "focus") {
+    if (e.trigger === "focus") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
     }
@@ -68,7 +69,7 @@ const focus = () => {
 
 const blur = () => {
   settings.value.events.forEach((e: EventItem) => {
-    if(e.trigger === "blur") {
+    if (e.trigger === "blur") {
       console.log(`${e.name} emited`);
       EventBus.emit(e.name);
     }
@@ -77,7 +78,7 @@ const blur = () => {
 defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
-<template> 
+<template>
   <va-date-input
     v-model="selectValue"
     :label="settings.label"

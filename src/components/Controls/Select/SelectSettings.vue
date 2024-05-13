@@ -9,8 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface ISelectSettings {
+export interface ISelectSettings {
   label: string;
   options: string[];
   selectedValue: string;
@@ -18,7 +17,7 @@ interface ISelectSettings {
   events: EventItem[];
 }
 
-interface ISelectComponent {
+export interface ISelectComponent {
   settings: ISelectSettings;
   setSetting: (key: string, value: any) => void;
 }
@@ -33,14 +32,17 @@ const events: Ref<EventItem[]> = ref(component.settings.events);
 const selectOptions: Ref<string[]> = ref(component.settings.options);
 
 const addEvent = () => {
-  component.settings.events.push({
+  const events = component.settings.events;
+
+  events.push({
     name: "",
     trigger: "",
   });
 };
 
 const addOption = () => {
-  component.settings.options.push('');
+  const options = component.settings.options;
+  options.push("");
 };
 
 const deleteEvent = (id: number) => {
@@ -49,7 +51,7 @@ const deleteEvent = (id: number) => {
 
 const deleteOption = (id: number, option: string) => {
   if (component.settings.selectedValue === option) {
-    component.settings.selectedValue = '';
+    component.settings.selectedValue = "";
   }
   selectOptions.value.splice(id, 1);
 };
@@ -58,7 +60,7 @@ const deleteOption = (id: number, option: string) => {
 <template>
   <va-input
     class="event-input"
-    v-model="component.settings.label"
+    :model-value="component.settings.label"
     label="Label text"
     @update:model-value="component.setSetting('label', $event)"
   />
@@ -67,14 +69,18 @@ const deleteOption = (id: number, option: string) => {
     <va-button @click="addOption">Add</va-button>
   </div>
   <!-- <div> -->
-    <div class="options-list" v-for="(option, index) in selectOptions" :key="index">
-      <va-input v-model="selectOptions[index]" label="Option" />
-      <va-button
-        preset="plain"
-        icon="delete"
-        @click="deleteOption(index, option)"
-      />
-    </div>
+  <div
+    class="options-list"
+    v-for="(option, index) in selectOptions"
+    :key="index"
+  >
+    <va-input v-model="selectOptions[index]" label="Option" />
+    <va-button
+      preset="plain"
+      icon="delete"
+      @click="deleteOption(index, option)"
+    />
+  </div>
   <!-- </div> -->
   <div class="events-list">
     <div class="events-list-label">

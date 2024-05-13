@@ -9,14 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
-
-interface IColorSettingsProps {
+export interface IColorSettingsProps {
   label?: string;
   availableEvents?: string[];
   events?: EventItem[];
 }
 
-import { inject, ref, type Ref} from "vue";
+import { inject, ref, type Ref } from "vue";
 import { useSettings } from "@/composables/widgets/settings";
 import { useSerialization } from "@/composables/widgets/serialization";
 import ColorSettings from "@/components/Controls/ColorInput/ColorSettings.vue";
@@ -28,10 +27,12 @@ const settingsComponent = ColorSettings;
 const props = withDefaults(defineProps<IColorSettingsProps>(), {
   label: "Test",
   availableEvents: (): string[] => ["Click"],
-  events: (): EventItem[] => [{
-    name: "Next page",
-    trigger: "Click",
-  }]
+  events: (): EventItem[] => [
+    {
+      name: "Next page",
+      trigger: "Click",
+    },
+  ],
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
@@ -51,7 +52,7 @@ const click = () => {
 defineExpose({ setSetting, settings, settingsComponent, getState });
 </script>
 
-<template> 
+<template>
   <va-color-input
     class="color-control"
     v-model="selectValue"

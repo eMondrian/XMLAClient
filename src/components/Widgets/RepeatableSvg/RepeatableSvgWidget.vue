@@ -9,16 +9,15 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IRepeatableSVGSettingsProps {
+export interface IRepeatableSVGSettingsProps {
   src?: string;
   activeItemStyles?: {
-    fill: string,
-    stroke: string,
+    fill: string;
+    stroke: string;
   };
   defaultItemStyles?: {
-    fill: string,
-    stroke: string,
+    fill: string;
+    stroke: string;
   };
   repeations?: string;
   progress?: string;
@@ -46,8 +45,7 @@ const props = withDefaults(defineProps<IRepeatableSVGSettingsProps>(), {
   }),
   repeations: "4",
   progress: "0.5",
-})
-
+});
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
@@ -55,11 +53,10 @@ const { getState } = useSerialization(settings);
 const svgSource: Ref<string> = ref("");
 
 onMounted(async () => {
-  if(!settings.value.src) return;
+  if (!settings.value.src) return;
   const req = await fetch(settings.value.src);
   const svgObject = await req.text();
   svgSource.value = svgObject;
-
 });
 
 defineExpose({
@@ -93,16 +90,19 @@ const createParsedData = (prop) => {
     });
     return processedString;
   });
-}
+};
 
 const repeationsToNumber: Ref<number> = computed(() => {
-  return !isNaN(parseFloat(settings.value.repeations)) ? Math.floor(Number(settings.value.repeations)) : 0;
-})
+  return !isNaN(parseFloat(settings.value.repeations))
+    ? Math.floor(Number(settings.value.repeations))
+    : 0;
+});
 
 const progressToNumber: Ref<number> = computed(() => {
-  return !isNaN(parseFloat(createParsedData(settings.value.progress).value)) ? Number(createParsedData(settings.value.progress).value) : 0;
-})
-
+  return !isNaN(parseFloat(createParsedData(settings.value.progress).value))
+    ? Number(createParsedData(settings.value.progress).value)
+    : 0;
+});
 </script>
 
 <template>
@@ -123,7 +123,7 @@ const progressToNumber: Ref<number> = computed(() => {
             x="0"
             y="0"
             style="fill: #adadad"
-            :width="100 * repeationsToNumber * progressToNumber"  
+            :width="100 * repeationsToNumber * progressToNumber"
             height="100"
           />
         </mask>
@@ -162,9 +162,5 @@ const progressToNumber: Ref<number> = computed(() => {
   display: flex;
   flex-direction: row;
   object-fit: contain;
-}
-
-.svg {
-
 }
 </style>

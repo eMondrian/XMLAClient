@@ -47,7 +47,7 @@ export function useWidgets() {
       return JSON.stringify(state);
     },
     loadState: (state) => {
-      console.warn("Not implemented");
+      console.warn("Not implemented", state);
     },
   };
 

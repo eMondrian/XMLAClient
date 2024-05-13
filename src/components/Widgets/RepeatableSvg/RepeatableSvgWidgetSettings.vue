@@ -9,22 +9,21 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-
-interface IRepeatableSVGSettings {
+export interface IRepeatableSVGSettings {
   src: string;
   activeItemStyles: {
-    fill: string,
-    stroke: string,
+    fill: string;
+    stroke: string;
   };
   defaultItemStyles: {
-    fill: string,
-    stroke: string,
+    fill: string;
+    stroke: string;
   };
   repeations: string;
   progress: string;
 }
 
-interface IRepeatableSVGComponent {
+export interface IRepeatableSVGComponent {
   store: Store | XMLAStore;
   settings: IRepeatableSVGSettings;
   setSetting: (key: string, value: any) => void;
@@ -79,33 +78,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" header="Repeatable SVG  widget settings">
+  <va-collapse
+    v-model="opened.widgetSection"
+    header="Repeatable SVG  widget settings"
+  >
     <div class="settings-container">
       <va-input
-        v-model="component.settings.src"
+        :model-value="component.settings.src"
         label="src"
         @update:model-value="component.setSetting('src', $event)"
       />
       <va-input
-        v-model="component.settings.repeations"
+        :model-value="component.settings.repeations"
         label="repeations"
         @update:model-value="component.setSetting('repeations', $event)"
       />
       <va-input
-        v-model="component.settings.progress"
+        :model-value="component.settings.progress"
         label="progress"
         @update:model-value="component.setSetting('progress', $event)"
       />
       <div class="colors">
         <va-color-input
           class="color-input"
-          v-model="component.settings.activeItemStyles.fill"
+          :model-value="component.settings.activeItemStyles.fill"
           label="Active item fill"
           @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
-          v-model="component.settings.activeItemStyles.stroke"
+          :model-value="component.settings.activeItemStyles.stroke"
           label="Active item stroke"
           @update:model-value="component.setSetting('stroke', $event)"
         />
@@ -113,13 +115,13 @@ onMounted(() => {
       <div class="colors">
         <va-color-input
           class="color-input"
-          v-model="component.settings.defaultItemStyles.fill"
+          :model-value="component.settings.defaultItemStyles.fill"
           label="Default item fill"
           @update:model-value="component.setSetting('fill', $event)"
         />
         <va-color-input
           class="color-input"
-          v-model="component.settings.defaultItemStyles.stroke"
+          :model-value="component.settings.defaultItemStyles.stroke"
           label="Default item stroke"
           @update:model-value="component.setSetting('stroke', $event)"
         />
@@ -141,7 +143,6 @@ onMounted(() => {
             }"
             value-by="id"
             name="store-radio-group"
-
           />
         </div>
         <pre class="response">{{ requestResult }}</pre>

@@ -91,13 +91,13 @@ export function useMoveableLayout() {
       zIndexMin,
       countMaxZValues,
       countMinZValues,
-    }
+    };
   };
 
   const updateElementZIndex = (refs: any, id: string, zIndex: number) => {
     const ref = refs[id] as HTMLElement[];
     const componentRef = refs[`${id}_control`] as { $el: HTMLElement }[];
-  
+
     if (ref && componentRef) {
       ref[0].style["z-index"] = zIndex;
       componentRef[0].$el.style["z-index"] = zIndex;
