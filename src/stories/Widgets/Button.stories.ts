@@ -11,16 +11,15 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import ButtonControl from '@/components/Controls/Button/ButtonControl.vue';
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof ButtonControl> = {
+  title: "Widget/StaticWidgets/ButtonControl",
+  component: ButtonControl,
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 50px; background-color: #fafafa; border-radius: 5px;"><story /></div>',
     }),
   ],
 };
@@ -34,13 +33,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    title: 'Next page',
+    availableEvents: ['Click'],
+    events: [{ name: 'Next page', trigger: 'Click' }],
   },
 };

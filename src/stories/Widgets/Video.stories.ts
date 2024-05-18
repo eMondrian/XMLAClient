@@ -11,18 +11,17 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import VideoWidget from '@/components/Widgets/Video/VideoWidget.vue';
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof VideoWidget> = {
+  title: "Widget/StaticWidgets/VideoWidget",
+  component: VideoWidget,
   tags: ["autodocs"],
-  decorators: [
-    () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
-    }),
-  ],
+  // decorators: [
+  //   () => ({
+  //     template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+  //   }),
+  // ],
 };
 
 export default meta;
@@ -34,13 +33,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    videoSettings: {fit: "None"},
+    videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
 };
+

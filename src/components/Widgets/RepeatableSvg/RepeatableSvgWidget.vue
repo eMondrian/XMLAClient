@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<IRepeatableSVGSettingsProps>(), {
     fill: "#777777",
     stroke: "#777777",
   }),
-  repeations: "4",
+  repeations: "3",
   progress: "0.5",
 })
 

@@ -11,12 +11,11 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import RichTextEditor from '@/components/Widgets/RichText/RichTextWidget.vue';
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof RichTextEditor> = {
+  title: "Widget/StaticWidgets/RichTextEditor",
+  component: RichTextEditor,
   tags: ["autodocs"],
   decorators: [
     () => ({
@@ -34,13 +33,12 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    editor: "<p>This is an example of the initial content of the editor</p>"
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    editor: "<h1>Heading</h1><p>Editor custom content</p>"
   },
 };

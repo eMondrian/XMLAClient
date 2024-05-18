@@ -33,10 +33,20 @@ const scope = inst?.type.__scopeId;
 const props = withDefaults(defineProps<ISVGSettingsProps>(), {
   src: "/demo/test.svg",
   classesConfig: () => ({
-    'primary': {
-      fill: '#ff5733',
-      stroke: '#1e8449',
-      strokeWidth: '5px'
+    primary: {
+      stroke: "#fff",
+      fill: "#000",
+      strokeWidth: "5px",
+    },
+    secondary: {
+      stroke: "#ffffff",
+      fill: "#ff0000",
+      strokeWidth: "3px",
+    },
+    ternary: {
+      stroke: "#aaaaff",
+      fill: "#ffff00",
+      strokeWidth: "2px",
     },
   }),
 })

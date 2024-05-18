@@ -28,7 +28,7 @@ const settingsComponent = DateSettings;
 const selectValue: Ref<Date> = ref(new Date(2024, 0, 1));
 
 const props = withDefaults(defineProps<IDateSettingsProps>(), {
-  title: "Next page",
+  label: "Next page",
   availableEvents: (): string[] => ["Click", "Clear", "Blur", "Focus"],
   events: (): EventItem[] => [{
     name: "Next page",

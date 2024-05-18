@@ -10,17 +10,31 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import { setup } from "@storybook/vue3";
+import {
+  createVuesticEssential,
+  VaDateInput
+} from "vuestic-ui";
+import "vuestic-ui/css";
+import "@/assets/main.css";
+import DateControl from '@/components/Controls/DateInput/DateControl.vue';
+setup(async (app) => {
+  app.use(
+    createVuesticEssential({
+      components: {
+        VaDateInput
+      },
+    }),
+  );
+});
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof DateControl> = {
+  title: "Widget/StaticWidgets/DateControl",
+  component: DateControl,
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px;"><story /></div>',
     }),
   ],
 };
@@ -34,13 +48,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    label: 'Next page',
+    availableEvents: ["Click", "Clear", "Blur", "Focus"],
+    events: [{ name: 'Next page', trigger: 'Click' }],
   },
 };

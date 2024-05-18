@@ -11,12 +11,11 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import IconWidget from '@/components/Widgets/Icon/IconWidget.vue';
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof IconWidget> = {
+  title: "Widget/StaticWidgets/IconWidget",
+  component: IconWidget,
   tags: ["autodocs"],
   decorators: [
     () => ({
@@ -34,13 +33,24 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    currentIcon: "book_2",
+    iconColor: "#000",
+    iconSize: 100,
+    isIconFilled: false,
+    strokeWeight: 100,
+    opticSize: 48,
+    grade: 48,
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    currentIcon: "book_5",
+    iconColor: "#09df08",
+    iconSize: 200,
+    isIconFilled: true,
+    strokeWeight: 200,
+    opticSize: 30,
+    grade: 65,
   },
 };

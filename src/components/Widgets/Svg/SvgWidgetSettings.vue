@@ -67,7 +67,26 @@ onMounted(() => {
   }
 });
 
-const fields: Ref<StyleFields[]> = ref([{className: 'primary', fill: '#ff5733', stroke: '#1e8449', strokeWidth: '5'}]);
+const fields: Ref<StyleFields[]> = ref([
+  {
+    className: "primary",
+    stroke: "#fff",
+    fill: "#000",
+    strokeWidth: "5px",
+  },
+  {
+    className: "secondary",
+    stroke: "#ffffff",
+    fill: "#ff0000",
+    strokeWidth: "3px",
+  },
+  {
+    className: "ternary",
+    stroke: "#aaaaff",
+    fill: "#ffff00",
+    strokeWidth: "2px",
+  },
+]);
 
 const addItems = () => {
   fields.value.push({

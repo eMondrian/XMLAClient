@@ -10,17 +10,30 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
+import { setup } from "@storybook/vue3";
+import {
+  createVuesticEssential,
+  VaColorInput
+} from "vuestic-ui";
 
-import TextWidget from "@/components/Widgets/Text/TextWidget.vue";
-
+import ColorControl from '@/components/Controls/ColorInput/ColorControl.vue';
+setup(async (app) => {
+  app.use(
+    createVuesticEssential({
+      components: {
+        VaColorInput,
+      },
+    }),
+  );
+});
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof TextWidget> = {
-  title: "Widget/StaticWidgets/Text",
-  component: TextWidget,
+const meta: Meta<typeof ColorControl> = {
+  title: "Widget/StaticWidgets/ColorControl",
+  component: ColorControl,
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding-left: 20px;"><story /></div>',
     }),
   ],
 };
@@ -34,13 +47,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    text: "Test text",
-    fontSize: 12,
-    fontColor: "#000",
-    fontWeight: "normal",
-    fontStyle: "normal",
-    textDecoration: "None",
-    horizontalAlign: "Left",
-    verticalAlign: "Top",
+    label: 'Next page',
+    availableEvents: ['Click'],
+    events: [{ name: 'Next page', trigger: 'Click' }],
   },
 };
