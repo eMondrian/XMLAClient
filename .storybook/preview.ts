@@ -14,6 +14,7 @@ import {
   VaTimeInput,
   VaDataTable,
   VaPagination,
+  VaIcon
 } from "vuestic-ui";
 import "vuestic-ui/css";
 import "@/assets/main.css";
@@ -33,6 +34,7 @@ setup((app) => {
         VaTimeInput,
         VaDataTable,
         VaPagination,
+        VaIcon
       },
     }),
   );

@@ -14,12 +14,8 @@ import type { Meta, StoryObj } from "@storybook/vue3";
 import { setup } from "@storybook/vue3";
 import {
   createVuesticEssential,
-  VaIcon,
   createIconsConfig,
-  VaButton,
 } from "vuestic-ui";
-import "vuestic-ui/css";
-import "@/assets/main.css";
 
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
 import ImageWidget from "@/components/Widgets/Image/ImageWidget.vue";
@@ -38,10 +34,6 @@ setup(async (app) => {
   console.log(fonts);
   app.use(
     createVuesticEssential({
-      components: {
-        VaIcon,
-        VaButton,
-      },
       config: {
         icons: createIconsConfig({
           fonts: [

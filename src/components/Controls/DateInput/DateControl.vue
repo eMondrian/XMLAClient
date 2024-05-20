@@ -25,7 +25,7 @@ import type { EventItem } from "@/@types/controls";
 const EventBus = inject("customEventBus") as any;
 const settingsComponent = DateSettings;
 
-const selectValue: Ref<Date> = ref(new Date(2024, 0, 1));
+const selectValue: Ref<Date> = ref(new Date());
 
 const props = withDefaults(defineProps<IDateSettingsProps>(), {
   label: "Next page",

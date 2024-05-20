@@ -20,7 +20,7 @@ const meta: Meta<typeof TimeControl> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px; color: black;"><story /></div>',
     }),
   ],
 };
