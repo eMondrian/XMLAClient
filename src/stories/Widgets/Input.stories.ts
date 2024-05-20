@@ -10,22 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaInput,
-} from "vuestic-ui";
 
 import InputControl from '@/components/Controls/Input/InputControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaInput
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof InputControl> = {
   title: "Widget/StaticWidgets/InputControl",

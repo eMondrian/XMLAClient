@@ -10,22 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaColorInput
-} from "vuestic-ui";
 
 import ColorControl from '@/components/Controls/ColorInput/ColorControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaColorInput,
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof ColorControl> = {
   title: "Widget/StaticWidgets/ColorControl",
@@ -33,7 +20,7 @@ const meta: Meta<typeof ColorControl> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding-left: 20px;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding-left: 20px; color: black;"><story /></div>',
     }),
   ],
 };

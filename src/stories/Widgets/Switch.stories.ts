@@ -10,22 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaSwitch
-} from "vuestic-ui";
 
 import SwitchControl from '@/components/Controls/Switch/SwitchControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaSwitch
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof SwitchControl> = {
   title: "Widget/StaticWidgets/SwitchControl",
@@ -33,7 +20,7 @@ const meta: Meta<typeof SwitchControl> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px; color: black;"><story /></div>',
     }),
   ],
 };

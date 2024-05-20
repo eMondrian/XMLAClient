@@ -20,7 +20,7 @@ const meta: Meta<typeof TextWidget> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 300px; background-color: #fafafa; color: black;"><story /></div>',
     }),
   ],
 };

@@ -12,6 +12,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 
 import IconWidget from '@/components/Widgets/Icon/IconWidget.vue';
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof IconWidget> = {
   title: "Widget/StaticWidgets/IconWidget",

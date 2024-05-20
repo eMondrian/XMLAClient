@@ -12,6 +12,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 
 import RichTextEditor from '@/components/Widgets/RichText/RichTextWidget.vue';
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof RichTextEditor> = {
   title: "Widget/StaticWidgets/RichTextEditor",
@@ -19,7 +20,7 @@ const meta: Meta<typeof RichTextEditor> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 300px; background-color: #fafafa; color: black;"><story /></div>',
     }),
   ],
 };

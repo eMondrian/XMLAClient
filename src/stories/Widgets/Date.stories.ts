@@ -10,23 +10,8 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaDateInput
-} from "vuestic-ui";
-import "vuestic-ui/css";
-import "@/assets/main.css";
+
 import DateControl from '@/components/Controls/DateInput/DateControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaDateInput
-      },
-    }),
-  );
-});
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof DateControl> = {
   title: "Widget/StaticWidgets/DateControl",
@@ -34,7 +19,7 @@ const meta: Meta<typeof DateControl> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px; color: black;"><story /></div>',
     }),
   ],
 };

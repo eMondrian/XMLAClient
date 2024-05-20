@@ -10,22 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaSelect
-} from "vuestic-ui";
 
 import SelectControl from '@/components/Controls/Select/SelectControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaSelect
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof SelectControl> = {
   title: "Widget/StaticWidgets/SelectControl",
@@ -33,7 +20,7 @@ const meta: Meta<typeof SelectControl> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px;"><story /></div>',
+      template: '<div style="width: 300px; height: 100px; background-color: #fafafa; padding: 20px; color: black;"><story /></div>',
     }),
   ],
 };

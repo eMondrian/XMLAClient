@@ -20,7 +20,7 @@ const meta: Meta<typeof ProgressWidget> = {
   tags: ["autodocs"],
   decorators: [
     () => ({
-      template: '<div style="width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; background-color: #fafafa;"><story /></div>',
+      template: '<div style="width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; background-color: #fafafa; color: black;"><story /></div>',
     }),
   ],
   argTypes: {

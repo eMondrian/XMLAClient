@@ -10,22 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaTimeInput
-} from "vuestic-ui";
 
 import TimeControl from '@/components/Controls/TimeInput/TimeControl.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaTimeInput
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof TimeControl> = {
   title: "Widget/StaticWidgets/TimeControl",

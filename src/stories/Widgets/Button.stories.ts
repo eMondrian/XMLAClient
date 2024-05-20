@@ -12,6 +12,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 
 import ButtonControl from '@/components/Controls/Button/ButtonControl.vue';
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof ButtonControl> = {
   title: "Widget/StaticWidgets/ButtonControl",

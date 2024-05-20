@@ -10,25 +10,9 @@
 */
 
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
-import {
-  createVuesticEssential,
-  VaDataTable,
-  VaPagination,
-  VaSelect
-} from "vuestic-ui";
+
 import TableWidget from '@/components/Widgets/Table/TableWidget.vue';
-setup(async (app) => {
-  app.use(
-    createVuesticEssential({
-      components: {
-        VaDataTable,
-        VaPagination,
-        VaSelect
-      },
-    }),
-  );
-});
+
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
 const meta: Meta<typeof TableWidget> = {
   title: "Widget/StaticWidgets/TableWidget",
