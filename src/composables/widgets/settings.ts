@@ -1,4 +1,4 @@
-import { ref, type Ref } from "vue";
+import { ref, type Ref, watch } from "vue";
 
 export function useSettings<Type>(props: any) {
   const settings = ref({}) as Ref<Type>;
@@ -11,6 +11,15 @@ export function useSettings<Type>(props: any) {
     settings.value[key] = value;
   };
 
+  watch(
+    props,
+    () => {
+      Object.keys(props).forEach((key) => {
+        settings.value[key] = props[key];
+      });
+    }
+  )
+  
   return {
     settings,
     setSetting,
