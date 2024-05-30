@@ -95,6 +95,7 @@
     "react-dom": "^18.2.0",
     "sass": "^1.70.0",
     "storybook": "^8.1.0",
+    "storybook-addon-jsdoc-to-mdx": "^1.0.3",
     "ts-node": "^10.9.1",
     "typescript": "~5.3.3",
     "vite": "^4.5.1",
