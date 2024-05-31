@@ -60,7 +60,10 @@ Contributors: Smart City Jena
                 Add
               </va-button>
             </template>
-            <va-dropdown-content class="dropdown-list">
+            <va-dropdown-content 
+              class="dropdown-list"
+              style="background-color: var(--app-dropdown-background); color: var(--app-font-color);"
+            >
               <div
                 class="dropdown-item"
                 v-for="widget of widgetOptions"
@@ -150,7 +153,6 @@ Contributors: Smart City Jena
     <SidebarSettings
       v-model="showSidebar"
       :settingsSection="settingsSection"
-      @updateBackgroundColor="updateBackgroundColor"
       class="sidebar"
     ></SidebarSettings>
   </div>
@@ -159,7 +161,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
-import { getCurrentInstance, markRaw, ref } from "vue";
+import { getCurrentInstance, markRaw, ref, provide } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
@@ -176,7 +178,7 @@ const editEnabled = ref(false);
 const showSidebar = ref(false);
 const settingsSection = ref(null as any);
 
-const settingsBackground = ref("#fefefe");
+const backgroundColor = ref("");
 const isDropdownVisible = ref(false);
 const isActiveButton = ref(false);
 const isMouseOver = ref(false);
@@ -184,6 +186,7 @@ const layoutSettingsButtons = ref<
   Array<{ label: string; preset: string; action: () => void }>
 >([]);
 
+provide("backgroundColor", backgroundColor);
 const instance = getCurrentInstance();
 
 const mousedown = () => {
@@ -331,10 +334,6 @@ layoutSettingsButtons.value.push(
   { label: "Store List", preset: "primary", action: openStoreList },
   { label: "App settings", preset: "primary", action: openAppSettings },
 );
-
-const updateBackgroundColor = (newColor) => {
-  settingsBackground.value = newColor;
-};
 
 const openSettings = (id, wrapperId, type = "Control") => {
   const refs = instance?.refs;
@@ -711,6 +710,7 @@ body.no-overflow[data-v-059e0ffc] {
 <style scoped lang="scss">
 .padd {
   padding: 15px;
+  background-color: var(--app-background);
 }
 
 .app-layout-container {
@@ -738,9 +738,9 @@ body.no-overflow[data-v-059e0ffc] {
   flex-direction: column;
   height: 308px;
   padding: 0;
-  -webkit-box-shadow: 0px 4px 20px 0px #bcbcc970;
-  -moz-box-shadow: 0px 4px 20px 0px #bcbcc970;
-  box-shadow: 0px 4px 20px 0px #bcbcc970;
+  -webkit-box-shadow: var(--app-dropdown-box-shadow);
+  -moz-box-shadow: var(--app-dropdown-box-shadow);
+  box-shadow: var(--app-dropdown-box-shadow);
 }
 
 .dropdown-item {
@@ -757,7 +757,8 @@ body.no-overflow[data-v-059e0ffc] {
 
 .dropdown-item:hover {
   transition: background-color 0.5s ease;
-  background-color: #b0c0fe;
+  background-color: var(--app-dropdown-background--hover);
+  color: var(--app-font-color);
 }
 
 .widgets-dropdown-button {
@@ -838,11 +839,8 @@ body.no-overflow[data-v-059e0ffc] {
   flex-grow: 1;
   gap: 1rem;
   overflow: auto;
-  background: v-bind(settingsBackground);
+  background-color: v-bind(backgroundColor);
   border-radius: 8px;
-  // -webkit-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
-  // -moz-box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
-  // box-shadow: 0px 0px 8px 1px rgba(34, 60, 80, 0.2);
 }
 
 .dashboard-container {

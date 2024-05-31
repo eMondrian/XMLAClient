@@ -24,6 +24,19 @@ $bs-text-light: #fff;
 $bs-text-dark: #343a40;
 $bs-text-grey: #868585;
 
+//light theme colors
+$bs-background-light: #fafafa;
+$bs-font-color-light: #000000;
+$bs-background-blue-light: #b0c0fe;
+$bs-box-shadow-light: 0px 4px 20px 0px rgb(130 130 145 / 44%);
+
+//dark theme color
+$bs-background-dark: #1a1a1a;
+$bs-background-soft-dark: #242424;
+$bs-font-color-dark: #ffffff;
+$bs-icon-color-dark: #ffffff;
+$bs-box-shadow-dark: 0px 4px 20px 0px rgb(0 0 0 / 44%);
+
 :root{
   --bs-blue: #{$bs-blue};
   --bs-gradient-green: #{$bs-gradient-green};
@@ -32,4 +45,34 @@ $bs-text-grey: #868585;
   --bs-text-grey: #{$bs-text-grey};
   --bs--grey: #{$bs-grey};
   --va-primary: #{$bs-blue};
+}
+
+:root.light-theme {
+  --app-background: #{$bs-background-light};
+  --app-sidebar-navigation: #{$bs-background-light};
+  --app-sidebar-settings: #{$bs-background-light};
+  --app-font-color: #{$bs-blue};
+  --app-icon-color: #{$bs-blue};
+  --app-font-color--active: #{$bs-icon-color-dark};
+  --app-icon-color--active: #{$bs-icon-color-dark};
+  --app-font-color--hover: #{$bs-blue};
+  --app-icon-color--hover: #{$bs-blue};
+  --app-dropdown-background: #{$bs-background-light};
+  --app-dropdown-background--hover: #{$bs-background-blue-light};
+  --app-dropdown-box-shadow: #{$bs-box-shadow-light};
+}
+
+:root.dark-theme {
+  --app-background: #{$bs-background-dark};
+  --app-sidebar-navigation: #{$bs-background-soft-dark};
+  --app-sidebar-settings: #{$bs-background-soft-dark};
+  --app-font-color: #{$bs-font-color-dark};
+  --app-icon-color: #{$bs-icon-color-dark};
+  --app-font-color--active: #{$bs-font-color-dark};
+  --app-icon-color--active: #{$bs-icon-color-dark};
+  --app-font-color--hover: #{$bs-font-color-dark};
+  --app-icon-color--hover: #{$bs-icon-color-dark};
+  --app-dropdown-background: #{$bs-background-soft-dark};
+  --app-dropdown-background--hover: #{$bs-blue};
+  --app-dropdown-box-shadow: #{$bs-box-shadow-dark};
 }

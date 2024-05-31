@@ -95,7 +95,7 @@ onMounted(() => {
             v-model="image.url"
             label="Image src"
             class="image-settings-remove-input"
-            @update:model-value="component.setSetting('url', $event)"
+            @update:model-value="component.setSetting('images.url', $event)"
           />
           <va-button
             @click="() => component.settings.images.splice(index, 1)"
@@ -109,13 +109,13 @@ onMounted(() => {
         :model-value="component.settings.imagesSettings.fit"
         label="Fit"
         :options="['Cover', 'Contain', 'Stretch', 'Fill', 'None']"
-        @update:model-value="component.setSetting('fit', $event)"
+        @update:modelValue="component.setSetting('imagesSettings.fit', $event)"
       >
       </va-select>
       <va-input
         :model-value="component.settings.imagesSettings.diashowInterval"
         label="Diashow interval"
-        @update:model-value="component.setSetting('diashowInterval', $event)"
+        @update:modelValue="component.setSetting('imagesSettings.diashowInterval', $event)"
       >
       </va-input>
     </div>

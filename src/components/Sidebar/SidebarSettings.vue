@@ -16,16 +16,11 @@ import SidebarAppSettings from "./SidebarAppSettings.vue";
 
 const props = defineProps(["modelValue", "settingsSection"]);
 
-const emit = defineEmits(["update:modelValue", "updateBackgroundColor"]);
-
-const updateBackgroundColor = (color) => {
-  emit("updateBackgroundColor", color);
-};
+const emit = defineEmits(["update:modelValue"]);
 </script>
 
 <template>
   <va-sidebar
-    color="#ffffff"
     :modelValue="modelValue"
     animated="right"
     width="524px"
@@ -49,13 +44,13 @@ const updateBackgroundColor = (color) => {
           />
         </template>
         <template v-if="props.settingsSection?.type === 'App'">
-          <SidebarAppSettings @updateBackgroundColor="updateBackgroundColor" />
+          <SidebarAppSettings />
         </template>
       </div>
 
       <div class="settings-sidebar-actions">
         <va-button
-          class="sidebar-button-close"
+          class="sidebar-button-close mr-4"
           preset="primary"
           @click="$emit('update:modelValue', !modelValue)"
         >
@@ -80,28 +75,26 @@ const updateBackgroundColor = (color) => {
   flex-direction: column;
   align-items: start;
 
-  padding-bottom: 20px;
   justify-content: space-between;
+  color: var(--app-font-color);
 }
 
 .settings-sidebar-content {
   flex-grow: 1;
   width: 100%;
+  background-color: var(--app-sidebar-settings);
 }
 
 .settings-sidebar-actions {
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  margin-bottom: 12px;
-  right: 32px;
+  height: auto;
+  padding: 0 4px 32px 0;
+  background-color: var(--app-sidebar-settings);
 }
 </style>
 <style lang="scss" scoped>
-.sidebar {
-  background-color: white;
-}
-
 .sidebar-button-done {
   height: 100%;
   border: 2px solid transparent;
