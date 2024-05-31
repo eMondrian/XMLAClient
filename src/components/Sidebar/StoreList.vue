@@ -11,17 +11,19 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import StoreList from "@/components/Stores/StoreList.vue";
 import { useStoreManager } from "@/composables/storeManager";
-import { inject } from "vue";
+import { inject, ref } from "vue";
 
 const EventBus = inject("customEventBus") as any;
 const storeManager = useStoreManager();
 
-const addNewStore = () => {
-  storeManager.initStore("New store", EventBus);
-};
+const isDropdownVisible = ref(false);
 
-const addNewXMLAStore = () => {
-  storeManager.initStore("New store", EventBus, "XMLA");
+const addSelectedStore = (store: string) => {
+  if (store === "XMLA") {
+    storeManager.initStore("New store", EventBus, "XMLA");
+  } else {
+    storeManager.initStore("New store", EventBus, "REST");
+  }
 };
 </script>
 
@@ -29,14 +31,54 @@ const addNewXMLAStore = () => {
   <div class="sidebar-stores">
     <div class="sidebar-stores-title">
       <h2 class="mb-2">Stores</h2>
-      <va-button @click="addNewStore">Add new</va-button>
-      <va-button class="ml-2" @click="addNewXMLAStore">Add new XMLA</va-button>
+
+      <va-dropdown
+        placement="bottom-end"
+        @close="isDropdownVisible = false"
+        @open="isDropdownVisible = true"
+      >
+        <template #anchor>
+          <va-button
+            class="dropdown-button"
+            icon="add"
+            v-model="isDropdownVisible"
+          >
+            Add
+          </va-button>
+        </template>
+        <va-dropdown-content class="dropdown-list">
+          <div
+            class="dropdown-item"
+            v-for="store of ['XMLA', 'REST']"
+            :key="store"
+            @click="addSelectedStore(store)"
+          >
+            <div>
+              {{ store }}
+            </div>
+          </div>
+        </va-dropdown-content>
+      </va-dropdown>
     </div>
     <StoreList class="mt-2" />
   </div>
 </template>
 
 <style lang="css">
+.dropdown-list {
+  padding: 0;
+}
+
+.dropdown-item {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
 .settings-sidebar {
   background-color: white;
   height: 100%;
