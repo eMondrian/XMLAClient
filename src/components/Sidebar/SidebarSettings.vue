@@ -74,9 +74,9 @@ const emit = defineEmits(["update:modelValue"]);
   display: flex;
   flex-direction: column;
   align-items: start;
-
   justify-content: space-between;
   color: var(--app-font-color);
+  border-left: 1px solid var(--app-sidebar-border);
 }
 
 .settings-sidebar-content {
@@ -117,20 +117,20 @@ const emit = defineEmits(["update:modelValue"]);
   height: 100%;
   border-radius: 72px;
   border: 2px solid transparent;
-  color: #1a2d91 !important;
+  color: var(--app-secondary-button-color) !important;
   box-sizing: border-box;
 
-  --va-background-color: #fafafa !important;
+  --va-button-font-weight: 500;
+  --va-button-padding: 4.25px 10px;
+  --va-background-color-opacity: 0 !important;
 
   &:hover {
-    --va-background-color: #b0befe !important;
-    --va-background-color-opacity: 1 !important;
+    --va-background-color: var(--app-secondary-button--hover) !important;
+    --va-background-color-opacity: 0.5 !important;
   }
 
   &:active {
-    border: 2px solid #4153b5 !important;
-
-    --va-background-color: #fafafa !important;
+    border: 2px solid var(--app-secondary-button-border) !important;
   }
 }
 </style>

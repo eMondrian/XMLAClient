@@ -26,9 +26,6 @@ const toggleTheme = () => {
   setTheme();
 };
 
-const fontColor = computed(() => {
-  return isDarkTheme.value ? "#ffffff" : "primary";
-})
 </script>
 
 <template>
@@ -39,7 +36,6 @@ const fontColor = computed(() => {
         v-model="innerBackground"
         label="Background color"
         clearable
-        :color="fontColor"
       />
       <div class="switch-theme mt-4">
         <va-switch

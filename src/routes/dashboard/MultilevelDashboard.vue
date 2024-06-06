@@ -50,8 +50,7 @@ Contributors: Smart City Jena
                 :preset="isDropdownVisible || isMouseOver ? 'primary' : ''"
                 :border-color="isDropdownVisible ? '#4153b5' : ''"
                 :iconColor="isMouseOver || isActiveButton ? '#4153b5' : ''"
-                :background-opacity="isDropdownVisible ? 0 : 1"
-                color="#4153b5"
+                :color="isDropdownVisible ? '#fafafa' : '#4153b5'"
                 @mousedown="mousedown"
                 @mouseup="mouseup"
                 @mouseover="mouseover"
@@ -726,7 +725,7 @@ body.no-overflow[data-v-059e0ffc] {
   display: flex;
   justify-content: space-between;
   height: 40px;
-  margin-left: 22px;
+  margin: 9px 0 0 22px;
 }
 
 .widgets-dropdown {
@@ -771,22 +770,23 @@ body.no-overflow[data-v-059e0ffc] {
   box-sizing: border-box;
 
   &:hover {
-    color: #4153b5 !important;
+    color: var(--app-dropdown-button-color--hover) !important;
 
-    --va-background-color: #b0befe !important;
+    --va-background-color: var(--app-dropdown-button-background-color--hover) !important;
     --va-background-color-opacity: 1 !important;
     --va-background-mask-opacity: 0 !important;
   }
 
   &:active {
     box-sizing: border-box;
-    border: 2px solid #4153b5 !important;
+    border: 2px solid var(--app-secondary-button-border) !important;
     border-radius: 8px;
-    color: #4153b5 !important;
+    color: var(--app-dropdown-button-color--active) !important;
 
-    --va-background-color: #fafafa !important;
+    --va-background-color: var(--app-dropdown-button-background-color--active) !important;
     --va-background-color-opacity: 1 !important;
     --va-background-mask-opacity: 0 !important;
+
   }
 }
 
@@ -805,27 +805,20 @@ body.no-overflow[data-v-059e0ffc] {
   margin-left: 12px;
   border-radius: 72px;
   border: 2px solid transparent;
-  color: #1a2d91 !important;
+  color: var(--app-secondary-button-color) !important;
   box-sizing: border-box;
 
   --va-button-font-weight: 590;
-  --va-background-color: #f3f4fd !important;
-  --va-background-color-opacity: 1 !important;
+  --va-background-color-opacity: 0 !important;
   --va-button-padding: 3px 10px;
 
   &:hover {
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 14.5px;
-
-    --va-background-color: #b0befe !important;
-    --va-background-color-opacity: 1 !important;
+    --va-background-color: var(--app-secondary-button--hover) !important;
+    --va-background-color-opacity: 0.5 !important;
   }
 
   &:active {
-    border: 2px solid #4153b5 !important;
-
-    --va-background-color: #fafafa !important;
+    border: 2px solid var(--app-secondary-button-border) !important;
   }
 
   :deep(.va-button__content) {
@@ -900,9 +893,5 @@ body.no-overflow[data-v-059e0ffc] {
 
 .sidebar {
   z-index: 1000000;
-  // -webkit-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  // -moz-box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  // box-shadow: -10px 0px 10px -2px rgba(34, 60, 80, 0.2);
-  border-left: 1px solid #b1b1b1;
 }
 </style>

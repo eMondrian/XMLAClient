@@ -147,7 +147,6 @@ onMounted(() => {
   flex-direction: row;
   align-items: flex-end;
   gap: 1rem;
-  background-color: #fff;
   padding: 0.5rem;
   border-radius: 0.25rem;
 }
@@ -173,7 +172,6 @@ onMounted(() => {
   height: 500px;
   overflow: auto;
   padding: 0.5rem;
-  background-color: #eee;
   border-radius: 0.5rem;
 }
 </style>
