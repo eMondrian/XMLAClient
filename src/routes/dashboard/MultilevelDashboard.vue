@@ -65,10 +65,9 @@ Contributors: Smart City Jena
                 class="dropdown-item"
                 v-for="widget of widgetOptions"
                 :key="widget"
+                @click="addSelectedWidget(widget)"
               >
-                <div @click="addSelectedWidget(widget)">
-                  {{ widget }}
-                </div>
+                {{ widget }}
               </div>
             </va-dropdown-content>
           </va-dropdown>
