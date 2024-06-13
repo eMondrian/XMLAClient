@@ -57,12 +57,11 @@ export default {
           <pre>{{ errorMessage }}</pre>
         </div>
         <va-button
-            preset="secondary"
-            class="mr-1 mb-1 close"
-            @click="close"
-        >
-          x
-        </va-button>
+          preset="secondary"
+          class="mr-1 mb-1 close"
+          @click="close"
+          icon="clear"
+        />
       </div>
     </template>
   </va-modal>
