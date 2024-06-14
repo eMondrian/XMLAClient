@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
-
+import { useErrorHandler } from "@/composables/dashboard/errorToast";
 interface EventBus {
   emit: (string, any?) => void;
   on: (string, Function) => void;
@@ -37,12 +37,14 @@ export class XMLAStore implements IStore {
   public row = null as any;
   public column = null as any;
   public measure = null as any;
+  private errorToast: any;
 
   constructor(id, caption, eventBus: EventBus) {
     this.id = id;
     this.caption = caption;
     this.datasourceManager = useDatasourceManager();
     this.eventBus = eventBus;
+    this.errorToast = useErrorHandler();
 
     this.eventBus.on(`EXPAND:${this.id}`, ({ value, area }) => {
       if (area === "rows") {
@@ -356,35 +358,41 @@ export class XMLAStore implements IStore {
   }
 
   async getData({ rows, columns, measures }) {
-    const datasource = this.datasourceManager.getDatasource(this.datasourceId);
+    try {
+      const datasource = this.datasourceManager.getDatasource(
+        this.datasourceId,
+      );
 
-    this.flushDrilldowns();
-    this.flushExpands();
+      this.flushDrilldowns();
+      this.flushExpands();
 
-    const rowsMapped = rows.map((e) => {
-      return { originalItem: e };
-    });
+      const rowsMapped = rows.map((e) => {
+        return { originalItem: e };
+      });
 
-    const columnsMapped = columns.map((e) => {
-      return { originalItem: e };
-    });
+      const columnsMapped = columns.map((e) => {
+        return { originalItem: e };
+      });
 
-    const measuresMapped = measures.map((e) => {
-      return { originalItem: e };
-    });
+      const measuresMapped = measures.map((e) => {
+        return { originalItem: e };
+      });
 
-    const body = await this.getMDXRequest(
-      rowsMapped,
-      columnsMapped,
-      measuresMapped,
-      {
-        showEmpty: true,
-        alignContent: "right",
-      },
-    );
+      const body = await this.getMDXRequest(
+        rowsMapped,
+        columnsMapped,
+        measuresMapped,
+        {
+          showEmpty: true,
+          alignContent: "right",
+        },
+      );
 
-    const responce = await datasource.getData(body);
-    return responce;
+      const responce = await datasource.getData(body);
+      return responce;
+    } catch (e) {
+      return this.errorToast.handleErrorToast(e);
+    }
   }
 
   setOptions({ caption, column, row, measure }) {

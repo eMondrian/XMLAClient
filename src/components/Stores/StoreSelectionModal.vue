@@ -14,8 +14,7 @@ Contributors: Smart City Jena
 import { useI18n } from 'vue-i18n';
 
 import { usePromisifiedModal } from "@/composables/promisifiedModal";
-import { ref, watch, markRaw, inject } from "vue";
-import DatasourceList from "@/components/Datasources/DatasourceList.vue";
+import { ref, watch, inject } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 
 const { t } = useI18n();
@@ -126,7 +125,7 @@ defineExpose({
   }
 
   .response {
-    background-color: lightgrey;
+    background-color: var(--app-response-background);
     padding: 0.5rem;
     border-radius: 4px;
   }

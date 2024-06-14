@@ -13,8 +13,7 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n';
 import { usePromisifiedModal } from "@/composables/promisifiedModal";
-import { ref, watch, markRaw, nextTick } from "vue";
-import DatasourceList from "@/components/Datasources/DatasourceList.vue";
+import { ref, watch, nextTick } from "vue";
 import { useDatasourceManager } from "../../composables/datasourceManager";
 
 const { t } = useI18n();
@@ -170,14 +169,14 @@ defineExpose({
     </template>
   </va-modal>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 .field-selection-modal {
   .va-modal__container {
     width: 100%;
   }
 
   .response {
-    background-color: lightgrey;
+    background-color: var(--app-response-background);
     padding: 0.5rem;
     border-radius: 4px;
   }
