@@ -18,13 +18,13 @@ import XMLAStoreListItem from "./ListItems/XMLAStoreListItem.vue";
 const { t } = useI18n();
 const storeManager = useStoreManager();
 const map = storeManager.getStoreList();
-const list = ref([]);
+const list = ref([] as IStore[]);
 
 watch(
   map,
   () => {
     list.value = Array.from(map.value, function (entry) {
-      return { ...entry[1] };
+      return entry[1];
     });
   },
   { deep: true },
@@ -32,7 +32,7 @@ watch(
 
 onMounted(() => {
   list.value = Array.from(map.value, function (entry) {
-    return { ...entry[1] };
+    return entry[1];
   });
 });
 </script>
@@ -118,7 +118,7 @@ onMounted(() => {
 .event-action-input {
   width: 230px;
 }
-.va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper{
-  z-index:1000000!important;
+.va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper {
+  z-index: 1000000 !important;
 }
 </style>

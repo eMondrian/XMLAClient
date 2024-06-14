@@ -9,7 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-interface ITextSettings {
+export interface ITextSettings {
   text: string;
   fontSize: number;
   fontColor: string;
@@ -19,7 +19,7 @@ interface ITextSettings {
   verticalAlign: string;
 }
 
-interface ITextSettingsProps {
+export interface ITextSettingsProps {
   text?: string;
   fontSize?: number;
   fontColor?: string;
