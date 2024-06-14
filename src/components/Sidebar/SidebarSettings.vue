@@ -9,11 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import StoreList from "@/components/Sidebar/StoreList.vue";
 import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
 import SidebarWidget from "@/components/Sidebar/SidebarWidget.vue";
 import SidebarAppSettings from "./SidebarAppSettings.vue";
 
+const { t } = useI18n();
 const props = defineProps(["modelValue", "settingsSection"]);
 
 const emit = defineEmits(["update:modelValue", "updateBackgroundColor"]);
@@ -59,13 +61,13 @@ const updateBackgroundColor = (color) => {
           preset="primary"
           @click="$emit('update:modelValue', !modelValue)"
         >
-          Close
+          {{ t('SidebarSettings.closeButton') }}
         </va-button>
         <!-- <va-button
           class="sidebar-button-done ml-2"
           color="#4153b5"        
         >
-          Done
+        {{ t('SidebarSettings.doneButton') }}
         </va-button> -->
       </div>
     </div>
