@@ -28,7 +28,7 @@ Contributors: Smart City Jena
             name="draw"
             :color="$route.name === 'designer' ? '#ffffff' : 'primary'"
           />
-          <va-sidebar-item-title> Designer </va-sidebar-item-title>
+          <va-sidebar-item-title> {{ $t('DashboardNavigation.designer') }} </va-sidebar-item-title>
         </va-sidebar-item-content>
       </va-sidebar-item>
       <va-sidebar-item
@@ -41,7 +41,7 @@ Contributors: Smart City Jena
             name="dashboard"
             :color="$route.name === 'dashboard' ? '#ffffff' : 'primary'"
           />
-          <va-sidebar-item-title> Dashboard </va-sidebar-item-title>
+          <va-sidebar-item-title> {{ $t('DashboardNavigation.dashboard') }} </va-sidebar-item-title>
         </va-sidebar-item-content>
       </va-sidebar-item>
       <va-sidebar-item
@@ -56,7 +56,7 @@ Contributors: Smart City Jena
               $route.name === 'multilevel-dashboard' ? '#ffffff' : 'primary'
             "
           />
-          <va-sidebar-item-title> Multilevel Dashboard </va-sidebar-item-title>
+          <va-sidebar-item-title> {{ $t('DashboardNavigation.multilevelDashboard') }} </va-sidebar-item-title>
         </va-sidebar-item-content>
       </va-sidebar-item>
     </va-sidebar>

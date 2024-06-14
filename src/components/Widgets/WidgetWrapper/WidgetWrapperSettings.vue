@@ -10,6 +10,7 @@ Contributors: Smart City Jena
 -->
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useI18n } from 'vue-i18n';
 
 interface IWrapperSettings {
   title?: string;
@@ -34,6 +35,7 @@ interface IWrapperComponent {
   setSetting: (key: string, value: any) => void;
 }
 
+const { t } = useI18n();
 const { wrapper } = defineProps<{ wrapper: IWrapperComponent }>();
 const opened = ref(false);
 </script>
@@ -42,38 +44,38 @@ const opened = ref(false);
   <va-collapse v-model="opened" header="Widget wrapper settings">
     <div class="settings-container">
       <VaDivider class="pad_bottom" orientation="left">
-        <span class="px-2">Title</span>
+        <span class="px-2">{{ t('WidgetWrapper.title') }}</span>
       </VaDivider>
       <va-input
         v-model="wrapper.settings.title"
-        label="Title"
+        :label="t('WidgetWrapper.label')"
         @update:model-value="wrapper.setSetting('title', $event)"
       />
       <va-input
         v-model="wrapper.settings.titleFontSize"
-        label="Title Font Size"
+        :label="t('WidgetWrapper.fontSize')"
         @update:model-value="wrapper.setSetting('titleFontSize', $event)"
       />
       <va-color-input
         v-model="wrapper.settings.titleColor"
-        label="Title Font Color"
+        :label="t('WidgetWrapper.fontColor')"
         @update:model-value="wrapper.setSetting('titleColor', $event)"
       />
 
       <VaDivider class="pad_bottom" orientation="center">
-        <span class="px-2">Background</span>
+        <span class="px-2">{{ t('WidgetWrapper.background') }}</span>
       </VaDivider>
 
       <va-color-input
         autofocus
-        label="Background Color"
+        :label="t('WidgetWrapper.backgroundColor')"
         class="color-fill"
         v-model="wrapper.settings.backgroundColor"
         @update:model-value="wrapper.setSetting('backgroundColor', $event)"
       />
-      <VaSlider 
+      <VaSlider
         v-model="wrapper.settings.backgroundColorTransparence"
-        label="Shadow Color Transparency"
+        :label="t('WidgetWrapper.backgroundColorTrancparency')"
         :min="0"
         :max="255"
         @update:model-value="wrapper.setSetting('backgroundColorTransparence', $event)"
@@ -89,61 +91,60 @@ const opened = ref(false);
         </template>
       </VaSlider>
       <VaDivider class="pad_bottom" orientation="center">
-        <span class="px-2">Border</span>
+        <span class="px-2">{{ t('WidgetWrapper.border') }}</span>
       </VaDivider>
       <va-input
         v-model="wrapper.settings.borderSize"
-        label="Border Size"
+        :label="t('WidgetWrapper.borderSize')"
         @update:model-value="wrapper.setSetting('borderSize', $event)"
       />
       <va-color-input
         autofocus
-        label="Border Color"
+        :label="t('WidgetWrapper.borderColor')"
         class="color-fill"
         v-model="wrapper.settings.borderColor"
         @update:model-value="wrapper.setSetting('borderColor', $event)"
       />
       <va-input
         v-model="wrapper.settings.borderRadius"
-        label="Border Radius"
+        :label="t('WidgetWrapper.borderRadius')"
         @update:model-value="wrapper.setSetting('borderRadius', $event)"
       />
       <VaDivider class="pad_bottom" orientation="left">
-        <span class="px-2">FullScreen</span>
+        <span class="px-2">{{ t('WidgetWrapper.fullScreen') }}</span>
       </VaDivider>
       <va-checkbox
         v-model="wrapper.settings.fullscreen"
-        label="Show fullscreen button"
+        :label="t('WidgetWrapper.showFullScreen')"
         @update:model-value="wrapper.setSetting('fullscreen', $event)"
       />
       <VaDivider class="pad_bottom" orientation="left">
-        <span class="px-2">Shaddow</span>
+        <span class="px-2">{{ t('WidgetWrapper.shadow') }}</span>
       </VaDivider>
     <va-input
       v-model="wrapper.settings.shadowX"
-      label="Shadow x"
-
+      :label="t('WidgetWrapper.shadowX')"
     />
     <va-input
       v-model="wrapper.settings.shadowY"
-      label="Shadow y"
+      :label="t('WidgetWrapper.shadowY')"
       @update:model-value="wrapper.setSetting('shadowY', $event)"
     />
     <va-input
       v-model="wrapper.settings.shadowBlur"
-      label="Shadow Blur"
+      :label="t('WidgetWrapper.shadowBlur')"
       @update:model-value="wrapper.setSetting('shadowBlur', $event)"
     />
     <va-color-input
       autofocus
-      label="Shadow Color"
+      :label="t('WidgetWrapper.shadowColorTransparency')"
       class="color-fill"
       v-model="wrapper.settings.shadowColor"
       @update:model-value="wrapper.setSetting('shadowColor', $event)"
     />
       <VaSlider
         v-model="wrapper.settings.shadowTransparence"
-        label="Shadow Color Transparency"
+        :label="t('WidgetWrapper.showFullScreen')"
         :min="0"
         :max="255"
         @update:model-value="wrapper.setSetting('shadowTransparence', $event)"
@@ -159,11 +160,11 @@ const opened = ref(false);
         </template>
       </VaSlider>
       <VaDivider class="pad_bottom" orientation="left">
-        <span class="px-2">Transparence</span>
+        <span class="px-2">{{ t('WidgetWrapper.transparence') }}</span>
       </VaDivider>
       <VaSlider
         v-model="wrapper.settings.transparency"
-        label="Transparency"
+        :label="t('WidgetWrapper.transparency')"
         :min="0"
         :max="1"
         :step="1"

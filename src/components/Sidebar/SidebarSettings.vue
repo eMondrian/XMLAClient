@@ -9,11 +9,13 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import StoreList from "@/components/Sidebar/StoreList.vue";
 import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
 import SidebarWidget from "@/components/Sidebar/SidebarWidget.vue";
 import SidebarAppSettings from "./SidebarAppSettings.vue";
 
+const { t } = useI18n();
 const props = defineProps(["modelValue", "settingsSection"]);
 
 const emit = defineEmits(["update:modelValue", "updateBackgroundColor"]);
@@ -56,16 +58,16 @@ const updateBackgroundColor = (color) => {
       <div class="settings-sidebar-actions">
         <va-button
           class="sidebar-button-close"
-          preset="primary"        
+          preset="primary"
           @click="$emit('update:modelValue', !modelValue)"
         >
-          Close
+          {{ t('SidebarSettings.closeButton') }}
         </va-button>
         <!-- <va-button
           class="sidebar-button-done ml-2"
-          color="#4153b5"        
+          color="#4153b5"
         >
-          Done
+        {{ t('SidebarSettings.doneButton') }}
         </va-button> -->
       </div>
     </div>
@@ -73,7 +75,6 @@ const updateBackgroundColor = (color) => {
 </template>
 
 <style lang="scss">
-
 .settings-sidebar {
   height: 100%;
   width: 100%;
@@ -99,7 +100,7 @@ const updateBackgroundColor = (color) => {
 }
 </style>
 <style lang="scss" scoped>
-.sidebar{
+.sidebar {
   background-color: white;
 }
 
@@ -109,14 +110,14 @@ const updateBackgroundColor = (color) => {
   box-sizing: border-box;
 
   &:hover {
-    color: #1A2D91 !important;
-    --va-background-color: #B0BEFE !important;
+    color: #1a2d91 !important;
+    --va-background-color: #b0befe !important;
     --va-background-color-opacity: 1 !important;
   }
 
   &:active {
-    color: #1A2D91 !important;
-    border: 2px solid #4153B5 !important;
+    color: #1a2d91 !important;
+    border: 2px solid #4153b5 !important;
     --va-background-color: #fafafa !important;
   }
 }
@@ -125,18 +126,18 @@ const updateBackgroundColor = (color) => {
   height: 100%;
   border-radius: 72px;
   border: 2px solid transparent;
-  color: #1A2D91 !important;
+  color: #1a2d91 !important;
   box-sizing: border-box;
 
   --va-background-color: #fafafa !important;
 
   &:hover {
-    --va-background-color: #B0BEFE !important;
+    --va-background-color: #b0befe !important;
     --va-background-color-opacity: 1 !important;
   }
 
   &:active {
-    border: 2px solid #4153B5 !important;
+    border: 2px solid #4153b5 !important;
 
     --va-background-color: #fafafa !important;
   }

@@ -9,20 +9,22 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import { useStoreManager } from "../../composables/storeManager";
 import { onMounted, ref, watch } from "vue";
 import StoreListItem from "./ListItems/StoreListItem.vue";
 import XMLAStoreListItem from "./ListItems/XMLAStoreListItem.vue";
 
+const { t } = useI18n();
 const storeManager = useStoreManager();
 const map = storeManager.getStoreList();
-const list = ref([]);
+const list = ref([] as IStore[]);
 
 watch(
   map,
   () => {
     list.value = Array.from(map.value, function (entry) {
-      return { ...entry[1] };
+      return entry[1];
     });
   },
   { deep: true },
@@ -30,7 +32,7 @@ watch(
 
 onMounted(() => {
   list.value = Array.from(map.value, function (entry) {
-    return { ...entry[1] };
+    return entry[1];
   });
 });
 </script>
@@ -47,7 +49,7 @@ onMounted(() => {
         </template>
       </div>
     </template>
-    <template v-else> No stores available </template>
+    <template v-else>{{ t('SidebarStoreList.noAvailableStores') }}</template>
   </va-list>
 </template>
 
@@ -116,7 +118,7 @@ onMounted(() => {
 .event-action-input {
   width: 230px;
 }
-.va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper{
-  z-index:1000000!important;
+.va-dropdown__content.va-select-dropdown__content.va-dropdown__content-wrapper {
+  z-index: 1000000 !important;
 }
 </style>
