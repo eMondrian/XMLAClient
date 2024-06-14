@@ -154,24 +154,29 @@ Contributors: Smart City Jena
       :settingsSection="settingsSection"
       class="sidebar"
     ></SidebarSettings>
+    <ErrorHandlingModal ref="errorHandlingModal"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import NavBarDash from "./NavBarDash.vue";
 import DashboardControls from "@/components/Dashboard/DashboardControls.vue";
-import { getCurrentInstance, markRaw, ref, provide } from "vue";
+import { getCurrentInstance, markRaw, ref, type Ref, provide } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import Moveable from "vue3-moveable";
 import SidebarSettings from "@/components/Sidebar/SidebarSettings.vue";
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import { useMoveableLayout } from "@/composables/dashboard/moveableLayout";
 import { useSerialization } from "@/composables/dashboard/serialization";
+import { useErrorHandler } from "@/composables/dashboard/errorToast";
 import { useWidgets } from "@/composables/dashboard/widgets";
 import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue";
+import ErrorHandlingModal from "@/components/Modals/ErrorHandlingModal.vue"
 
 const dsManager = useDatasourceManager();
 const storeManager = useStoreManager();
+const { setOnClick } = useErrorHandler();
+const errorHandlingModal = ref(null) as Ref<any>;
 
 const editEnabled = ref(false);
 const showSidebar = ref(false);
@@ -187,6 +192,12 @@ const layoutSettingsButtons = ref<
 
 provide("backgroundColor", backgroundColor);
 const instance = getCurrentInstance();
+
+const openErrorModal = (data) => {
+  errorHandlingModal.value?.run(data);
+}
+
+setOnClick(openErrorModal);
 
 const mousedown = () => {
   isActiveButton.value = true;
