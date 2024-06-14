@@ -11,14 +11,18 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
-import Svg from "@/../demo/human.svg";
+import RichTextEditor from '@/components/Widgets/RichText/RichTextWidget.vue';
 
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof RepeatableSvgWidget> = {
-  title: "Widget/StaticWidgets/RepeatableSvg",
-  component: RepeatableSvgWidget,
+const meta: Meta<typeof RichTextEditor> = {
+  title: "Widget/StaticWidgets/RichTextEditor",
+  component: RichTextEditor,
   tags: ["autodocs"],
+  decorators: [
+    () => ({
+      template: '<div style="width: 300px; height: 300px; background-color: #fafafa; color: black;"><story /></div>',
+    }),
+  ],
 };
 
 export default meta;
@@ -30,16 +34,12 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    src: Svg,
-    activeItemStyles: {
-      fill: "red",
-      stroke: "yellow",
-    },
-    defaultItemStyles: {
-      fill: "#777",
-      stroke: "#777",
-    },
-    repeations: "3",
-    progress: "0.3",
+    editor: "<p>This is an example of the initial content of the editor</p>"
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    editor: "<h1>Heading</h1><p>Editor custom content</p>"
   },
 };

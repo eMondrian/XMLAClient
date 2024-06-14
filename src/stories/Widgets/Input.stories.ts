@@ -11,14 +11,18 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
-import Svg from "@/../demo/human.svg";
+import InputControl from '@/components/Controls/Input/InputControl.vue';
 
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof RepeatableSvgWidget> = {
-  title: "Widget/StaticWidgets/RepeatableSvg",
-  component: RepeatableSvgWidget,
+const meta: Meta<typeof InputControl> = {
+  title: "Widget/StaticWidgets/InputControl",
+  component: InputControl,
   tags: ["autodocs"],
+  decorators: [
+    () => ({
+      template: '<div style="width: 300px; height: 75px;"><story /></div>',
+    }),
+  ],
 };
 
 export default meta;
@@ -30,16 +34,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    src: Svg,
-    activeItemStyles: {
-      fill: "red",
-      stroke: "yellow",
-    },
-    defaultItemStyles: {
-      fill: "#777",
-      stroke: "#777",
-    },
-    repeations: "3",
-    progress: "0.3",
+    label: 'Next page',
+    availableEvents: ['Blur', 'Input'],
+    events: [{ name: 'Next page', trigger: 'Input' }],
   },
 };

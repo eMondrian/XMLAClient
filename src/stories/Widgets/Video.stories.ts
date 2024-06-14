@@ -11,14 +11,17 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
-import Svg from "@/../demo/human.svg";
-
+import VideoWidget from '@/components/Widgets/Video/VideoWidget.vue';
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof RepeatableSvgWidget> = {
-  title: "Widget/StaticWidgets/RepeatableSvg",
-  component: RepeatableSvgWidget,
+const meta: Meta<typeof VideoWidget> = {
+  title: "Widget/StaticWidgets/VideoWidget",
+  component: VideoWidget,
   tags: ["autodocs"],
+  // decorators: [
+  //   () => ({
+  //     template: '<div style="width: 300px; height: 300px; background-color: #fafafa;"><story /></div>',
+  //   }),
+  // ],
 };
 
 export default meta;
@@ -30,16 +33,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    src: Svg,
-    activeItemStyles: {
-      fill: "red",
-      stroke: "yellow",
-    },
-    defaultItemStyles: {
-      fill: "#777",
-      stroke: "#777",
-    },
-    repeations: "3",
-    progress: "0.3",
+    videoSettings: {fit: "None"},
+    videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
 };
+

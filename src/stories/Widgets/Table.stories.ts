@@ -11,13 +11,12 @@
 
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import RepeatableSvgWidget from "@/components/Widgets/RepeatableSvg/RepeatableSvgWidget.vue";
-import Svg from "@/../demo/human.svg";
+import TableWidget from '@/components/Widgets/Table/TableWidget.vue';
 
 // More on how to set up stories at: https://storybook.js.org/docs/vue/writing-stories/introduction
-const meta: Meta<typeof RepeatableSvgWidget> = {
-  title: "Widget/StaticWidgets/RepeatableSvg",
-  component: RepeatableSvgWidget,
+const meta: Meta<typeof TableWidget> = {
+  title: "Widget/StaticWidgets/TableWidget",
+  component: TableWidget,
   tags: ["autodocs"],
 };
 
@@ -29,17 +28,31 @@ type Story = StoryObj<typeof meta>;
  * to learn how to use render functions.
  */
 export const Primary: Story = {
+  render: (args: any) => ({
+    setup() {
+      return { args };
+    },
+    template: `
+      <TableWidget
+        :filter="args.filter"
+        :filterByFields="args.filterByFields"
+        :currentPage="args.currentPage"
+        :perPage="args.perPage"
+        :data="args.data"
+        :headers="args.headers"
+        :columns="args.columns"
+      >
+      </TableWidget>
+    `,
+    components: { TableWidget },
+  }),
   args: {
-    src: Svg,
-    activeItemStyles: {
-      fill: "red",
-      stroke: "yellow",
-    },
-    defaultItemStyles: {
-      fill: "#777",
-      stroke: "#777",
-    },
-    repeations: "3",
-    progress: "0.3",
+    filter: "",
+    filterByFields: [],
+    currentPage: 1,
+    perPage: 1,
+    data: [],
+    headers: [],
+    columns: [],
   },
 };

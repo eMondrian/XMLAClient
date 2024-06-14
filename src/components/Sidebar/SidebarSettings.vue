@@ -65,7 +65,7 @@ const updateBackgroundColor = (color) => {
         </va-button>
         <!-- <va-button
           class="sidebar-button-done ml-2"
-          color="#4153b5"        
+          color="#4153b5"
         >
         {{ t('SidebarSettings.doneButton') }}
         </va-button> -->

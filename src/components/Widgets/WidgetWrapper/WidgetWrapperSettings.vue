@@ -73,7 +73,7 @@ const opened = ref(false);
         v-model="wrapper.settings.backgroundColor"
         @update:model-value="wrapper.setSetting('backgroundColor', $event)"
       />
-      <VaSlider 
+      <VaSlider
         v-model="wrapper.settings.backgroundColorTransparence"
         :label="t('WidgetWrapper.backgroundColorTrancparency')"
         :min="0"
