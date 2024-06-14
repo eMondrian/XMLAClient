@@ -35,10 +35,6 @@ const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
 const { getState } = useSerialization(settings);
 
-const { settings, setSetting } = useSettings<typeof props>(props);
-const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
-
 
 defineExpose({
     setSetting,
