@@ -28,6 +28,7 @@ export class Store implements IStore {
   private errorToast: any;
 
   public type = "REST" as const;
+  public listAvailableDatasourceTypes = ["REST"];
 
   constructor(id: string, caption: string, eventBus: EventBus) {
     this.id = id;
@@ -109,7 +110,7 @@ export class Store implements IStore {
     this.eventBus.emit(`UPDATE:${this.id}`);
   }
 
-  updateEvents(events) {
+  updateEvents(events: IStoreEvents[]): void {
     console.log(events);
     this.initedEvents.forEach((e) => {
       this.eventBus.off(e.name, e.cb);
