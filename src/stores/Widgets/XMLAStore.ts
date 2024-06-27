@@ -38,6 +38,7 @@ export class XMLAStore implements IStore {
   public column = null as any;
   public measure = null as any;
   private errorToast: any;
+  public listAvailableDatasourceTypes = ["XMLA"];
 
   constructor(id, caption, eventBus: EventBus) {
     this.id = id;
@@ -388,8 +389,8 @@ export class XMLAStore implements IStore {
         },
       );
 
-      const responce = await datasource.getData(body);
-      return responce;
+      const response = await datasource.getData(body);
+      return response;
     } catch (e) {
       return this.errorToast.handleErrorToast(e);
     }
