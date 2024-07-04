@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<ISVGSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 const styles: Ref<string> = computed(() => {
     let string: string = "";
@@ -78,6 +78,7 @@ defineExpose({
     settings,
     settingsComponent,
     getState,
+    loadState,
     store,
     setStore,
 });

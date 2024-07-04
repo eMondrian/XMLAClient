@@ -16,14 +16,15 @@ import { optionalArrayToArray } from "@/utils/helpers";
 import { v4, v5 } from "uuid";
 import { Store } from "@/stores/Widgets/Store";
 import { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { IStore, EventBus } from "@/@types/Index";
 
 const availableStores = ref(new Map<string, IStore>());
 
 export function useStoreManager() {
   const initStore = (
-    caption = "NO CAPTION",
-    eventBus,
-    type = "REST",
+    caption: string = "NO CAPTION",
+    eventBus: EventBus,
+    type: string = "REST",
   ): string => {
     console.log(eventBus);
     const id = v4();

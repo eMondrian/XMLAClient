@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface IInputSettingsProps {
     label?: string;
     availableEvents?: string[];
@@ -22,7 +23,7 @@ import InputSettings from "./InputSettings.vue";
 import type { EventItem } from "@/@types/controls";
 
 const settingsComponent = InputSettings;
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 
 const inputVal: Ref<string> = ref("");
 

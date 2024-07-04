@@ -8,6 +8,8 @@
   Contributors: Smart City Jena
 
 */
+import type { ISerializable } from "@/@types/Index";
+
 declare interface SerializableParts {
   [key: string]: ISerializable;
 }

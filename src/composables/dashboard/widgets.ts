@@ -10,6 +10,7 @@
 */
 import { ref, getCurrentInstance } from "vue";
 import { enabledWidgets, widgetNames } from "@/components/Widgets";
+import type { ISerializable } from "@/@types/Index";
 
 declare interface Widget {
     id: string;
@@ -17,13 +18,6 @@ declare interface Widget {
     caption: string;
     state?: any;
 }
-
-// declare interface Control {
-//   id: string;
-//   component: string;
-//   caption: string;
-//   state?: any;
-// }
 
 export function useWidgets() {
     const instance = getCurrentInstance();

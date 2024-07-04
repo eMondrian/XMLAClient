@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface IButtonSettingsProps {
     title?: string;
     availableEvents?: string[];
@@ -22,7 +23,7 @@ import { useSerialization } from "@/composables/widgets/serialization";
 import ButtonSettings from "@/components/Controls/Button/ButtonSettings.vue";
 
 const settingsComponent = ButtonSettings;
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 
 const props = withDefaults(defineProps<IButtonSettingsProps>(), {
     title: "Next page",

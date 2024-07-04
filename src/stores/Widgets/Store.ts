@@ -12,6 +12,8 @@
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import type RESTDatasource from "@/dataSources/RestDatasource";
 import { useErrorHandler } from "@/composables/dashboard/errorToast";
+import type { IStore, EventBus, IStoreParams, IStoreEvents } from "@/@types/Index";
+
 export class Store implements IStore {
   public caption: string;
   public id: string;

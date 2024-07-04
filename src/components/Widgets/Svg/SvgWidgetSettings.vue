@@ -19,6 +19,8 @@ export interface ISVGComponent {
     settings: ISVGSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => ISVGSettings;
+    loadState: (state: ISVGSettings) => void;
 }
 
 import { useI18n } from "vue-i18n";
@@ -27,6 +29,7 @@ import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState, StyleFields, Config } from "@/@types/widgets";
+import type { IStore } from "@/@types/Index";
 
 const { t } = useI18n();
 const { component } = defineProps<{ component: ISVGComponent }>();
@@ -37,7 +40,7 @@ const opened: Ref<CollapseState> = ref({
 });
 
 const storeManager = useStoreManager();
-let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<IStore[]>;
 const requestResult: Ref<string> = ref("");
 
 const getStores = () => {

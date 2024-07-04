@@ -8,6 +8,7 @@
   Contributors: Smart City Jena
 
 */
+import type { ISerializable, IDatasource } from "@/@types/Index";
 
 export default class RESTDatasource implements IDatasource, ISerializable {
   public url: string;

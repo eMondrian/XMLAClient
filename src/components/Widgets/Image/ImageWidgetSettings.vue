@@ -20,6 +20,7 @@ import type {
 } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { IStore } from "@/@types/Index";
 
 export interface ImageComponentSettings {
     images: ImageGalleryItem[];
@@ -31,6 +32,8 @@ export interface ImageComponent {
     settings: ImageComponentSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => ImageComponentSettings;
+    loadState: (state: ImageComponentSettings) => void;
 }
 
 const { t } = useI18n();
@@ -42,7 +45,7 @@ const opened: Ref<CollapseState> = ref({
 });
 
 const storeManager = useStoreManager();
-let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<IStore[]>;
 const requestResult: Ref<string> = ref("");
 
 const addNew = () => {

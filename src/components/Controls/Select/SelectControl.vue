@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface ISelectSettingsProps {
     label?: string;
     options?: string[];
@@ -23,7 +24,7 @@ import { useSerialization } from "@/composables/widgets/serialization";
 import SelectSettings from "@/components/Controls/Select/SelectSettings.vue";
 import type { EventItem } from "@/@types/controls";
 
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 const settingsComponent = SelectSettings;
 
 const props = withDefaults(defineProps<ISelectSettingsProps>(), {

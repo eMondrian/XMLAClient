@@ -8,6 +8,7 @@
   Contributors: Smart City Jena
 
 */
+import type { ISerializable } from "@/@types/Index";
 import { ref, getCurrentInstance } from "vue";
 
 declare interface LayoutItem {

@@ -40,13 +40,14 @@ const props = withDefaults(defineProps<IProgressSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 defineExpose({
     setSetting,
     settings,
     settingsComponent,
     getState,
+    loadState,
     store,
     setStore,
 });

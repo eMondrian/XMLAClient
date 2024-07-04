@@ -18,6 +18,8 @@ export interface IRichTextEditorComponent {
     settings: IRichTextEditorSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => IRichTextEditorSettings;
+    loadState: (state: IRichTextEditorSettings) => void;
 }
 
 import { ref, onMounted, watch, type Ref } from "vue";
@@ -40,6 +42,7 @@ import Underline from "@tiptap/extension-underline";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState } from "@/@types/widgets";
 import { useI18n } from "vue-i18n";
+import type { IStore } from "@/@types/Index";
 
 const { t } = useI18n();
 const { component } = defineProps<{ component: IRichTextEditorComponent }>();
@@ -50,7 +53,7 @@ const opened: Ref<CollapseState> = ref({
 });
 
 const storeManager = useStoreManager();
-let stores = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<IStore[]>;
 
 const requestResult = ref("");
 

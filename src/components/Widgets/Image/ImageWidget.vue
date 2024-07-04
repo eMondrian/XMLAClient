@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<IImageSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 let interval = null as any;
 const currentImage: Ref<number> = ref(0);
@@ -77,6 +77,7 @@ defineExpose({
     settings,
     settingsComponent,
     getState,
+    loadState,
     store,
     setStore,
 });

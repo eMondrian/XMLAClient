@@ -28,6 +28,8 @@ export interface IRepeatableSVGComponent {
     settings: IRepeatableSVGSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => IRepeatableSVGSettings;
+    loadState: (state: IRepeatableSVGSettings) => void;
 }
 
 import { useI18n } from "vue-i18n";

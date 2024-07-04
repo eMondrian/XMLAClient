@@ -11,6 +11,7 @@
 import { XMLAApi } from "@/api/xml";
 import { createClientAsync } from "@/XMLAClient";
 import { MetadataStore } from "./Storage/MetadataStore";
+import type { ISerializable, IDatasource } from "@/@types/Index";
 
 export default class XMLADatasource implements IDatasource, ISerializable {
   public url: string;

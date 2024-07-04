@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface ISwitchSettingsProps {
     label?: string;
     availableEvents?: string[];
@@ -21,7 +22,7 @@ import { useSerialization } from "@/composables/widgets/serialization";
 import SwitchSettings from "@/components/Controls/Switch/SwitchSettings.vue";
 import type { EventItem } from "@/@types/controls";
 
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 const settingsComponent = SwitchSettings;
 
 const isChecked: Ref<boolean> = ref(false);

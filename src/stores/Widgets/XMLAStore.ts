@@ -12,11 +12,7 @@ Contributors: Smart City Jena
 import { useDatasourceManager } from "@/composables/datasourceManager";
 import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
 import { useErrorHandler } from "@/composables/dashboard/errorToast";
-interface EventBus {
-  emit: (string, any?) => void;
-  on: (string, Function) => void;
-  off: (string, Function) => void;
-}
+import type { IStore, EventBus } from "@/@types/Index";
 
 export class XMLAStore implements IStore {
   public caption = "";

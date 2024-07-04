@@ -10,6 +10,7 @@
 */
 
 import mqtt from "mqtt";
+import type { EventBus, IDatasource } from "@/@types/Index";
 
 export default class MQTTDatasource implements IDatasource {
   public url: string;
@@ -18,7 +19,7 @@ export default class MQTTDatasource implements IDatasource {
   public type = "MQTT" as const;
 
   private _msg_parsed: any = {};
-  private eventBus: any;
+  private eventBus: EventBus;
 
   constructor(id, url, caption, eventBus) {
     console.log(eventBus);

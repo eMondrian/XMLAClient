@@ -15,6 +15,7 @@ import { useStoreManager } from "@/composables/storeManager";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState, ObjectFitSetting } from "@/@types/widgets";
+import type { IStore } from "@/@types/Index";
 
 export interface IVideoSettings {
     videoSettings: ObjectFitSetting;
@@ -26,6 +27,8 @@ export interface IVideoComponent {
     settings: IVideoSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => IVideoSettings;
+    loadState: (state: IVideoSettings) => void;
 }
 
 const { t } = useI18n();
@@ -37,7 +40,7 @@ const opened: Ref<CollapseState> = ref({
 });
 
 const storeManager = useStoreManager();
-let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<IStore[]>;
 const requestResult: Ref<string> = ref("");
 
 const getStores = () => {

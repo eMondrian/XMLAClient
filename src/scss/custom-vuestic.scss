@@ -39,3 +39,15 @@ Contributors: Smart City Jena
     }
   }
 }
+
+.settings-toast {
+  .va-toast__content {
+    text-decoration: none !important;
+  }
+}
+
+.va-icon-settings {
+  .va-icon {
+    color: var(--va-primary) !important;
+  }
+}

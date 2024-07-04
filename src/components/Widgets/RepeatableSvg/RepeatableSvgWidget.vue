@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<IRepeatableSVGSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 const svgSource: Ref<string> = ref("");
 
 onMounted(async () => {
@@ -64,6 +64,7 @@ defineExpose({
     settings,
     settingsComponent,
     getState,
+    loadState,
     store,
     setStore,
 });

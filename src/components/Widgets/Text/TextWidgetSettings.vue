@@ -16,6 +16,7 @@ import type { Store } from "@/stores/Widgets/Store";
 
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
 import type { CollapseState } from "@/@types/widgets";
+import type { IStore } from "@/@types/Index";
 
 export interface ITextSettings {
     text: string;
@@ -33,6 +34,8 @@ export interface ITextComponent {
     settings: ITextSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => ITextSettings;
+    loadState: (state: ITextSettings) => void;
 }
 
 const { t } = useI18n();

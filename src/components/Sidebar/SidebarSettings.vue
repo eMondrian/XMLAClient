@@ -9,16 +9,70 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import { watch, ref } from "vue";
 import { useI18n } from 'vue-i18n';
+import { useToast } from "vuestic-ui";
 import StoreList from "@/components/Sidebar/StoreList.vue";
 import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
 import SidebarWidget from "@/components/Sidebar/SidebarWidget.vue";
 import SidebarAppSettings from "./SidebarAppSettings.vue";
+import { useSerialization } from "@/composables/widgets/serialization"
 
 const { t } = useI18n();
+const { init } = useToast();
 const props = defineProps(["modelValue", "settingsSection"]);
-
+const componentSettings = ref(null);
+const { getState, loadState } = useSerialization(componentSettings);
 const emit = defineEmits(["update:modelValue"]);
+let localStorageKey = ref("");
+
+watch(
+  () => props.settingsSection,
+  (newValue) => {
+    if (!newValue) return;
+    componentSettings.value = newValue.component?.settings;
+  }
+);
+
+const copyState = (): void => {
+  const state = getState();
+  if (state) {
+    localStorageKey.value = props.settingsSection?.component?.settingsComponent?.__name;
+    localStorage.setItem(localStorageKey.value, JSON.stringify(state));
+
+    init({
+      message: "Widget state copied to the clipboard!",
+      closeable: false,
+      color: "success",
+      duration: 3000,
+      offsetX: 32,
+      offsetY: 82,
+      position: "bottom-right",
+      customClass: "settings-toast",
+    });
+  }
+};
+
+const pasteState = (): void => {
+  const currentKey = props.settingsSection?.component?.settingsComponent?.__name;
+  const savedState = localStorage.getItem(localStorageKey.value);
+
+  if (savedState && currentKey === localStorageKey.value) {
+    const parsedState = JSON.parse(savedState);
+    loadState(parsedState);
+  } else {
+    init({
+      message: "Widget state types do not match!",
+      closeable: false,
+      color: "danger",
+      duration: 3000,
+      offsetX: 32,
+      offsetY: 82,
+      position: "bottom-right",
+      customClass: "settings-toast",
+    });
+  }
+};
 </script>
 
 <template>
@@ -51,6 +105,18 @@ const emit = defineEmits(["update:modelValue"]);
       </div>
 
       <div class="settings-sidebar-actions">
+        <va-button
+          class="sidebar-button-close"
+          @click="copyState()"
+        >
+          {{ t('SidebarSettings.copyStateButton') }}
+        </va-button>
+        <va-button
+          class="sidebar-button-close"
+          @click="pasteState()"
+        >
+          {{ t('SidebarSettings.pasteStateButton') }}
+        </va-button>
         <va-button
           class="sidebar-button-close mr-4"
           preset="primary"
