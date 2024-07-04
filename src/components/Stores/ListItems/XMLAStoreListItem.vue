@@ -27,30 +27,27 @@ const selectedCube = ref({} as MDSchemaCube);
 const selectedDatasourceId = ref("");
 const selectedDatasource = ref({
   url: "",
-  caption:  "",
-  id: null,
+  caption: "",
+  id: "",
 });
 
 watch(
   () => selectedDatasourceId.value,
   (nV) => {
     const currentDs = dslist.value.find((item) => item.id === nV);
-    selectedDatasource.value = currentDs;
+    if (!currentDs) {
+      return
+    }
 
+    selectedDatasource.value = currentDs;
     const store = storeManager.getStore(item.value.id);
     store.setDatasource(currentDs.id);
+
     getCatalogs();
   }, {
     deep: true,
   }
 );
-
-// const hierarchies = ref([] as MDSchemaHierarchy[]);
-// const selectedRow = ref({});
-// const selectedCol = ref({});
-
-// const measures = ref([] as MDSchemaMeasure[]);
-// const selectedMeasure = ref({});
 
 const props = defineProps({
   item: {
@@ -89,9 +86,6 @@ onActivated(() => {
 });
 
 onMounted(async () => {
-  // selectedRow.value = item.value.row || {};
-  // selectedCol.value = item.value.column || {};
-  // selectedMeasure.value = item.value.measure || {};
   dslist.value = Object.entries(dsmap.value).map((entry) => {
     return entry[1];
   }) 
@@ -133,19 +127,16 @@ const saveStore = (item) => {
 const createDatasource = () => {
   const id = dsManager.initDatasource("XMLA", "", "New store");
   selectedDatasourceId.value = id;
-};
 
-// const updateDatasource = (index) => {
-//   const datasourceToUpdate = dslist.value[index] as XMLADatasource;
-//   if (datasourceToUpdate) {
-//     dsManager.updateDatasource(
-//       datasourceToUpdate.id,
-//       "XMLA",
-//       datasourceToUpdate.caption,
-//       datasourceToUpdate.url,
-//     );
-//   }
-// };
+  selectedCatalog.value = {
+    CATALOG_NAME: "",
+    DESCRIPTION: "",
+  };
+  selectedCube.value = {
+    CUBE_NAME: "",
+    CUBE_CAPTION: "",
+  };
+};
 
 const setCaption = () => {
   const ds = dsManager.getDatasource(selectedDatasource.value.id);
@@ -170,16 +161,10 @@ const setUrl = () => {
       ds.caption,
       selectedDatasource.value.url,
     );
+
+    getCatalogs();
   }
 };
-
-// const setSelectedDatasource = (id, currentSelectedItems) => {
-//   const ids = currentSelectedItems.map((e) => e.id);
-//   const store = storeManager.getStore(id);
-//   store.setDatasource(ids[0]);
-
-//   getCatalogs();
-// };
 
 const getSelectedDatasource = (): XMLADatasource => {
   const store = storeManager.getStore(item.value.id);
@@ -225,33 +210,7 @@ const getMetadata = async () => {
     selectedCatalog.value.CATALOG_NAME,
     selectedCube.value.CUBE_NAME,
   );
-
-  // hierarchies.value = await selectedDatasource.getHierarchies();
-  // measures.value = await selectedDatasource.getMeasures();
 };
-
-// const setRowHierarchy = async (value) => {
-//   const store = storeManager.getStore(props.item.id);
-//   store.setOptions({
-//     row: value,
-//   });
-// };
-
-// const setColHierarchy = async (value) => {
-//   const store = storeManager.getStore(props.item.id);
-//   store.setOptions({
-//     column: value,
-//   });
-// };
-
-// const setMeasure = async (value) => {
-//   const store = storeManager.getStore(props.item.id);
-//   store.setOptions({
-//     measure: value,
-//   });
-//   await nextTick();
-//   await store.getData();
-// };
 </script>
 
 <template>
@@ -272,38 +231,6 @@ const getMetadata = async () => {
 
     <div class="datasource-list">
       <h2>{{ t("SidebarStoreList.dataSourcesTitle") }}</h2>
-      <!-- <va-data-table
-        class="table-crud"
-        :items="dslist"
-        :columns="[{ key: 'caption' }, { key: 'url' }]"
-        :model-value="[getSelectedDatasource()]"
-        selectable
-        select-mode="single"
-        @update:model-value="setSelectedDatasource(item.id, $event)"
-      >
-        <template #cell(caption)="{ rowIndex }">
-          <va-input
-            class="caption-input"
-            @blur="updateDatasource(rowIndex, null)"
-            v-model="dslist[rowIndex].caption"
-          ></va-input>
-        </template>
-        <template #cell(type)="{ rowIndex }">
-          <va-select
-            class="type-input"
-            :model-value="dslist[rowIndex].type"
-            @update:modelValue="updateDatasource(rowIndex, $event)"
-            :options="['REST', 'XMLA']"
-          />
-        </template>
-        <template #cell(url)="{ rowIndex }">
-          <va-input
-            class="url-input"
-            @blur="updateDatasource(rowIndex)"
-            v-model="dslist[rowIndex].url"
-          ></va-input>
-        </template>
-      </va-data-table> -->
       <div class="connections-controls">
         <va-select
           text-by="caption"
@@ -356,35 +283,6 @@ const getMetadata = async () => {
             />
           </div>
         </template>
-        <!-- <template v-if="Object.keys(selectedCube).length">
-          <h2 class="mt-3">
-            {{ t("SidebarStoreList.XMLAStoreListItem.rowsHierarchy") }}:
-          </h2>
-          <va-select
-            :options="hierarchies"
-            text-by="HIERARCHY_NAME"
-            @update:modelValue="setRowHierarchy"
-            v-model="selectedRow"
-          />
-          <h2 class="mt-3">
-            {{ t("SidebarStoreList.XMLAStoreListItem.colsHierarchy") }}:
-          </h2>
-          <va-select
-            :options="hierarchies"
-            text-by="HIERARCHY_NAME"
-            @update:modelValue="setColHierarchy"
-            v-model="selectedCol"
-          />
-          <h2 class="mt-3">
-            {{ t("SidebarStoreList.XMLAStoreListItem.measure") }}:
-          </h2>
-          <va-select
-            :options="measures"
-            text-by="MEASURE_NAME"
-            @update:modelValue="setMeasure"
-            v-model="selectedMeasure"
-          />
-        </template> -->
       </template>
     </div>
   </div>

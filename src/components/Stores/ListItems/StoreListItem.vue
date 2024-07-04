@@ -22,8 +22,8 @@ const dslist: Ref<RESTDatasource[]> = ref([] as RESTDatasource[]);
 const selectedDatasourceId = ref("");
 const selectedDatasource = ref({
   url: "",
-  caption:  "",
-  id: null,
+  caption: "",
+  id: "",
 });
 
 const props = defineProps({
@@ -73,8 +73,11 @@ watch(
   () => selectedDatasourceId.value,
   (nV) => {
     const currentDs = dslist.value.find((item) => item.id === nV);
-    selectedDatasource.value = currentDs;
+    if (!currentDs) {
+      return
+    }
 
+    selectedDatasource.value = currentDs;
     const store = storeManager.getStore(item.value.id);
     store.setDatasource(currentDs.id);
   }, {
