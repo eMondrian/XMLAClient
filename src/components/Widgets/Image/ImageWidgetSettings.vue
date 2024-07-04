@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { v4 } from "uuid";
-import { ref, onMounted, type Ref } from "vue";
+import { ref, onMounted, type Ref, watch } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type {
     CollapseState,
@@ -85,6 +85,13 @@ onMounted(() => {
         getData();
     }
 });
+
+watch(
+    component.settings,
+    () => {
+        opened.value.widgetSection = true;
+    }
+)
 </script>
 
 <template>

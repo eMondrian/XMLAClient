@@ -9,9 +9,9 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { watch, ref } from "vue";
+import { watch, ref} from "vue";
 import { useI18n } from 'vue-i18n';
-import { useToast } from "vuestic-ui";
+import { useToast, type ToastPosition } from "vuestic-ui";
 import StoreList from "@/components/Sidebar/StoreList.vue";
 import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
 import SidebarWidget from "@/components/Sidebar/SidebarWidget.vue";
@@ -21,10 +21,18 @@ import { useSerialization } from "@/composables/widgets/serialization"
 const { t } = useI18n();
 const { init } = useToast();
 const props = defineProps(["modelValue", "settingsSection"]);
-const componentSettings = ref(null);
-const { getState, loadState } = useSerialization(componentSettings);
+const componentSettings = ref({} as any);
+const { getState, loadState } = useSerialization<any>(componentSettings as any);
 const emit = defineEmits(["update:modelValue"]);
-let localStorageKey = ref("");
+
+const toastConfig = {
+  closeable: false,
+  duration: 3000,
+  offsetX: 32,
+  offsetY: 82,
+  position: 'bottom-right' as ToastPosition,
+  customClass: "settings-toast",
+};
 
 watch(
   () => props.settingsSection,
@@ -37,39 +45,36 @@ watch(
 const copyState = (): void => {
   const state = getState();
   if (state) {
-    localStorageKey.value = props.settingsSection?.component?.settingsComponent?.__name;
-    localStorage.setItem(localStorageKey.value, JSON.stringify(state));
+    localStorage.setItem("widgetStorageKey", JSON.stringify(state));
 
     init({
       message: "Widget state copied to the clipboard!",
-      closeable: false,
       color: "success",
-      duration: 3000,
-      offsetX: 32,
-      offsetY: 82,
-      position: "bottom-right",
-      customClass: "settings-toast",
+      ...toastConfig,
     });
   }
 };
 
 const pasteState = (): void => {
-  const currentKey = props.settingsSection?.component?.settingsComponent?.__name;
-  const savedState = localStorage.getItem(localStorageKey.value);
+  const savedState = localStorage.getItem("widgetStorageKey") as string | null;
+  if (!savedState) {
+    init({
+      message: "The saved state is missing!",
+      color: "warning",
+      ...toastConfig,
+    });
+    return
+  };
 
-  if (savedState && currentKey === localStorageKey.value) {
-    const parsedState = JSON.parse(savedState);
+  const parsedState = JSON.parse(savedState);
+
+  if (typeof parsedState === typeof componentSettings.value ) {
     loadState(parsedState);
   } else {
     init({
       message: "Widget state types do not match!",
-      closeable: false,
       color: "danger",
-      duration: 3000,
-      offsetX: 32,
-      offsetY: 82,
-      position: "bottom-right",
-      customClass: "settings-toast",
+      ...toastConfig,
     });
   }
 };
