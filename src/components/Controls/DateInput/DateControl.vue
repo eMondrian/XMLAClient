@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface IDateSettingsProps {
     label?: string;
     availableEvents?: string[];
@@ -21,7 +22,7 @@ import { useSerialization } from "@/composables/widgets/serialization";
 import DateSettings from "@/components/Controls/DateInput/DateSettings.vue";
 import type { EventItem } from "@/@types/controls";
 
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 const settingsComponent = DateSettings;
 
 const selectValue: Ref<Date> = ref(new Date(2024, 0, 1));

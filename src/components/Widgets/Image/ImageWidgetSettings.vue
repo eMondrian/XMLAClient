@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { v4 } from "uuid";
-import { ref, onMounted, type Ref } from "vue";
+import { ref, onMounted, type Ref, watch } from "vue";
 import { useStoreManager } from "@/composables/storeManager";
 import type {
     CollapseState,
@@ -20,6 +20,7 @@ import type {
 } from "@/@types/widgets";
 import type { Store } from "@/stores/Widgets/Store";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { IStore } from "@/@types/Index";
 
 export interface ImageComponentSettings {
     images: ImageGalleryItem[];
@@ -31,6 +32,8 @@ export interface ImageComponent {
     settings: ImageComponentSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => ImageComponentSettings;
+    loadState: (state: ImageComponentSettings) => void;
 }
 
 const { t } = useI18n();
@@ -42,7 +45,7 @@ const opened: Ref<CollapseState> = ref({
 });
 
 const storeManager = useStoreManager();
-let stores: Ref<any[]> = ref([]) as Ref<any[]>;
+let stores = ref([]) as Ref<IStore[]>;
 const requestResult: Ref<string> = ref("");
 
 const addNew = () => {
@@ -82,6 +85,13 @@ onMounted(() => {
         getData();
     }
 });
+
+watch(
+    component.settings,
+    () => {
+        opened.value.widgetSection = true;
+    }
+)
 </script>
 
 <template>

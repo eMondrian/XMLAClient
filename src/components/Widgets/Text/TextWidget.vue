@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<ITextSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, data, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 defineExpose({
   setSetting,
@@ -61,6 +61,7 @@ defineExpose({
   store,
   setStore,
   getState,
+  loadState,
 });
 
 const parsedText = computed(() => {

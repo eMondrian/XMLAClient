@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<IIconSettingsProps>(), {
 
 const { settings, setSetting } = useSettings<typeof props>(props);
 const { store, setStore } = useStore<Store>();
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 const iconStyle = computed(() => {
     return `
@@ -58,6 +58,7 @@ defineExpose({
     settings,
     settingsComponent,
     getState,
+    loadState,
     store,
     setStore,
 });

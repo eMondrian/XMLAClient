@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<IWrapperSettingsProps>(), {
 })
 
 const { settings, setSetting } = useSettings<typeof props>(props);
-const { getState } = useSerialization(settings);
+const { getState, loadState } = useSerialization(settings);
 
 const fullscreenEnabled = ref(false);
 
@@ -63,6 +63,7 @@ defineExpose({
   settings,
   settingsComponent,
   getState,
+  loadState,
 });
 
 const getShadow = computed(()=>{

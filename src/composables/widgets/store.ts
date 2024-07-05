@@ -11,6 +11,7 @@ Contributors: Smart City Jena
 
 import { ref, type Ref, inject } from "vue";
 import type { TinyEmitter } from "tiny-emitter";
+import type { IStore } from "@/@types/Index";
 
 export function useStore<Type extends IStore>() {
   const data = ref({});

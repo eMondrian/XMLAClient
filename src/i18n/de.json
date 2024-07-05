@@ -37,7 +37,9 @@
 
   "SidebarSettings": {
     "closeButton": "Schließen",
-    "doneButton": "Erledigt"
+    "doneButton": "Erledigt",
+    "copyStateButton": "Copy state",
+    "pasteStateButton": "Paste state"
   },
 
   "SidebarStoreSettings": {

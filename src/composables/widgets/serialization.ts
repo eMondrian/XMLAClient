@@ -9,9 +9,11 @@ Contributors: Smart City Jena
 
 */
 
-import type { Ref } from "vue";
+import { type Ref } from "vue";
+import type { IWidgetSerializable } from "@/@types/Index";
 
-export function useSerialization<Type>(settings: Ref<Type>) {
+export function useSerialization<Type>(settings: Ref<Type>): IWidgetSerializable<Type> {
+
   const getState = () => {
     const state = {} as Type;
     const componentState = settings.value;
@@ -19,11 +21,17 @@ export function useSerialization<Type>(settings: Ref<Type>) {
     for (const key in componentState) {
       state[key] = componentState[key];
     }
-
     return state;
+  };
+
+  const loadState = (state: Type) => {
+    for (const key in state) {
+      settings.value[key] = state[key];
+    }
   };
 
   return {
     getState,
+    loadState,
   };
 }

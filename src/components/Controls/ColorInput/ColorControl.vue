@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script setup lang="ts">
+import type { EventBus } from "@/@types/Index";
 export interface IColorSettingsProps {
     label?: string;
     availableEvents?: string[];
@@ -21,7 +22,7 @@ import { useSerialization } from "@/composables/widgets/serialization";
 import ColorSettings from "@/components/Controls/ColorInput/ColorSettings.vue";
 import type { EventItem } from "@/@types/controls";
 
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 const settingsComponent = ColorSettings;
 
 const props = withDefaults(defineProps<IColorSettingsProps>(), {

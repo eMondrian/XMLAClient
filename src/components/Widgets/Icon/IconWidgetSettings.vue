@@ -31,6 +31,8 @@ export interface IIconComponent {
     settings: IIconSettings;
     setSetting: (key: string, value: any) => void;
     setStore: (store: Store | XMLAStore) => void;
+    getState: () => IIconSettings;
+    loadState: (state: IIconSettings) => void;
 }
 
 const { t } = useI18n();

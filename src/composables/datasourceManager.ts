@@ -10,12 +10,13 @@
 */
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { type Ref, ref, watch } from "vue";
+import { type Ref, ref } from "vue";
 import { v4 } from "uuid";
 import RESTDatasource from "@/dataSources/RestDatasource";
 import XmlaDatasource from "@/dataSources/XmlaDatasource";
 import MQTTDatasource from "@/dataSources/MqttDatasource";
 import { inject } from "vue";
+import type { IDatasource } from "@/@types/Index";
 
 declare interface DatasourceMap {
   [key: string]: IDatasource;

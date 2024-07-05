@@ -33,6 +33,8 @@ interface IWrapperSettings {
 interface IWrapperComponent {
     settings: IWrapperSettings;
     setSetting: (key: string, value: any) => void;
+    getState: () => IWrapperSettings;
+    loadState: (state: IWrapperSettings) => void;
 }
 
 const { t } = useI18n();

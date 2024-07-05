@@ -22,6 +22,7 @@ import ColumnsArea from "../../PivotTable/Areas/ColumnsArea.vue";
 import CellsArea from "../../PivotTable/Areas/CellsArea.vue";
 import PivotTableSettingsButton from "@/components/PivotTable/PivotTableSettingsButton.vue";
 import type { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import type { EventBus } from "@/@types/Index";
 
 const DEFAULT_COLUMN_WIDTH = 150;
 const DEFAULT_ROW_HEIGHT = 30;
@@ -30,7 +31,7 @@ const inited = ref(false);
 const storeManager = useStoreManager();
 const settingsComponent = PivotTableWidgetSettings;
 
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 
 const storeId = ref("");
 

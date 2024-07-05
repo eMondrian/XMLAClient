@@ -8,12 +8,17 @@ SPDX-License-Identifier: EPL-2.0
 Contributors: Smart City Jena
 */
 
-declare interface ISerializable {
+export interface ISerializable {
   getState: () => string;
-  loadState: (state: string, eventBus?: any) => void;
+  loadState: (state: string, eventBus?: EventBus) => void;
 }
 
-declare interface IDatasource {
+export interface IWidgetSerializable<Type> {
+  getState: () => Type;
+  loadState: (state: Type) => void;
+}
+
+export interface IDatasource {
   id: string;
   caption: string;
   url: string;
@@ -21,7 +26,7 @@ declare interface IDatasource {
   getData: (params: any) => Promise<any>;
 }
 
-interface IStore {
+export interface IStore {
   id: string;
   caption: string;
   events: IStoreEvents[];
@@ -33,17 +38,17 @@ interface IStore {
   setOptions: (options: IStoreParams) => void;
 }
 
-interface EventBus {
+export interface EventBus {
   emit: (string, any?) => void;
   on: (string, Function) => void;
   off: (string, Function) => void;
 }
 
-interface IStoreParams {
+export interface IStoreParams {
   [key: string]: any;
 }
 
-interface IStoreEvents {
+export interface IStoreEvents {
   name: string;
   action: string;
 }

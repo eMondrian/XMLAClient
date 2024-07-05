@@ -13,9 +13,10 @@ import { useI18n } from "vue-i18n";
 import StoreList from "@/components/Stores/StoreList.vue";
 import { useStoreManager } from "@/composables/storeManager";
 import { inject, ref } from "vue";
+import type { EventBus } from "@/@types/Index";
 
 const { t } = useI18n();
-const EventBus = inject("customEventBus") as any;
+const EventBus = inject("customEventBus") as EventBus;
 const storeManager = useStoreManager();
 
 const isDropdownVisible = ref(false);
