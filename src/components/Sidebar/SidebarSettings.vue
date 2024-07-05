@@ -17,6 +17,7 @@ import SidebarControl from "@/components/Sidebar/SidebarControl.vue";
 import SidebarWidget from "@/components/Sidebar/SidebarWidget.vue";
 import SidebarAppSettings from "./SidebarAppSettings.vue";
 import { useSerialization } from "@/composables/widgets/serialization"
+import { haveSameKeys } from "@/utils/helpers";
 
 const { t } = useI18n();
 const { init } = useToast();
@@ -68,7 +69,7 @@ const pasteState = (): void => {
 
   const parsedState = JSON.parse(savedState);
 
-  if (typeof parsedState === typeof componentSettings.value ) {
+  if (haveSameKeys(parsedState,componentSettings.value)) {
     loadState(parsedState);
   } else {
     init({
