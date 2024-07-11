@@ -79,7 +79,7 @@ Contributors: Smart City Jena
                                 }}
                             </va-button>
                         </template>
-                        <va-dropdown-content 
+                        <va-dropdown-content
                             class="dropdown-list"
                             style="background-color: var(--app-dropdown-background); color: var(--app-font-color);"
                             >
@@ -89,7 +89,9 @@ Contributors: Smart City Jena
                                 :key="widget"
                                 @click="addSelectedWidget(widget)"
                             >
-                                {{ t(`Widgets.${widget}`) }}
+                                <div>
+                                    {{ t(`Widgets.${widget}`) }}
+                                </div>
                             </div>
                         </va-dropdown-content>
                     </va-dropdown>
@@ -309,16 +311,18 @@ const toggleEdit = () => {
 
 const saveLayout = () => {
     const state = getSerializedState();
+    localStorage.setItem("testLayout", JSON.stringify(state));
+
     console.log(state);
 };
 
 const loadLayout = async () => {
-    loadState("{}");
-    // const retrievedObject =
-    //   localStorage.getItem("testLayout") || JSON.stringify(layout);
+    // loadState("{}");
+    const retrievedObject =
+        localStorage.getItem("testLayout") || JSON.stringify(layout);
     // layout.value = JSON.parse(retrievedObject);
 
-    // console.log(layout.value);
+    loadState(JSON.parse(retrievedObject));
 
     // const dsState = localStorage.getItem("dsState") || "{}";
     // const storeState = localStorage.getItem("storeState") || "{}";
