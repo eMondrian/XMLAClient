@@ -111,18 +111,20 @@ const pasteState = (): void => {
       </div>
 
       <div class="settings-sidebar-actions">
-        <va-button
-          class="sidebar-button-close"
-          @click="copyState()"
-        >
-          {{ t('SidebarSettings.copyStateButton') }}
-        </va-button>
-        <va-button
-          class="sidebar-button-close"
-          @click="pasteState()"
-        >
-          {{ t('SidebarSettings.pasteStateButton') }}
-        </va-button>
+        <div v-if="props.settingsSection?.type === 'Widget'">
+          <va-button
+            class="sidebar-button-close"
+            @click="copyState()"
+          >
+            {{ t('SidebarSettings.copyStateButton') }}
+          </va-button>
+          <va-button
+            class="sidebar-button-close"
+            @click="pasteState()"
+          >
+            {{ t('SidebarSettings.pasteStateButton') }}
+          </va-button>
+        </div>
         <va-button
           class="sidebar-button-close mr-4"
           preset="primary"
