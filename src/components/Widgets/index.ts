@@ -18,6 +18,7 @@ import IconWidget from "@/components/Widgets/Icon/IconWidget.vue";
 import RichTextWidget from "@/components/Widgets/RichText/RichTextWidget.vue";
 import TableWidget from "@/components/Widgets/Table/TableWidget.vue";
 import PivotTableWidget from "@/components/Widgets/PivotTable/PivotTableWidget.vue";
+import ChartWidget from "@/components/Widgets/Chart/ChartWidget.vue";
 import SwitchControl from "@/components/Controls/Switch/SwitchControl.vue";
 import SelectControl from "@/components/Controls/Select/SelectControl.vue";
 import DateControl from "@/components/Controls/DateInput/DateControl.vue";
@@ -38,6 +39,7 @@ export const enabledWidgets = {
     RichTextWidget,
     TableWidget,
     PivotTableWidget,
+    ChartWidget,
     // Controls
     SwitchControl,
     SelectControl,
@@ -60,6 +62,7 @@ export const widgetNames = [
     { name: "RichTextWidget", label: "Rich Text Widget" },
     { name: "TableWidget", label: "Table Widget" },
     { name: "PivotTableWidget", label: "Pivot Table Widget" },
+    { name: "ChartWidget", label: "Chart Widget" },
     // Controls
     { name: "SwitchControl", label: "Switch Control" },
     { name: "SelectControl", label: "Select Control" },

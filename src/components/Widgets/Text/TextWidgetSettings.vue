@@ -109,6 +109,7 @@ onMounted(() => {
                     <VaButton
                         color="#fafafa"
                         class="align-button"
+                        :class="{'active':component.settings.fontWeight === 'bold'}"
                         icon="format_bold"
                         size="small"
                         icon-color="#000000"
@@ -122,6 +123,7 @@ onMounted(() => {
                     <VaButton
                         color="#fafafa"
                         class="align-button"
+                        :class="{'active':component.settings.fontStyle === 'italic'}"
                         icon="format_italic"
                         size="small"
                         icon-color="#000000"
@@ -133,15 +135,15 @@ onMounted(() => {
                         "
                     />
                     <VaButton
-                        color="#fafafa"
                         class="align-button"
+                        :class="{'active':component.settings.textDecoration === 'underline'}"
                         icon="format_underline"
                         size="small"
                         icon-color="#000000"
                         :model-value="component.settings.textDecoration"
                         @click="
                             component.settings.textDecoration === 'underline'
-                                ? component.setSetting('textDecoration', 'None')
+                                ? component.setSetting('textDecoration', 'none')
                                 : component.setSetting(
                                       'textDecoration',
                                       'underline',
@@ -152,7 +154,7 @@ onMounted(() => {
                 <div class="align-buttons-group">
                     <div class="align-horizontal-buttons">
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.horizontalAlign === 'Left'}"
                             class="align-button"
                             icon="align_horizontal_left"
                             size="small"
@@ -163,7 +165,7 @@ onMounted(() => {
                             "
                         />
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.horizontalAlign === 'Center'}"
                             class="align-button"
                             icon="align_horizontal_center"
                             size="small"
@@ -177,7 +179,7 @@ onMounted(() => {
                             "
                         />
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.horizontalAlign === 'Right'}"
                             class="align-button"
                             icon="align_horizontal_right"
                             size="small"
@@ -190,7 +192,7 @@ onMounted(() => {
                     </div>
                     <div class="align-vertical-buttons ml-2">
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.verticalAlign === 'Top'}"
                             class="align-button"
                             icon="align_vertical_top"
                             size="small"
@@ -201,7 +203,7 @@ onMounted(() => {
                             "
                         />
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.verticalAlign === 'Center'}"
                             class="align-button"
                             icon="align_vertical_center"
                             size="small"
@@ -212,7 +214,7 @@ onMounted(() => {
                             "
                         />
                         <VaButton
-                            color="#fafafa"
+                            :class="{'active':component.settings.verticalAlign === 'Bottom'}"
                             class="align-button"
                             icon="align_vertical_bottom"
                             size="small"
@@ -274,7 +276,7 @@ onMounted(() => {
 }
 
 .text-color {
-    width: 156px;
+    width:100px;
 }
 
 .text-weight {
@@ -284,8 +286,6 @@ onMounted(() => {
 .align-buttons-group {
     display: flex;
     align-self: flex-end;
-    border: 2px solid #cdcfdb;
-    border-radius: 4px;
     margin-left: 12px;
 
     &__format {
@@ -298,13 +298,23 @@ onMounted(() => {
     }
 
     .align-button {
-        width: 100%;
-        height: 32px;
-        padding: 0 7.5px;
+        width: 32px;
+        height: 36px;
+        margin-left: 4px;
+        border-radius: 4px;
 
         &:hover {
-            --va-background-color: rgb(162, 181, 218) !important;
+            --va-background-color: rgb(122, 143, 184) !important;
         }
     }
+}
+
+.va-button {
+    --va-background-color: var(--app-button-with-icon) !important;
+}
+
+.active {
+    border-radius: 5px !important;
+    border: 2px solid rgb(22, 253, 22) !important;
 }
 </style>

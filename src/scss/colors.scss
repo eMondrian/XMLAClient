@@ -81,6 +81,7 @@ $bs-box-shadow-dark: 0px 4px 20px 0px rgb(0 0 0 / 44%);
   --app-secondary-button--hover: #{$bs-pale-cornflower-blue};
   --app-secondary-button--active: #{$bs-white};
   --app-secondary-button-border: #{$bs-royal-blue};
+  --app-button-with-icon: #{$bs-light-silver};
   --va-primary: #{$bs-blue};
 }
 
@@ -113,5 +114,6 @@ $bs-box-shadow-dark: 0px 4px 20px 0px rgb(0 0 0 / 44%);
   --app-secondary-button--hover: #{$bs-dark-grey};
   --app-secondary-button--active: #{$bs-dark-grey};
   --app-secondary-button-border: #{$bs-royal-blue};
+  --app-button-with-icon: #{$bs-dark-grey};
   --va-primary: #{$bs-white};
 }

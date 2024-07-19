@@ -49,6 +49,7 @@ const opened: Ref<CollapseState> = ref({
     storeSection: false,
 });
 
+const currentSelectNode = ref("");
 const storeManager = useStoreManager();
 let stores = ref([]) as Ref<any[]>;
 
@@ -147,6 +148,52 @@ watch(
         component.setSetting("editor", newValue);
     },
 );
+
+const handleSelectChange = (value) => {
+    if (!editor.value) return;
+    
+    if (value === 'Paragraph') {
+        editor.value.chain().focus().setParagraph().run();
+    } else if (value.includes('Header')) {
+        editor?.value.chain().focus().toggleHeading({ level: parseInt(value.split(' ')[1]) }).run();
+    }
+};
+
+const updateSelectNode = () => {
+  if (!editor.value) return;
+
+  const isActive = (level) => editor?.value.isActive('heading', { level });
+  if (isActive(1)) {
+    currentSelectNode.value = 'Header 1';
+  } else if (isActive(2)) {
+    currentSelectNode.value = 'Header 2';
+  } else if (isActive(3)) {
+    currentSelectNode.value = 'Header 3';
+  } else if (isActive(4)) {
+    currentSelectNode.value = 'Header 4';
+  } else if (isActive(5)) {
+    currentSelectNode.value = 'Header 5';
+  } else if (isActive(6)) {
+    currentSelectNode.value = 'Header 6';
+  } else {
+    currentSelectNode.value = 'Paragraph';
+  }
+};
+
+onMounted(() => {
+  if (editor.value) {
+    editor.value.on('transaction', updateSelectNode);
+  }
+});
+
+watch(editor, (newEditor, oldEditor) => {
+  if (oldEditor) {
+    oldEditor.off('transaction', updateSelectNode);
+  }
+  if (newEditor) {
+    newEditor.on('transaction', updateSelectNode);
+  }
+});
 </script>
 
 <template>
@@ -156,191 +203,228 @@ watch(
     >
         <div class="settings-container">
             <div v-if="editor">
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleBold().run()"
-                    :disabled="!editor.can().chain().focus().toggleBold().run()"
-                    :class="{ 'is-active': editor.isActive('bold') }"
-                >
-                    {{ t("RichTextWidget.bold") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleItalic().run()"
-                    :disabled="
-                        !editor.can().chain().focus().toggleItalic().run()
-                    "
-                    :class="{ 'is-active': editor.isActive('italic') }"
-                >
-                    {{ t("RichTextWidget.italic") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleStrike().run()"
-                    :disabled="
-                        !editor.can().chain().focus().toggleStrike().run()
-                    "
-                    :class="{ 'is-active': editor.isActive('strike') }"
-                >
-                    {{ t("RichTextWidget.strike") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleUnderline().run()"
-                    :disabled="
-                        !editor.can().chain().focus().toggleUnderline().run()
-                    "
-                    :class="{ 'is-active': editor.isActive('underline') }"
-                >
-                    {{ t("RichTextWidget.underline") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleCode().run()"
-                    :disabled="!editor.can().chain().focus().toggleCode().run()"
-                    :class="{ 'is-active': editor.isActive('code') }"
-                >
-                    {{ t("RichTextWidget.code") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().unsetAllMarks().run()"
-                >
-                    {{ t("RichTextWidget.clearMarks") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().clearNodes().run()"
-                >
-                    {{ t("RichTextWidget.clearNodes") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().setParagraph().run()"
-                    :class="{ 'is-active': editor.isActive('paragraph') }"
-                >
-                    {{ t("RichTextWidget.paragraph") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 1 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 1 }),
-                    }"
-                >
-                    h1
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 2 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 2 }),
-                    }"
-                >
-                    h2
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 3 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 3 }),
-                    }"
-                >
-                    h3
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 4 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 4 }),
-                    }"
-                >
-                    h4
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 5 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 5 }),
-                    }"
-                >
-                    h5
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="
-                        editor.chain().focus().toggleHeading({ level: 6 }).run()
-                    "
-                    :class="{
-                        'is-active': editor.isActive('heading', { level: 6 }),
-                    }"
-                >
-                    h6
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleBulletList().run()"
-                    :class="{ 'is-active': editor.isActive('bulletList') }"
-                >
-                    {{ t("RichTextWidget.bulletList") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleOrderedList().run()"
-                    :class="{ 'is-active': editor.isActive('orderedList') }"
-                >
-                    {{ t("RichTextWidget.orderedList") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleCodeBlock().run()"
-                    :class="{ 'is-active': editor.isActive('codeBlock') }"
-                >
-                    {{ t("RichTextWidget.codeBlock") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().toggleBlockquote().run()"
-                    :class="{ 'is-active': editor.isActive('blockquote') }"
-                >
-                    {{ t("RichTextWidget.blockQuote") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().setHorizontalRule().run()"
-                >
-                    {{ t("RichTextWidget.horizontalRule") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().setHardBreak().run()"
-                >
-                    {{ t("RichTextWidget.hardBreak") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().undo().run()"
-                    :disabled="!editor.can().chain().focus().undo().run()"
-                >
-                    {{ t("RichTextWidget.undo") }}
-                </va-button>
-                <va-button
-                    class="editor-btn"
-                    @click="editor.chain().focus().redo().run()"
-                    :disabled="!editor.can().chain().focus().redo().run()"
-                >
-                    {{ t("RichTextWidget.redo") }}
-                </va-button>
+                <div class="marks-block">
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="undo"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().undo().run()"
+                        :disabled="!editor.can().chain().focus().undo().run()"
+                    >
+                        <!-- {{ t("RichTextWidget.undo") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="redo"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().redo().run()"
+                        :disabled="!editor.can().chain().focus().redo().run()"
+                    >
+                        <!-- {{ t("RichTextWidget.redo") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_bold"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleBold().run()"
+                        :disabled="!editor.can().chain().focus().toggleBold().run()"
+                        :class="{ 'is-active': editor.isActive('bold') }"
+                    >
+                        <!-- {{ t("RichTextWidget.bold") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_italic"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleItalic().run()"
+                        :disabled="
+                            !editor.can().chain().focus().toggleItalic().run()
+                        "
+                        :class="{ 'is-active': editor.isActive('italic') }"
+                    >
+                        <!-- {{ t("RichTextWidget.italic") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_strikethrough"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleStrike().run()"
+                        :disabled="
+                            !editor.can().chain().focus().toggleStrike().run()
+                        "
+                        :class="{ 'is-active': editor.isActive('strike') }"
+                    >
+                        <!-- {{ t("RichTextWidget.strike") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_underlined"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleUnderline().run()"
+                        :disabled="
+                            !editor.can().chain().focus().toggleUnderline().run()
+                        "
+                        :class="{ 'is-active': editor.isActive('underline') }"
+                    >
+                        <!-- {{ t("RichTextWidget.underline") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="code"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleCode().run()"
+                        :disabled="!editor.can().chain().focus().toggleCode().run()"
+                        :class="{ 'is-active': editor.isActive('code') }"
+                    >
+                        <!-- {{ t("RichTextWidget.code") }} -->
+                    </va-button>
+                    <!-- <va-button
+                        class="editor-btn"
+                        @click="editor.chain().focus().unsetAllMarks().run()"
+                    >
+                        {{ t("RichTextWidget.clearMarks") }}
+                    </va-button> -->
+                    <va-select
+                        class="select-node"
+                        :model-value="currentSelectNode"
+                        :options="['Paragraph', 'Header 1', 'Header 2', 'Header 3', 'Header 4', 'Header 5', 'Header 6']"
+                        @update:model-value="handleSelectChange"
+                    >
+                    </va-select>
+                </div>
+                <div class="nodes-block">
+                    <!-- <va-button
+                        class="editor-btn"
+                        @click="editor.chain().focus().setParagraph().run()"
+                        :class="{ 'is-active': editor.isActive('paragraph') }"
+                    >
+                        {{ t("RichTextWidget.paragraph") }}P
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 1 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 1 }),
+                        }"
+                    >
+                        H1
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 2 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 2 }),
+                        }"
+                    >
+                        H2
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 3 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 3 }),
+                        }"
+                    >
+                        H3
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 4 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 4 }),
+                        }"
+                    >
+                        H4
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 5 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 5 }),
+                        }"
+                    >
+                        H5
+                    </va-button>
+                    <va-button
+                        class="editor-btn"
+                        @click="
+                            editor.chain().focus().toggleHeading({ level: 6 }).run()
+                        "
+                        :class="{
+                            'is-active': editor.isActive('heading', { level: 6 }),
+                        }"
+                    >
+                        H6
+                    </va-button> -->
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_list_bulleted"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleBulletList().run()"
+                        :class="{ 'is-active': editor.isActive('bulletList') }"
+                    >
+                        <!-- {{ t("RichTextWidget.bulletList") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_list_numbered"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleOrderedList().run()"
+                        :class="{ 'is-active': editor.isActive('orderedList') }"
+                    >
+                        <!-- {{ t("RichTextWidget.orderedList") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="integration_instructions"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleCodeBlock().run()"
+                        :class="{ 'is-active': editor.isActive('codeBlock') }"
+                    >
+                        <!-- {{ t("RichTextWidget.codeBlock") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="format_quote"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().toggleBlockquote().run()"
+                        :class="{ 'is-active': editor.isActive('blockquote') }"
+                    >
+                        <!-- {{ t("RichTextWidget.blockQuote") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="horizontal_rule"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().setHorizontalRule().run()"
+                    >
+                        <!-- {{ t("RichTextWidget.horizontalRule") }} -->
+                    </va-button>
+                    <va-button
+                        class="editor-btn editor-button--color"
+                        icon="wrap_text"
+                        icon-color="#000000"
+                        @click="editor.chain().focus().setHardBreak().run()"
+                    >
+                        <!-- {{ t("RichTextWidget.hardBreak") }} -->
+                    </va-button>
+                    <!-- <va-button
+                        class="editor-btn"
+                        @click="editor.chain().focus().clearNodes().run()"
+                    >
+                        {{ t("RichTextWidget.clearNodes") }}
+                    </va-button> -->
+                </div>
             </div>
             <div class="editor">
                 <editor-content :editor="editor" />
@@ -477,9 +561,20 @@ watch(
 .editor-btn {
     margin: 0 4px 4px 0;
     border: 2px solid transparent;
+
+    --va-background-color: var(--app-button-with-icon) !important;
+
+    &:hover {
+        --va-background-color: rgb(122, 143, 184) !important;
+    }
+
 }
 
 .is-active {
     border: 2px solid rgb(22, 253, 22) !important;
+}
+
+.select-node {
+    width: 120px;
 }
 </style>

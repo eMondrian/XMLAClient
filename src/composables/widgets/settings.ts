@@ -18,6 +18,7 @@ export function useSettings<Type>(props: any) {
     });
 
     const setSetting = (key, value) => {
+        console.log(key, value)
         const keyArr = key.split(".");
         let iter = settings.value;
 

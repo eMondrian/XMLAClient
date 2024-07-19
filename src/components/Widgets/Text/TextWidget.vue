@@ -9,16 +9,6 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-export interface ITextSettings {
-    text: string;
-    fontSize: number;
-    fontColor: string;
-    fontWeight: string;
-    textDecoration: string;
-    horizontalAlign: string;
-    verticalAlign: string;
-}
-
 export interface ITextSettingsProps {
     text?: string;
     fontSize?: number;
