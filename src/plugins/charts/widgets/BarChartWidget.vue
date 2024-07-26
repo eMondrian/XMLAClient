@@ -19,7 +19,7 @@ import { useStoreManager } from "@/composables/storeManager";
 import { useStore } from "@/composables/widgets/store";
 import type { Store } from "@/stores/Widgets/Store";
 import { useSerialization } from "@/composables/widgets/serialization";
-import { Bar } from "vue-chartjs";
+import { Bar, Line } from "vue-chartjs";
 import { deepUnref } from "vue-deepunref";
 import {
     Chart as ChartJS,
@@ -27,6 +27,8 @@ import {
     Tooltip,
     Legend,
     BarElement,
+    LineElement,
+    PointElement,
     CategoryScale,
     LinearScale,
     LogarithmicScale,
@@ -45,6 +47,7 @@ import type { TinyEmitter } from "tiny-emitter";
 import useChartDataComposer from "@/plugins/charts/composables/ChartDataComposer";
 import { CSVComposer } from "@/plugins/charts/impl/CSVComposer";
 import { XMLAComposer } from "@/plugins/charts/impl/XMLAComposer";
+import { reverse } from "lodash";
 
 //import * as dateFns from 'date-fns';
 //import * as  dateFnsAdapter  from 'chartjs-adapter-date-fns';
@@ -55,10 +58,20 @@ import { XMLAComposer } from "@/plugins/charts/impl/XMLAComposer";
 
 const settingsComponent = BarChartWidgetSettings;
 
+const chartComponent = computed(() => {
+    switch (settings.value.chartType) {
+        case 'Line':
+            return Line;
+        default:
+            return Bar;
+    }
+});
+
+
 const props = withDefaults(defineProps<ITChartSettings>(), {
     dataSets: [] as IDataSetSelector[],
     composer: [],
-    // chartType: "Bar",
+    chartType: "Bar",
     title: "Some chart",
     titlePosition: "top",
     legendPosition: "top",
@@ -68,6 +81,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
     axes: {
         x: {
             text: "X",
+            position: "bottom",
             type: "timeseries",
             offsetAfterAutoskip: true,
             ticks: {
@@ -82,9 +96,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
             grid: {
                 display: true,
                 color: "#ccc",
-                // thickness: 1, 
-                // dash: [2, 2],
-                // dashOffset: 0,
+                thickness: 1,
                 tickMarksColor: "#ccc",
             },
             ticks: {
@@ -94,7 +106,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
         y: {
             text: "Y",
             position: "left",
-            type: "category",
+            type: "linear",
             backgroundColor: "#fff",
             stacked: false,
             weight: 2,
@@ -103,9 +115,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
             grid: {
                 display: true,
                 color: "#ccc",
-                // thickness: 1, 
-                // dash: [2, 2],
-                // dashOffset: 0,
+                thickness: 1,
                 tickMarksColor: "#ccc",
             },
             ticks: {
@@ -159,15 +169,15 @@ defineExpose({
     getState,
 });
 
-onMounted(() => {
-    console.log(props);
-});
+onMounted(() => {});
 
 ChartJS.register(
     Title,
     Tooltip,
     Legend,
     BarElement,
+    LineElement,
+    PointElement,
     CategoryScale,
     LinearScale,
     LogarithmicScale,
@@ -270,7 +280,7 @@ const chartData = computed(() => {
     }
 });
 const chartOptions = computed(() => {
-    return {
+    const config = {
         plugins: {
             title: {
             display: true,
@@ -282,10 +292,15 @@ const chartOptions = computed(() => {
             },
         },
         responsive: true,
-        backgroundColor: "#00000000",
+        // backgroundColor: "#00000000",
         scales: {
             x: {
-                display: true,
+                display: settings.value.axes.x.display,
+                type: settings.value.axes.x.type,
+                position: settings.value.axes.x.position,
+                reverse: settings.value.axes.x.reverse,
+                stacked: settings.value.axes.x.stacked,
+                backgroundColor: settings.value.axes.x.backgroundColor,
                 title: {
                     display: true,
                     text: settings.value.axes.x.text,
@@ -304,8 +319,12 @@ const chartOptions = computed(() => {
                 }
             },
             y: {
-                display: true,
+                display: settings.value.axes.y.display,
+                type: settings.value.axes.y.type,
                 position: settings.value.axes.y.position,
+                reverse: settings.value.axes.y.reverse,
+                stacked: settings.value.axes.y.stacked,
+                backgroundColor: settings.value.axes.y.backgroundColor,
                 title: {
                     display: true,
                     text: settings.value.axes.y.text,
@@ -322,16 +341,20 @@ const chartOptions = computed(() => {
                     // tickBorderDashOffset: settings.value.axes.y.grid.dashOffset,
                     tickColor: settings.value.axes.y.grid.tickMarksColor,
                 }
-            }
+            },
         }
     };
+    if (settings.value.axes.y2) {
+        config.scales.y2 = settings.value.axes.y2;
+    }
+    return config;
 });
 </script>
 
 <template>
     <!--<div class="chart_container" v-if="settings">-->
 
-    <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+    <component :is="chartComponent" :data="chartData" :options="chartOptions"/>
 
     <!--</div>-->
 </template>

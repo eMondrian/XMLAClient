@@ -356,6 +356,7 @@
     "toggleDropdown": "toggle",
     "select": "select",
     "openColorPicker": "color",
-    "noOptions": "No options"
+    "noOptions": "No options",
+    "selectRowByIndex": "select"
   }
 }

@@ -56,6 +56,7 @@ export interface TicksSettings {
 }
 
 export interface ITChartSettings {
+    chartType: string;
     title: string;
     titlePosition: string;
     legendPosition: string,
@@ -138,28 +139,26 @@ function addAxis() {
     let name = "y2";
 
     //component.setSetting('axes.'+name,{
-    //let axis =  clone(toRaw(unref(component.settings.axes)));
-
+    //let axis =  clone(toRaw(unref(component.settings.axes)));     
     axes.value[name] = {
+        title: {
+            display: true,
+            text: "Y2",
+        },
+        ticks: {
+            color: "#000"
+        },
         type: "category",
         backgroundColor: "#fff",
         stacked: false,
         weight: 2,
         reverse: false,
         display: true,
+        position: "right",
     };
-    //component.setSetting('axes',axis);
+    component.setSetting(`axes.${name}`, axes.value[name]);
 }
-onMounted(() => {
-    console.log(component.settings.axes.x.text)
-});
-
-watch(
-    () => component.settings.axes.x.text,
-    (nV) => {
-        console.log(nV)
-    }
-)
+onMounted(() => {});
 
 const updateBgc = (index, newColor) => {
     backgroundColors.value[index].color = newColor;
@@ -211,6 +210,14 @@ watch(
 <template>
     <va-collapse v-model="opened.mainSection" header="Chart">
         <div class="settings-block mb-3">
+            <va-select
+                label="Chart Type:"
+                :model-value="component.settings.chartType"
+                @update:model-value="component.setSetting('chartType', $event)"
+                :options="['Bar', 'Line']"
+            />
+        </div>
+        <div class="settings-block mb-3">
               <va-input
                 class="title-input"
                 label="Title:"
@@ -247,7 +254,6 @@ watch(
             />
             <va-input
                 class="transparency-input ml-2"
-
                 :model-value="bgc.transparency"
                 @update:model-value="updateTransparency(index, $event)"
                 label="Transparency"
@@ -288,114 +294,220 @@ watch(
     <va-collapse v-model="opened.mapSection" header="Axes">
         <div class="settings-container">
             <div class="settings-block" v-if="component">
-                <h2>x-Axis:</h2>
+                <h2 class="mb-2">x-Axis:</h2>
 
-                <VaSelect
-                    v-if="axes.x"
-                    v-model="axes.x.type"
-                    :options="[
-                        'timeseries',
-                        'linear',
-                        'logarithmic',
-                        'category',
-                    ]"
-                    placeholder="Select an header for X"
-                />
-                <VaColorInput v-model="axes.x.backgroundColor" label="color">
-                </VaColorInput>
-                <br />
-                <VaSwitch label="stacked" v-model="axes.x.stacked" /><br />
-                <VaSwitch label="reverse" v-model="axes.x.reverse" /><br />
-                <VaSwitch
-                    label="display"
-                    left-label
-                    v-model="axes.x.display"
-                /><br />
-                <VaInput v-model="axes.x.weight" label="weight"> </VaInput>
-                <VaInput
-                        label="title"
-                        :model-value="component.settings.axes.x.text"
-                        @update:model-value="component.setSetting('axes.x.text', $event)"
-                />
-                <br />
-                <h2>y-Axis:</h2>
-                <br />
-
-                <VaSelect
-                    v-model="axes.y.type"
-                    :options="[
-                        'timeseries',
-                        'linear',
-                        'logarithmic',
-                        'category',
-                    ]"
-                    placeholder="Select an header for X"
-                />
-                <VaColorInput v-model="axes.y.backgroundColor" label="color">
-                </VaColorInput>
-                <br />
-                <VaSwitch label="stacked" v-model="axes.y.stacked" /><br />
-                <VaSwitch label="reverse" v-model="axes.y.reverse" /><br />
-                <VaSwitch
-                    label="display"
-                    left-label
-                    v-model="axes.y.display"
-                /><br />
-                <VaInput v-model="axes.y.weight" label="weight"> </VaInput>
-                <VaInput
-                        label="title"
-                        :model-value="component.settings.axes.y.text"
-                        @update:model-value="component.setSetting('axes.x.text', $event)"
-                />
-                <br />
-
-                <div
-                    v-for="additionanl_name in axis_names"
-                    :key="additionanl_name"
-                >
-                    <h2>{{ additionanl_name }}</h2>
+                <div class="settings-block mb-3">
                     <VaSelect
-                        v-model="axes[additionanl_name].type"
-                        :options="['time', 'linear', 'logarithmic', 'category']"
+                        label="Type"
+                        v-if="axes.x"
+                        v-model="axes.x.type"
+                        :options="[
+                            'timeseries',
+                            'linear',
+                            'logarithmic',
+                            'category',
+                        ]"
                         placeholder="Select an header for X"
                     />
+                </div>
+                <div class="settings-block mb-3">
                     <VaColorInput
-                        v-model="axes[additionanl_name].backgroundColor"
+                        v-model="axes.x.backgroundColor"
                         label="color"
-                    >
-                    </VaColorInput>
-                    <br />
-                    <VaInput
-                        label="title"
-                        v-model="axes[additionanl_name].text"
                     />
-                    <br />
+                </div>
+                <div class="settings-block mb-3" >
                     <VaSwitch
                         label="stacked"
-                        v-model="axes[additionanl_name].stacked"
-                    /><br />
+                        :model-value="component.settings.axes.x.stacked"
+                        @update:model-value="component.setSetting('axes.x.stacked', $event)"
+                    />
+                </div>
+                <div class="settings-block mb-3">
                     <VaSwitch
                         label="reverse"
-                        v-model="axes[additionanl_name].reverse"
-                    /><br />
+                        v-model="axes.x.reverse"
+                    />
+                </div>
+                <div class="settings-block mb-3">
                     <VaSwitch
                         label="display"
                         left-label
-                        v-model="axes[additionanl_name].display"
-                    /><br />
-                    <VaInput
-                        v-model="axes[additionanl_name].weight"
-                        label="weight"
-                    >
-                    </VaInput>
+                        v-model="axes.x.display"
+                    />
                 </div>
-                <VaSelect
-                    label="Position"
-                    :model-value="component.settings.axes.y.position"
-                    @update:model-value="component.setSetting('axes.y.position', $event)"
-                    :options="['left', 'right']"
-                    placeholder="Position"
-                /><br />
+                <div class="settings-block mb-3">
+                    <VaInput
+                        v-model="axes.x.weight"
+                        label="weight"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaInput
+                        label="title"
+                        :model-value="component.settings.axes.x.text"
+                        @update:model-value="component.setSetting('axes.x.text', $event)"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaSelect
+                        label="Position"
+                        :model-value="component.settings.axes.x.position"
+                        @update:model-value="component.setSetting('axes.x.position', $event)"
+                        :options="['top', 'bottom']"
+                        placeholder="Position"
+                    />
+                </div>
+                <h2 class="mt-3 mb-2">y-Axis:</h2>
+                <div class="settings-block mb-3">
+                    <VaSelect
+                        v-model="axes.y.type"
+                        :options="[
+                            'timeseries',
+                            'linear',
+                            'logarithmic',
+                            'category',
+                        ]"
+                        placeholder="Select an header for X"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaColorInput
+                    v-model="axes.y.backgroundColor"
+                    label="color"
+                />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaSwitch
+                        label="stacked"
+                        v-model="axes.y.stacked"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaSwitch
+                        label="reverse"
+                        v-model="axes.y.reverse"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaSwitch
+                        label="display"
+                        left-label
+                        v-model="axes.y.display"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaInput
+                    v-model="axes.y.weight"
+                    label="weight"
+                />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaInput
+                        label="title"
+                        :model-value="component.settings.axes.y.text"
+                        @update:model-value="component.setSetting('axes.y.text', $event)"
+                    />
+                </div>
+                <div class="settings-block mb-3">
+                    <VaSelect
+                        label="Position"
+                        :model-value="component.settings.axes.y.position"
+                        @update:model-value="component.setSetting('axes.y.position', $event)"
+                        :options="['left', 'right']"
+                        placeholder="Position"
+                    />
+                </div>
+
+                <div
+                    v-for="additional_name in axis_names"
+                    :key="additional_name"
+                >
+                    <h2 class="mt-3 mb-2">{{ additional_name }}:</h2>
+                    <div class="settings-block mb-3">
+                        <VaSelect
+                            v-model="axes[additional_name].type"
+                            :options="['time', 'linear', 'logarithmic', 'category']"
+                            placeholder="Select an header for X"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaColorInput
+                            v-model="axes[additional_name].backgroundColor"
+                            label="color"
+                        />
+                    </div>
+                    <!-- <div class="settings-block mb-3">
+                        <VaInput
+                            label="title"
+                            v-model="axes[additional_name].text"
+                        />
+                    </div> -->
+                    <div class="settings-block mb-3">
+                        <VaSwitch
+                            label="stacked"
+                            v-model="axes[additional_name].stacked"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaSwitch
+                            v-model="axes[additional_name].reverse"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaSwitch
+                            label="display"
+                            left-label
+                            v-model="axes[additional_name].display"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaInput
+                            v-model="axes[additional_name].weight"
+                            label="weight"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaInput
+                            label="title"
+                            v-model="axes[additional_name].title.text"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <VaSelect
+                            label="Position"
+                            v-model="axes[additional_name].position"
+                            :options="['left', 'right']"
+                            placeholder="Position"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <va-color-input
+                            class="axis-color"
+                            label="Color y ticks:"
+                            v-model="axes[additional_name].ticks.color"
+                        />
+                    </div>
+                    <div class="settings-block mb-3">
+                        <va-color-input
+                            class="axis-color"
+                            label="Color:"
+                            v-model="axes[additional_name].backgroundColor"
+                        />
+                    </div>
+                    <!-- <VaInput
+                        label="title"
+                        :model-value="component.settings.axes[additional_name].text"
+                        @update:model-value="component.setSetting(`axes.${additional_name}.text`, $event)"
+                    />
+                    <VaSelect
+                        label="Position"
+                        :model-value="component.settings.axes[additional_name].position"
+                        @update:model-value="component.setSetting(`axes.${additional_name}.position`, $event)"
+                        :options="['left', 'right']"
+                        placeholder="Position"
+                    /> -->
+                </div>
             </div>
             <VaButton @click="addAxis()"> Add+ </VaButton>
         </div>
@@ -404,26 +516,26 @@ watch(
         <div class="settings-container">
             <div class="settings-block mb-3">
                 <va-switch
-                    label="Display x Grid Lines:"
+                    label="Display X Grid Lines:"
                     :model-value="component.settings.axes.x.grid.display"
                     @update:model-value="component.setSetting('axes.x.grid.display', $event)"
                 />
             </div>
             <div class="settings-block mb-3">
-                    <va-color-input
-                        class="axis-color"
-                        label="Color x grid:"
-                        :model-value="component.settings.axes.x.grid.color"
-                        @update:model-value="component.setSetting('axes.x.grid.color', $event)"
-                    />
+                <va-color-input
+                    class="axis-color"
+                    label="Color x grid:"
+                    :model-value="component.settings.axes.x.grid.color"
+                    @update:model-value="component.setSetting('axes.x.grid.color', $event)"
+                />
             </div>
-            <!-- <div class="settings-block mb-3">
+            <div class="settings-block mb-3">
                 <va-input
                     label="Thickness x grid:"
-                    :model-value="component.settings.X_gridLines.thickness"
-                    @update:model-value="component.setSetting('X_gridLines.thickness', $event)"
+                    :model-value="component.settings.axes.x.grid.thickness"
+                    @update:model-value="component.setSetting('axes.x.grid.thickness', $event)"
                 />
-            </div> -->
+            </div>
                 <!-- <div class="settings-block mb-3">
                 <va-input
                     label="Dash x grid:"
@@ -443,27 +555,27 @@ watch(
                     class="axis-color"
                     label="Color x tick marks:"
                     :model-value="component.settings.axes.x.grid.tickMarksColor"
-                    @update:model-value="component.setSetting('axes.x.grid', $event)"
+                    @update:model-value="component.setSetting('axes.x.grid.tickMarksColor', $event)"
                 />
             </div>
-            <!-- <div class="settings-block mb-3">
+            <div class="settings-block mb-3">
                 <va-color-input
                     class="axis-color"
-                    label="Color y ticks:"
+                    label="Color x ticks:"
                     :model-value="component.settings.axes.x.ticks.color"
                     @update:model-value="component.setSetting('axes.x.ticks.color', $event)"
                 />
-            </div> -->
-            <div class="settings-block mb-3">
+            </div>
+            <!-- <div class="settings-block mb-3">
                 <va-input
                     label="Tick Template:"
                     :model-value="component.settings.axes.x.tickTemplate"
                     @update:model-value="component.setSetting('axes.x.tickTemplate', $event)"
                 />
-            </div>
+            </div> -->
             <div class="settings-block mb-3">
                 <va-switch
-                    label="Display y Grid Lines:"
+                    label="Display Y Grid Lines:"
                     :model-value="component.settings.axes.y.grid.display"
                     @update:model-value="component.setSetting('axes.y.grid.display', $event)"
                 />
@@ -476,13 +588,13 @@ watch(
                     @update:model-value="component.setSetting('axes.y.grid.color', $event)"
                 />
             </div>
-            <!-- <div class="settings-block mb-3">
+            <div class="settings-block mb-3">
                 <va-input
                     label="Thickness y grid:"
-                    :model-value="component.settings.Y_gridLines.thickness"
-                    @update:model-value="component.setSetting('Y_gridLines.thickness', $event)"
+                    :model-value="component.settings.axes.y.grid.thickness"
+                    @update:model-value="component.setSetting('axes.y.grid.thickness', $event)"
                 />
-            </div> -->
+            </div>
                 <!-- <div class="settings-block mb-3">
                 <va-input
                     label="Dash y grid:"
@@ -505,21 +617,21 @@ watch(
                     @update:model-value="component.setSetting('axes.y.grid.tickMarksColor', $event)"
                 />
             </div>
-            <!-- <div class="settings-block mb-3">
+            <div class="settings-block mb-3">
                 <va-color-input
                     class="axis-color"
                     label="Color y ticks:"
                     :model-value="component.settings.axes.y.ticks.color"
                     @update:model-value="component.setSetting('axes.y.ticks.color', $event)"
                 />
-            </div> -->
-            <div class="settings-block mb-3">
+            </div>    
+            <!-- <div class="settings-block mb-3">
                 <va-input
                     label="Tick Template:"
                     :model-value="component.settings.axes.y.tickTemplate"
                     @update:model-value="component.setSetting('axes.y.tickTemplate', $event)"
                 />
-            </div>
+            </div> -->
         </div>
     </va-collapse>
     <va-collapse v-model="opened.RenderSection" header="Data" v-if="component">
