@@ -58,8 +58,18 @@ const settingsComponent = BarChartWidgetSettings;
 const props = withDefaults(defineProps<ITChartSettings>(), {
     dataSets: [] as IDataSetSelector[],
     composer: [],
+    // chartType: "Bar",
+    title: "Some chart",
+    titlePosition: "top",
+    legendPosition: "top",
+    borderColor: '#000000',
+    canvasBackgroundColor: "#ffffff",
+    dataSetBackgroundColors: () => ["#ff0000", "#00ff00", "#0000ff"],
     axes: {
         x: {
+            title: {
+                text: "X",
+            },
             type: "timeseries",
             offsetAfterAutoskip: true,
             ticks: {
@@ -71,14 +81,40 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
             weight: 2,
             reverse: false,
             display: true,
+            grid: {
+                display: true,
+                color: "#ccc",
+                // thickness: 1, 
+                // dash: [2, 2],
+                // dashOffset: 0,
+                tickMarksColor: "#ccc",
+            },
+            ticks: {
+                color: "#000",
+            }
         },
         y: {
+            title: {
+                text: "Y",
+            },
+            position: "left",
             type: "category",
             backgroundColor: "#fff",
             stacked: false,
             weight: 2,
             reverse: false,
             display: true,
+            grid: {
+                display: true,
+                color: "#ccc",
+                // thickness: 1, 
+                // dash: [2, 2],
+                // dashOffset: 0,
+                tickMarksColor: "#ccc",
+            },
+            ticks: {
+                color: "#000",
+            }
         },
     },
     axisAssignment: {},
@@ -193,7 +229,7 @@ watch(
             //@ts-ignore
             /* props.composer = InitializedComposerds;
 
-       settings.value.composer = InitializedComposerds;
+        settings.value.composer = InitializedComposerds;
         settings.value = settings.value;*/
         }
         chartDataComposer.setComposers(settings.value.composer);
@@ -224,6 +260,9 @@ const chartData = computed(() => {
                     label: e.title,
                     data: e.data,
                     yAxisID: e.from || "y", // getAssignment(e.from!),
+                    borderWidth: 2,
+                    backgroundColor: settings.value.dataSetBackgroundColors,
+                    borderColor: settings.value.borderColor,
                 };
             }),
         };
@@ -236,9 +275,56 @@ const chartData = computed(() => {
 });
 const chartOptions = computed(() => {
     return {
+        plugins: {
+            title: {
+            display: true,
+            text: settings.value.title,
+            position: settings.value.titlePosition,
+        },
+            legend: {
+                position: settings.value.legendPosition,
+            },
+        },
         responsive: true,
         backgroundColor: "#00000000",
         scales: settings.value.axes,
+        x: {
+            title: {
+                display: true,
+                text: 'X' //settings.value.axes.x.title,
+            },
+            ticks: {
+                // callback: (val, index) => settings.value.axes.x.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
+                color: settings.value.axes.x.ticks.color,
+            },
+            grid: {
+                display: settings.value.axes.x.grid.display,
+                color: settings.value.axes.x.grid.color,
+                lineWidth: settings.value.axes.x.grid.thickness,
+                // tickBorderDash: settings.value.axes.x.grid.dash,
+                // tickBorderDashOffset: settings.value.axes.x.grid.dashOffset,
+                tickColor: settings.value.axes.x.grid.tickMarksColor,
+            }
+        },
+        y: {
+            position: settings.value.axes.y.position,
+            title: {
+                display: true,
+                text: 'Y' // settings.value.axes.y.title,
+            },
+            ticks: {
+                // callback: (val, index) => settings.value.axes.y.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
+                color: settings.value.axes.y.ticks.color,
+            },
+            grid: {
+                display: settings.value.axes.y.grid.display,
+                color: settings.value.axes.y.grid.color,
+                lineWidth: settings.value.axes.y.grid.thickness,
+                // tickBorderDash: settings.value.axes.y.grid.dash,
+                // tickBorderDashOffset: settings.value.axes.y.grid.dashOffset,
+                tickColor: settings.value.axes.y.grid.tickMarksColor,
+            }
+        }
     };
 });
 </script>
@@ -268,6 +354,10 @@ const chartOptions = computed(() => {
     width: 100%;
     height: 100%;
     position: relative;
+}
+
+canvas {
+    background-color: v-bind(settings.canvasBackgroundColor);
 }
 </style>
 <style>
