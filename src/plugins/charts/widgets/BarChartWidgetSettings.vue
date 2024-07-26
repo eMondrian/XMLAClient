@@ -30,7 +30,7 @@ import useComposerManager from "@/plugins/charts/composables/ComposerManager";
 
 export interface AxisSettings {
     type: string;
-    title: string;
+    text: string;
     backgroundColor: string;
     stacked: boolean;
     weight: number;
@@ -150,7 +150,16 @@ function addAxis() {
     };
     //component.setSetting('axes',axis);
 }
-onMounted(() => {});
+onMounted(() => {
+    console.log(component.settings.axes.x.text)
+});
+
+watch(
+    () => component.settings.axes.x.text,
+    (nV) => {
+        console.log(nV)
+    }
+)
 
 const updateBgc = (index, newColor) => {
     backgroundColors.value[index].color = newColor;
@@ -303,10 +312,11 @@ watch(
                     v-model="axes.x.display"
                 /><br />
                 <VaInput v-model="axes.x.weight" label="weight"> </VaInput>
-                <!-- <VaInput
+                <VaInput
                         label="title"
-                        v-model="axes.x.title"
-                /> -->
+                        :model-value="component.settings.axes.x.text"
+                        @update:model-value="component.setSetting('axes.x.text', $event)"
+                />
                 <br />
                 <h2>y-Axis:</h2>
                 <br />
@@ -332,10 +342,11 @@ watch(
                     v-model="axes.y.display"
                 /><br />
                 <VaInput v-model="axes.y.weight" label="weight"> </VaInput>
-                <!-- <VaInput
+                <VaInput
                         label="title"
-                        v-model="axes.y.title"
-                /> -->
+                        :model-value="component.settings.axes.y.text"
+                        @update:model-value="component.setSetting('axes.x.text', $event)"
+                />
                 <br />
 
                 <div
@@ -354,12 +365,11 @@ watch(
                     >
                     </VaColorInput>
                     <br />
-                    <!-- <VaInput
+                    <VaInput
                         label="title"
-                        v-model="axes[additionanl_name].title"
+                        v-model="axes[additionanl_name].text"
                     />
-                    <br /> -->
-                    
+                    <br />
                     <VaSwitch
                         label="stacked"
                         v-model="axes[additionanl_name].stacked"

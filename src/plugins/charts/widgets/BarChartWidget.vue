@@ -67,9 +67,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
     dataSetBackgroundColors: () => ["#ff0000", "#00ff00", "#0000ff"],
     axes: {
         x: {
-            title: {
-                text: "X",
-            },
+            text: "X",
             type: "timeseries",
             offsetAfterAutoskip: true,
             ticks: {
@@ -94,9 +92,7 @@ const props = withDefaults(defineProps<ITChartSettings>(), {
             }
         },
         y: {
-            title: {
-                text: "Y",
-            },
+            text: "Y",
             position: "left",
             type: "category",
             backgroundColor: "#fff",
@@ -287,42 +283,45 @@ const chartOptions = computed(() => {
         },
         responsive: true,
         backgroundColor: "#00000000",
-        scales: settings.value.axes,
-        x: {
-            title: {
+        scales: {
+            x: {
                 display: true,
-                text: 'X' //settings.value.axes.x.title,
+                title: {
+                    display: true,
+                    text: settings.value.axes.x.text,
+                },
+                ticks: {
+                    // callback: (val, index) => settings.value.axes.x.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
+                    color: settings.value.axes.x.ticks.color,
+                },
+                grid: {
+                    display: settings.value.axes.x.grid.display,
+                    color: settings.value.axes.x.grid.color,
+                    lineWidth: settings.value.axes.x.grid.thickness,
+                    // tickBorderDash: settings.value.axes.x.grid.dash,
+                    // tickBorderDashOffset: settings.value.axes.x.grid.dashOffset,
+                    tickColor: settings.value.axes.x.grid.tickMarksColor,
+                }
             },
-            ticks: {
-                // callback: (val, index) => settings.value.axes.x.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
-                color: settings.value.axes.x.ticks.color,
-            },
-            grid: {
-                display: settings.value.axes.x.grid.display,
-                color: settings.value.axes.x.grid.color,
-                lineWidth: settings.value.axes.x.grid.thickness,
-                // tickBorderDash: settings.value.axes.x.grid.dash,
-                // tickBorderDashOffset: settings.value.axes.x.grid.dashOffset,
-                tickColor: settings.value.axes.x.grid.tickMarksColor,
-            }
-        },
-        y: {
-            position: settings.value.axes.y.position,
-            title: {
+            y: {
                 display: true,
-                text: 'Y' // settings.value.axes.y.title,
-            },
-            ticks: {
-                // callback: (val, index) => settings.value.axes.y.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
-                color: settings.value.axes.y.ticks.color,
-            },
-            grid: {
-                display: settings.value.axes.y.grid.display,
-                color: settings.value.axes.y.grid.color,
-                lineWidth: settings.value.axes.y.grid.thickness,
-                // tickBorderDash: settings.value.axes.y.grid.dash,
-                // tickBorderDashOffset: settings.value.axes.y.grid.dashOffset,
-                tickColor: settings.value.axes.y.grid.tickMarksColor,
+                position: settings.value.axes.y.position,
+                title: {
+                    display: true,
+                    text: settings.value.axes.y.text,
+                },
+                ticks: {
+                    // callback: (val, index) => settings.value.axes.y.grid.tickTemplate.replace('{value}', chartData.value.labels[index]),
+                    color: settings.value.axes.y.ticks.color,
+                },
+                grid: {
+                    display: settings.value.axes.y.grid.display,
+                    color: settings.value.axes.y.grid.color,
+                    lineWidth: settings.value.axes.y.grid.thickness,
+                    // tickBorderDash: settings.value.axes.y.grid.dash,
+                    // tickBorderDashOffset: settings.value.axes.y.grid.dashOffset,
+                    tickColor: settings.value.axes.y.grid.tickMarksColor,
+                }
             }
         }
     };
