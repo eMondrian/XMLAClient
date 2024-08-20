@@ -15,13 +15,15 @@ import type { TinyEmitter } from "tiny-emitter";
 export function useStore<Type extends IStore>(updateFn?, watcher?) {
     const data = ref({});
     const store = ref(null) as unknown as Ref<Type>;
-
+    const loading = inject('updateLoading') as Ref<boolean>;
     const EventBus = inject("customEventBus") as TinyEmitter;
 
     if (!updateFn) {
         updateFn = async () => {
             if (!store) return;
+            loading.value = true;
             data.value = await store.value.getData();
+            loading.value = false;
         };
     }
 
@@ -45,5 +47,6 @@ export function useStore<Type extends IStore>(updateFn?, watcher?) {
         data,
         store,
         setStore,
+        loading,
     };
 }

@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<ISVGSettingsProps>(), {
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
-const { store, data, setStore } = useStore<Store>();
+const { store, data, setStore, loading } = useStore<Store>();
 const { getState } = useSerialization(settings);
 
 const styles: Ref<string> = computed(() => {
@@ -80,6 +80,7 @@ defineExpose({
     getState,
     store,
     setStore,
+    loading,
 });
 
 const svgSourceParced = computed(() => {

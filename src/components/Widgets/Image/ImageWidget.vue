@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<IImageSettingsProps>(), {
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
-const { store, data, setStore } = useStore<Store>();
+const { store, data, setStore, loading } = useStore<Store>();
 const { getState } = useSerialization(settings);
 
 let interval = null as any;
@@ -79,6 +79,7 @@ defineExpose({
     getState,
     store,
     setStore,
+    loading,
 });
 
 const parsedUrl = (url: string): string => {

@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<IProgressSettingsProps>(), {
 });
 
 const { settings, setSetting } = useSettings<typeof props>(props);
-const { store, data, setStore } = useStore<Store>();
+const { store, data, setStore, loading } = useStore<Store>();
 const { getState } = useSerialization(settings);
 
 defineExpose({
@@ -49,6 +49,7 @@ defineExpose({
     getState,
     store,
     setStore,
+    loading,
 });
 
 const parsedProgress = computed(() => {
