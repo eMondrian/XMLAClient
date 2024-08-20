@@ -10,8 +10,6 @@ Contributors: Smart City Jena
 -->
 <script lang="ts" setup>
 import { onMounted } from "vue";
-import { useStoreManager } from "@/composables/storeManager";
-
 import type { IChartComponent } from "@/plugins/charts/Chart";
 import ChartSettingsSection from "@/plugins/charts/widgets/ChartSettingsSection.vue";
 import AxesSettingsSection from "@/plugins/charts/widgets/AxesSettingsSection.vue";
@@ -19,8 +17,6 @@ import GridSettingsSection from "@/plugins/charts/widgets/GridSettingsSection.vu
 import DataSettingsSection from "@/plugins/charts/widgets/DataSettingsSection.vue";
 
 const { component } = defineProps<{ component: IChartComponent }>();
-
-// const requestResult = ref("");
 
 onMounted(() => {});
 </script>
