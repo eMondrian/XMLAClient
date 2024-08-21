@@ -3,6 +3,7 @@ import { watch, computed } from "vue";
 import type { AxisSettings } from "@/plugins/charts/widgets/BarChartWidgetSettings.vue";
 import type { IChartComponent } from "chart.js/dist/core/core.typedRegistry";
 
+
 const model = defineModel() as any;
 
 console.log(model.value);
@@ -29,12 +30,6 @@ watch(
 );
 
 const axis_names = computed((e) => {
-    if (props.axes == null)
-        return [
-            {
-                name: "y",
-            },
-        ];
     return Object.keys(props.axes).filter((name) => name != "x");
 });
 

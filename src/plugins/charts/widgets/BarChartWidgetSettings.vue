@@ -116,7 +116,7 @@ const addComposer = (store: IStore) => {
     const storeData = component.setStore(store as Store);
     if (ComposerClass) {
         const aComposer = new ComposerClass();
-        aComposer.setStore(storeData.store);
+        aComposer.setStore(storeData.store.value);
         aComposer.setData(storeData.data);
 
         const val = [...toRaw(unref(component.settings.composer))];

@@ -292,7 +292,10 @@ const chartOptions = computed(() => {
         },
         responsive: true,
         // backgroundColor: "#00000000",
-        scales: settings.value.axes
+        scales: settings.value.axes,
+        onClick: (e: any, item: any) => {
+            console.log(e, item);
+        },
     }
         /*scales: {
             x: {

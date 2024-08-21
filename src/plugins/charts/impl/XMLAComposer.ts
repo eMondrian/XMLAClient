@@ -3,20 +3,16 @@ import type {
     Composer,
     XMLASelector,
 } from "@/plugins/charts/widgets/api/ChartdataComposer";
-import { computed, type ComputedRef, type Ref, ref, watch } from "vue";
+import { computed, type ComputedRef, type Ref, ref, isRef } from "vue";
 import { parseRequestToTable } from "@/utils/MdxRequests/MdxRequestHelper";
-import {parseInt} from "lodash";
 
 
 export class XMLAComposer implements Composer<XMLASelector> {
     private selectorX: XMLASelector | undefined;
     private selectorY: any = {};
     private data: Ref<any> = ref({});
+    private parsedData: any = {};
     private store: IStore | undefined;
-    public selectedMeasures: MDSchemaMeasure[] = [];
-    public selectedRows: ConfiguredHierarchy[] = [];
-    public selectedCols: ConfiguredHierarchy[] = [];
-    public selectedFilters: ConfiguredHierarchy[] = [];
     public mainAxisRotate: boolean = false;
 
     type: string = "XMLA";
@@ -56,10 +52,22 @@ export class XMLAComposer implements Composer<XMLASelector> {
     }
 
     setData(data: Ref<any>) {
-        this.data = data;
+        if (isRef(data)) {
+            console.log(this.store);
+            // this.fetch();
+            this.getData().then((e) => {
+                this.data.value = e;
+            });
+        } else {
+            this.data = data;
+        }
     }
-    setStore(store: IStore) {
+    setStore(store: BaseStore) {
         this.store = store;
+
+        store.eventBus.on(`UPDATE:${store.id}`, async () => {
+            await this.fetch();
+        });
     }
     getStore() {
         return this.store;
@@ -67,8 +75,13 @@ export class XMLAComposer implements Composer<XMLASelector> {
 
     getDataX(): ComputedRef<AxisData> | Ref<AxisData> {
         return computed(() => {
-            console.log(this.data);
+            console.log('xData', this.selectorX, this.data);
+            console.log('store', this.store);
+
             try {
+                const xData = this.data[this.selectorX!.header] || [];
+                xData.__metadata = this.selectorX;
+
                 return {
                     //@ts-ignore
                     data: this.data[this.selectorX!.header] || [],
@@ -134,17 +147,9 @@ export class XMLAComposer implements Composer<XMLASelector> {
 
     async getData() {
         if (!this.store) return;
-        const requestParams = {
-            rows: this.selectedRows,
-            columns: this.selectedCols,
-            measures: this.selectedMeasures,
-            rowsExpandedMembers: [],
-            rowsDrilldownMembers: [],
-            columnsExpandedMembers: [],
-            columnsDrilldownMembers: [],
-        };
 
-        const mdxResponce = await this.store.getData(requestParams);
+        const mdxResponce = await this.store.getData();
+        console.log(mdxResponce);
 
         if (this.mainAxisRotate) {
             return parseRequestToTable(mdxResponce, 1) as any;
@@ -160,14 +165,11 @@ export class XMLAComposer implements Composer<XMLASelector> {
 
     async restoreState(state) {
         console.log(state.selectorY["y"]);
-        this.selectedCols = state.selectedCols;
-        this.selectedRows = state.selectedRows;
-        this.selectedFilters = state.selectedFilters;
-        this.selectedMeasures = state.selectedMeasures;
         this.mainAxisRotate = state.mainAxisRotate;
 
-        // await this.fetch();
+        await this.fetch();
         this.data.value = await this.getData();
+        // this.data.value = await this.getData();
         this.selectorY = state.selectorY;
         this.selectorX = state.selectorX;
     }
