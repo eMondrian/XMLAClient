@@ -16,7 +16,8 @@
     "loadLayout": "Load Layout",
     "storeList": "Store List",
     "appSettings": "App settings",
-    "addWidgetButton": "Add"
+    "addWidgetButton": "Add",
+    "dataSourceList": "Data source list"
   },
 
   "AppSidebarSettings": {
@@ -72,6 +73,10 @@
       "name": "Name",
       "value": "Value"
     }
+  },
+
+  "SidebarDatasourceList": {
+    "title": "Data Source List"
   },
 
   "StoreConfigurationModal": {

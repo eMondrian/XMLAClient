@@ -350,6 +350,11 @@ const openAppSettings = () => {
     showSidebar.value = true;
 };
 
+const openDataSourceList = () => {
+    settingsSection.value = { type: "SourceList" };
+    showSidebar.value = true;
+}
+
 layoutSettingsButtons.value.push(
     {
         label: t("MultilevelDashboardNavigation.save"),
@@ -368,6 +373,12 @@ layoutSettingsButtons.value.push(
         preset: "primary",
         action: openStoreList,
         icon: "list",
+    },
+    {
+        label: t("MultilevelDashboardNavigation.dataSourceList"),
+        preset: "primary",
+        action: openDataSourceList,
+        icon: "list_alt",
     },
     {
         label: t("MultilevelDashboardNavigation.appSettings"),

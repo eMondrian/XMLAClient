@@ -224,6 +224,19 @@ const getMetadata = async () => {
         selectedCube.value.CUBE_NAME,
     );
 };
+
+const deleteStore = () => {
+    storeManager.deleteStore(item.value.id);
+    console.log(storeManager.getStoreList().value);
+}
+
+const deleteDatasource = () => {
+    if (selectedDatasourceId.value) {
+        dsManager.deleteDatasource(selectedDatasourceId.value);
+        selectedDatasourceId.value = "";
+        selectedDatasource.value = { url: "", caption: "", id: "" };
+    }
+};
 </script>
 
 <template>
@@ -236,6 +249,11 @@ const getMetadata = async () => {
             expand_more
         </va-icon>
         <va-icon v-else class="material-icons"> expand_less </va-icon>
+        <va-button
+            @click.stop="deleteStore"
+            icon="clear"
+            color="transparent">
+        </va-button>
     </div>
     <div v-if="isExpanded" class="store-item-content">
         <va-input
@@ -253,6 +271,14 @@ const getMetadata = async () => {
                     v-model="selectedDatasourceId"
                     :options="dslist"
                 />
+                <va-button
+                    class="datasource-list-delete-button"
+                    color="danger"
+                    @click="deleteDatasource"
+                    :disabled="!selectedDatasourceId"
+                >
+                    Delete
+                </va-button>
                 <va-button
                     class="datasource-list-add-button"
                     @click="createDatasource"
@@ -305,3 +331,9 @@ const getMetadata = async () => {
         </div>
     </div>
 </template>
+
+<style lang="scss" scoped>
+.store-item-header {
+    cursor: pointer;
+}
+</style>

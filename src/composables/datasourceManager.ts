@@ -70,6 +70,16 @@ export function useDatasourceManager() {
         }
     };
 
+    const deleteDatasource = (id: string) => {
+        if (availableDatasources.value[id]) {
+            const updatedDatasources = { ...availableDatasources.value };
+            delete updatedDatasources[id];
+            availableDatasources.value = updatedDatasources;
+        } else {
+            throw new Error(`Datasource with id ${id} not found`);
+        }
+    };
+
     const getState = () => {
         const state = {};
 
@@ -122,6 +132,7 @@ export function useDatasourceManager() {
         getDatasource,
         getDatasourceList,
         updateDatasource,
+        deleteDatasource,
         getState,
         loadState,
     };
