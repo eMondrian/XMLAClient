@@ -27,7 +27,7 @@ const availableDatasources: Ref<DatasourceMap> = ref({});
 export function useDatasourceManager() {
     const EventBus = inject("customEventBus") as any;
 
-    const initDatasource = (type: string, url: string, caption: string) => {
+    const initDatasource = (type: string, caption: string, url?: string) => {
         const id = v4();
 
         try {
@@ -53,7 +53,7 @@ export function useDatasourceManager() {
         return availableDatasources;
     };
 
-    const updateDatasource = (key, type, caption, url, cube, catalog) => {
+    const updateDatasource = (key, type, caption, url, cube?, catalog?) => {
         try {
             const classinst = dataSourceRegistry[type];
             const datasource = new classinst(

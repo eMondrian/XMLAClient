@@ -95,7 +95,7 @@ const saveStore = (item) => {
 };
 
 const createDatasource = () => {
-    const id = dsManager.initDatasource("REST", "", "New store");
+    const id = dsManager.initDatasource("REST", "New store");
     selectedDatasourceId.value = id;
 };
 
