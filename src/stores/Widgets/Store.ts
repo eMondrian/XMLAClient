@@ -106,12 +106,10 @@ export class Store extends BaseStore implements IStore {
         this.requestTemplate = requestTemplate;
 
         this.calculateParams();
-        console.log("EMITED UPDATE", this.id);
         this.eventBus.emit(`UPDATE:${this.id}`);
     }
 
     updateEvents(events) {
-        console.log(events);
         this.initedEvents.forEach((e) => {
             this.eventBus.off(e.name, e.cb);
         });

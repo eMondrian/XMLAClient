@@ -28,14 +28,16 @@ export interface ITextSettingsProps {
     textDecoration?: string;
     horizontalAlign?: string;
     verticalAlign?: string;
+    test:string[]
 }
 
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import TextWidgetSettings from "./TextWidgetSettings.vue";
 import { useSettings } from "@/composables/widgets/settings";
 import { useStore } from "@/composables/widgets/store";
 import { useSerialization } from "@/composables/widgets/serialization";
 import type { Store } from "@/stores/Widgets/Store";
+import type { TinyEmitter } from "tiny-emitter";
 
 const settingsComponent = TextWidgetSettings;
 
@@ -50,8 +52,9 @@ const props = withDefaults(defineProps<ITextSettingsProps>(), {
     verticalAlign: "Top",
 });
 
+const eventbus = inject("customEventBus") as TinyEmitter;
 const { settings, setSetting } = useSettings<typeof props>(props);
-const { store, data, setStore } = useStore<Store>();
+const { store, data, setStore, loading } = useStore<Store>(eventbus);
 const { getState } = useSerialization(settings);
 
 defineExpose({
@@ -61,6 +64,7 @@ defineExpose({
     store,
     setStore,
     getState,
+    loading,
 });
 
 const parsedText = computed(() => {

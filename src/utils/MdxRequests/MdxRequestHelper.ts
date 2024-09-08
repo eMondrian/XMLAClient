@@ -258,8 +258,6 @@ const parseRequestToTable = (mdxResponce, mainAxis) => {
         mdxResponce.Body.ExecuteResponse.return.root.CellData?.Cell,
     );
 
-    console.log(axis0, axis1);
-    console.log(cellsArray);
     const table = {} as any;
     if (mainAxis === 0) {
         table["Headers"] = [];
@@ -292,7 +290,8 @@ const parseRequestToTable = (mdxResponce, mainAxis) => {
             });
         });
     }
-    console.log(table);
+
+    return table;
 };
 
 export { parseMdxRequest, parseRequestToTable };

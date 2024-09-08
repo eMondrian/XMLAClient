@@ -12,8 +12,10 @@ Contributors: Smart City Jena
 import { useI18n } from "vue-i18n";
 import { useStoreManager } from "../../../composables/storeManager";
 import { useDatasourceManager } from "../../../composables/datasourceManager";
-import { onMounted, ref, watch, onActivated } from "vue";
+import { onMounted, ref, watch, onActivated, computed } from "vue";
+import QueryDesigner from "../../Common/QueryDesigner.vue";
 import type XMLADatasource from "@/dataSources/XmlaDatasource";
+import { type XMLAStore } from "@/stores/Widgets/XMLAStore";
 
 const { t } = useI18n();
 const storeManager = useStoreManager();
@@ -43,8 +45,14 @@ watch(
         const store = storeManager.getStore(item.value.id);
         store.setDatasource(currentDs.id);
 
-        selectedCatalog.value = currentDs.catalog || { CATALOG_NAME: "", DESCRIPTION: "" };
-        selectedCube.value = currentDs.cube || { CUBE_NAME: "", CUBE_CAPTION: "" };
+        selectedCatalog.value = currentDs.catalog || {
+            CATALOG_NAME: "",
+            DESCRIPTION: "",
+        };
+        selectedCube.value = currentDs.cube || {
+            CUBE_NAME: "",
+            CUBE_CAPTION: "",
+        };
 
         getCatalogs();
 
@@ -107,8 +115,6 @@ onMounted(async () => {
         })
         .filter((e) => e.type === "XMLA") as XMLADatasource[];
 
-    console.log(item.value);
-    console.log(storeManager);
     const store = storeManager.getStore(item.value.id);
     const ds = store.getDatasource();
 
@@ -159,21 +165,21 @@ const createDatasource = () => {
 };
 
 const updateDatasource = ({
-        caption,
-        url,
-        cube,
-        catalog
-    }
-    :{
-        id?: string,
-        type?: string,
-        caption?: string,
-        url?: string,
-        cube?: MDSchemaCube,
-        catalog?: DBSchemaCatalog 
-    }) => {
-
-    const ds = dsManager.getDatasource(selectedDatasource.value.id) as XMLADatasource;
+    caption,
+    url,
+    cube,
+    catalog,
+}: {
+    id?: string;
+    type?: string;
+    caption?: string;
+    url?: string;
+    cube?: MDSchemaCube;
+    catalog?: DBSchemaCatalog;
+}) => {
+    const ds = dsManager.getDatasource(
+        selectedDatasource.value.id,
+    ) as XMLADatasource;
     if (!ds) return;
 
     dsManager.updateDatasource(
@@ -202,8 +208,8 @@ const getCatalogs = async () => {
     }
 
     catalogs.value = await selectedDatasource.getCatalogs();
-    
-    updateDatasource({catalog: selectedCatalog.value});
+
+    updateDatasource({ catalog: selectedCatalog.value });
 };
 
 const getCubes = async () => {
@@ -219,7 +225,7 @@ const getCubes = async () => {
         selectedCatalog.value.CATALOG_NAME,
     );
 
-    updateDatasource({cube: selectedCube.value});
+    updateDatasource({ cube: selectedCube.value });
 };
 
 const getMetadata = async () => {
@@ -239,7 +245,7 @@ const getMetadata = async () => {
 const deleteStore = () => {
     storeManager.deleteStore(item.value.id);
     console.log(storeManager.getStoreList().value);
-}
+};
 
 const deleteDatasource = () => {
     if (selectedDatasourceId.value) {
@@ -247,6 +253,48 @@ const deleteDatasource = () => {
         selectedDatasourceId.value = "";
         selectedDatasource.value = { url: "", caption: "", id: "" };
     }
+};
+
+const rows = computed(() => {
+    console.log("rows computed");
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    return store.XMLARequestParams.rows;
+});
+
+const setRows = (rows) => {
+    console.log("setRows", rows);
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    store.setRows(rows);
+};
+
+const columns = computed(() => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    return store.XMLARequestParams.columns;
+});
+
+const setCols = (cols) => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    store.setCols(cols);
+};
+
+const measures = computed(() => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    return store.XMLARequestParams.measures;
+});
+
+const setMeasures = (measures) => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    store.setMeasures(measures);
+};
+
+const filters = computed(() => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    return store.XMLARequestParams.filters;
+});
+
+const setFilters = (filters) => {
+    const store = storeManager.getStore(item.value.id) as XMLAStore;
+    store.setFilters(filters);
 };
 </script>
 
@@ -260,10 +308,7 @@ const deleteDatasource = () => {
             expand_more
         </va-icon>
         <va-icon v-else class="material-icons"> expand_less </va-icon>
-        <va-button
-            @click.stop="deleteStore"
-            icon="clear"
-            color="transparent">
+        <va-button @click.stop="deleteStore" icon="clear" color="transparent">
         </va-button>
     </div>
     <div v-if="isExpanded" class="store-item-content">
@@ -301,13 +346,19 @@ const deleteDatasource = () => {
                 <div class="connections-list">
                     <va-input
                         class="mt-3"
-                        @blur="updateDatasource({caption: selectedDatasource.caption})"
+                        @blur="
+                            updateDatasource({
+                                caption: selectedDatasource.caption,
+                            })
+                        "
                         v-model="selectedDatasource.caption"
                         :label="t('SidebarStoreList.StoreLabels.caption')"
                     ></va-input>
                     <va-input
                         class="mt-3"
-                        @blur="updateDatasource({url: selectedDatasource.url})"
+                        @blur="
+                            updateDatasource({ url: selectedDatasource.url })
+                        "
                         v-model="selectedDatasource.url"
                         :label="t('SidebarStoreList.StoreLabels.url')"
                     ></va-input>
@@ -338,6 +389,24 @@ const deleteDatasource = () => {
                         />
                     </div>
                 </template>
+            </template>
+            <template
+                v-if="selectedCatalog.CATALOG_NAME && selectedCube.CUBE_NAME"
+            >
+                <QueryDesigner
+                    style="margin-top: 2rem"
+                    :store="storeManager.getStore(item.id)"
+                    :currentState="{
+                        rows,
+                        columns,
+                        measures,
+                        filters,
+                    }"
+                    @update:cols="setCols"
+                    @update:rows="setRows"
+                    @update:measures="setMeasures"
+                    @update:filters="setFilters"
+                />
             </template>
         </div>
     </div>

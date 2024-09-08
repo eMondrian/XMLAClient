@@ -12,16 +12,19 @@ Contributors: Smart City Jena
 import { ref, type Ref, inject } from "vue";
 import type { TinyEmitter } from "tiny-emitter";
 
-export function useStore<Type extends IStore>(updateFn?, watcher?) {
+export function useStore<Type extends IStore>(
+    eventBus?: TinyEmitter, updateFn?, watcher?) {
     const data = ref({});
     const store = ref(null) as unknown as Ref<Type>;
-
-    const EventBus = inject("customEventBus") as TinyEmitter;
+    const loading = inject('updateLoading') as Ref<boolean>;
+    const EventBus = eventBus || (inject("EventBus") as TinyEmitter);
 
     if (!updateFn) {
         updateFn = async () => {
             if (!store) return;
+            loading.value = true;
             data.value = await store.value.getData();
+            loading.value = false;
         };
     }
 
@@ -37,7 +40,7 @@ export function useStore<Type extends IStore>(updateFn?, watcher?) {
         }
         store.value = newStore;
 
-        EventBus.on(`UPDATE:${newStore.id}`, updateFn);
+        EventBus.on(`UPDATE:${newStore.id}`, () => updateFn(store.value));
         updateFn(store.value);
     };
 
@@ -45,5 +48,6 @@ export function useStore<Type extends IStore>(updateFn?, watcher?) {
         data,
         store,
         setStore,
+        loading,
     };
 }

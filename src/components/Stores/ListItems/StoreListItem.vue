@@ -14,10 +14,12 @@ import { useStoreManager } from "../../../composables/storeManager";
 import { useDatasourceManager } from "../../../composables/datasourceManager";
 import { type Ref, onMounted, ref, watch } from "vue";
 import type RESTDatasource from "@/dataSources/RestDatasource";
+import { useLoaderStore } from "@/composables/dashboard/LoaderStore";
 
 const { t } = useI18n();
 const storeManager = useStoreManager();
-const dslist: Ref<RESTDatasource[]> = ref([]);
+const { setLoading } = useLoaderStore();
+const dslist: Ref<RESTDatasource[]> = ref([] as RESTDatasource[]);
 
 const selectedDatasourceId = ref("");
 const selectedDatasource = ref({
@@ -77,9 +79,13 @@ watch(
             return;
         }
 
+        // setLoading(true);
         selectedDatasource.value = currentDs;
         const store = storeManager.getStore(item.value.id);
         store.setDatasource(currentDs.id);
+        // setTimeout(() => {
+        // setLoading(false);
+        // }, 2000)
     },
     {
         deep: true,

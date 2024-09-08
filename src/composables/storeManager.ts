@@ -43,11 +43,9 @@ export function useStoreManager(): StoreManagerI {
         eventBus,
         type = "REST",
     ): string => {
-        console.log(eventBus);
         const id = v4();
 
         const storeClass = storeRegistry.get(type);
-        console.log(storeClass, "storeClass");
         if (storeClass) {
             const store = reactive(
                 new (storeClass as any)(id, caption, eventBus) as IStore &
@@ -55,15 +53,14 @@ export function useStoreManager(): StoreManagerI {
             );
             availableStores.value.set(id, store);
 
-            console.log("inited");
-
             return id;
         }
         return "";
     };
 
     const getStore = (key): IStore => {
-        console.log(availableStores.value, "availableStores");
+        console.log(key);
+        console.log(availableStores.value);
         const store = availableStores.value.get(key);
         if (store) {
             return store;
@@ -108,7 +105,6 @@ export function useStoreManager(): StoreManagerI {
                 availableStores.value.set(key, store);
             }
         });
-        console.log(availableStores.value);
     };
 
     const registerStoreType = (classOfStoreType: typeof BaseStore) => {
