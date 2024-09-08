@@ -70,6 +70,7 @@ import {
     VaTabs,
     VaTab,
     VaInnerLoading,
+    VaFileUpload,
 } from "vuestic-ui";
 import "vuestic-ui/css";
 
@@ -78,14 +79,17 @@ import { router } from "@/router/router";
 import { ref } from "vue";
 
 import VueSmartWidget from "vue-smart-widget";
-import {useDatasourceManager} from "@/composables/datasourceManager";
+import { useDatasourceManager } from "@/composables/datasourceManager";
 import XMLADatasource from "@/dataSources/XmlaDatasource";
 import RESTDatasource from "@/dataSources/RestDatasource";
 import MQTTDatasource from "@/dataSources/MqttDatasource";
-import {useStoreManager} from "@/composables/storeManager";
-import {XMLAStore} from "@/stores/Widgets/XMLAStore";
-import {Store} from "@/stores/Widgets/Store";
+import { useStoreManager } from "@/composables/storeManager";
+import { XMLAStore } from "@/stores/Widgets/XMLAStore";
+import { Store } from "@/stores/Widgets/Store";
+import Chart from "@/plugins/charts/Chart";
+import CSVStore from "@/plugins/charts/stores/CSVStore";
 
+//@ts-ignore
 const app = createApp(App);
 
 const pinia = createPinia();
@@ -100,7 +104,7 @@ const i18n = createI18n({
 app.use(i18n);
 
 const isDarkTheme = ref(
-    JSON.parse(localStorage?.getItem("isDarkTheme")??'false'),
+    JSON.parse(localStorage?.getItem("isDarkTheme") ?? "false"),
 );
 const htmlElement = document.documentElement;
 htmlElement.classList.add(isDarkTheme.value ? "dark-theme" : "light-theme");
@@ -110,7 +114,6 @@ pinia.use(SOAPClient);
 app.use(pinia);
 app.use(router);
 app.use(VueSmartWidget);
-
 
 app.use(EventBus);
 const fonts = [
@@ -176,6 +179,7 @@ app.use(
             VaTabs,
             VaTab,
             VaInnerLoading,
+            VaFileUpload,
         },
         config: {
             colors: {
@@ -191,10 +195,9 @@ useDatasourceManager().registerDataSource(XMLADatasource);
 useDatasourceManager().registerDataSource(RESTDatasource);
 useDatasourceManager().registerDataSource(MQTTDatasource);
 
-
 useStoreManager().registerStoreType(XMLAStore);
 useStoreManager().registerStoreType(Store);
 
-
+app.use(Chart);
 app.mount("#app");
 export default app;

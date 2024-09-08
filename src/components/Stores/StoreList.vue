@@ -14,12 +14,14 @@ import { useStoreManager } from "../../composables/storeManager";
 import { onMounted, ref, watch } from "vue";
 import StoreListItem from "./ListItems/StoreListItem.vue";
 import XMLAStoreListItem from "./ListItems/XMLAStoreListItem.vue";
+import CSVStoreListItem from "./ListItems/CSVStoreListItem.vue";
+
 
 const { t } = useI18n();
 const storeManager = useStoreManager();
 const map = storeManager.getStoreList();
 const list = ref([] as IStore[]);
-const tabs = ["REST", "XMLA"];
+const tabs = ["REST", "XMLA", "CSV"];
 const currentTab = ref(0);
 let filteredList = ref([] as IStore[]);
 
@@ -75,6 +77,14 @@ watch([() => list.value, () => currentTab.value], ([newList, _]) => {
                         "
                     >
                         <XMLAStoreListItem :item="item"></XMLAStoreListItem>
+                    </template>
+                    <template
+                        v-else-if="
+                            item.type === 'CSV' &&
+                            item.type === tabs[currentTab]
+                        "
+                    >
+                        <CSVStoreListItem :item="item"></CSVStoreListItem>
                     </template>
                 </div>
             </template>

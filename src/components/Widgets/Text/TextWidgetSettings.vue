@@ -76,6 +76,9 @@ onMounted(() => {
         getData();
     }
 });
+const add =()=>{
+    component.setSetting('test',['hi'])
+}
 </script>
 
 <template>
@@ -96,6 +99,7 @@ onMounted(() => {
                         component.setSetting('fontSize', $event)
                     "
                 />
+                <button @click="add">add</button>
             </div>
             <div class="settings-block">
                 <va-color-input
