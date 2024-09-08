@@ -263,31 +263,56 @@ const parseRequestToTable = (mdxResponce, mainAxis) => {
     if (mainAxis === 0) {
         table["Headers"] = [];
         axis1.forEach((item, index) => {
-            const newItem = item.Member.Caption;
+            const newItem = {
+                caption: item.Member.Caption,
+                __meta: {
+                    axis1: item,
+                },
+            };
             table["Headers"].push(newItem);
         });
 
         axis0.forEach((item, i) => {
             table[item.Member.Caption] = [];
             axis1.forEach((subItem, j) => {
-                table[item.Member.Caption].push(
-                    cellsArray[j * axis0.length + i].Value,
-                );
+                table[item.Member.Caption].push({
+                    value: cellsArray[j * axis0.length + i].Value,
+                    axis1: subItem,
+                    axis0: item,
+                });
+
+                // table[item.Member.Caption][j].__meta = {
+                //     axis1: subItem,
+                //     axis0: item,
+                // };
             });
         });
     } else if (mainAxis === 1) {
         table["Headers"] = [];
         axis0.forEach((item, index) => {
-            const newItem = item.Member.Caption;
+            console.log(item);
+            const newItem = {
+                caption: item.Member.Caption,
+                __meta: {
+                    axis0: item,
+                },
+            };
             table["Headers"].push(newItem);
         });
 
         axis1.forEach((item, i) => {
             table[item.Member.Caption] = [];
             axis0.forEach((subItem, j) => {
-                table[item.Member.Caption].push(
-                    cellsArray[i * axis0.length + j].Value,
-                );
+                table[item.Member.Caption].push({
+                    value: cellsArray[i * axis0.length + j].Value,
+                    axis1: item,
+                    axis0: subItem,
+                });
+
+                // table[item.Member.Caption][i][j].__meta = {
+                //     axis0: subItem,
+                //     axis1: item,
+                // };
             });
         });
     }

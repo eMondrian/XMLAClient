@@ -233,6 +233,17 @@ const setUrl = () => {
         </div>
 
         <div class="datasource-list">
+            <VaSelect
+                :model-value="item.getLongPollingTime()"
+                @update:model-value="item.setLongPollingTime($event)"
+                :options="['no', 500, 1000, 2000, 5000]"
+                text-by="header"
+                label="Row"
+                placeholder="Select an row"
+            />
+        </div>
+
+        <div class="datasource-list">
             <h2>{{ t("SidebarStoreList.storeListItem.events") }}</h2>
             <va-button
                 class="datasource-list-add-button"

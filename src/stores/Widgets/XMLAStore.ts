@@ -66,7 +66,7 @@ export class XMLAStore extends BaseStore implements IStore {
             this.drilldownHandler.handleDrilldown(params);
             this.eventBus.emit(`UPDATE:${this.id}`);
         });
-        this.eventBus.on(`drillup:${this.id}`, async (params) => {
+        this.eventBus.on(`DRILLUP:${this.id}`, async (params) => {
             this.drilldownHandler.handleDrillup(params);
             this.eventBus.emit(`UPDATE:${this.id}`);
         });

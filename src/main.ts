@@ -70,6 +70,7 @@ import {
     VaTabs,
     VaTab,
     VaFileUpload,
+    VaMenu,
 } from "vuestic-ui";
 import "vuestic-ui/css";
 
@@ -88,6 +89,7 @@ import {Store} from "@/stores/Widgets/Store";
 import Chart from "@/plugins/charts/Chart";
 import CSVStore from "@/plugins/charts/stores/CSVStore";
 import Table from "@/plugins/table/Table";
+import TableReworked from "@/plugins/tableReworked/Table";
 
 //@ts-ignore
 const app = createApp(App);
@@ -179,7 +181,8 @@ app.use(
             VaTimeInput,
             VaTabs,
             VaTab,
-            VaFileUpload
+            VaFileUpload,
+            VaMenu,
         },
         config: {
             colors: {
@@ -203,5 +206,6 @@ useStoreManager().registerStoreType(Store);
 
 app.use(Chart);
 app.use(Table);
+app.use(TableReworked);
 app.mount("#app");
 export default app;

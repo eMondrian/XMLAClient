@@ -26,6 +26,8 @@ export class Store extends BaseStore implements IStore {
     public initedEvents: Array<{ name: string; cb: Function }> = [];
     private runtimeParams: IStoreParams = {};
     private errorToast: any;
+    private longPollingTimer: any;
+    private longPollingTime: number | string = "no";
 
     public type = Store.TYPE;
     public listAvailableDatasourceTypes = ["REST"];
@@ -146,6 +148,41 @@ export class Store extends BaseStore implements IStore {
                 cb,
             });
         });
+    }
+
+    initLongPolling(time): void {
+        if (this.longPollingTimer) {
+            this.clearLongPolling();
+        }
+
+        this.longPollingTime = time;
+        if (this.longPollingTime === "no") {
+            return;
+        } else {
+            this.longPollingTimer = setInterval(() => {
+                this.eventBus.emit(`UPDATE:${this.id}`);
+            }, this.longPollingTime as number);
+        }
+    }
+
+    clearLongPolling(): void {
+        clearInterval(this.longPollingTimer);
+        this.longPollingTimer = null;
+    }
+
+    getLongPollingTime(): number | string {
+        return this.longPollingTime;
+    }
+
+    setLongPollingTime(time): void {
+        console.log(time);
+        if (time === "no") {
+            this.clearLongPolling();
+            this.longPollingTime = time;
+            return;
+        }
+        this.longPollingTime = time;
+        this.initLongPolling(time);
     }
 
     registerForDataSourceEvents(): void {

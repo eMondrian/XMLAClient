@@ -131,7 +131,7 @@ provide("drillup", (value, area) => {
     EventBus.emit(`DRILLUP:${store.value.id}`, { value, area });
 });
 provide("expand", (value, area) => {
-    console.log('expand');
+    console.log('expand', value);
     EventBus.emit(`EXPAND:${store.value.id}`, { value, area });
 });
 provide("collapse", (value, area) => {
