@@ -9,17 +9,31 @@
 
 */
 import { ref } from "vue";
+import runtimeConfig from "@/runtimeConfig.json";
 
-export function useRuntimeConfig(runtimeConfig: Record<string, string>) {
-    const runtimeState = ref({});
+const runtimeState = ref({});
+
+const init = () => {
+    const storedConfig = localStorage.getItem("runtimeConfig");
+    if (storedConfig) {
+        runtimeState.value = JSON.parse(storedConfig);
+    } else {
+        runtimeState.value = runtimeConfig;
+    }
+    
+    const queryString = window.location.hash.split('?')[1];
+    const urlParams = new URLSearchParams(queryString);
+    const keys = Array.from(urlParams.keys());
+    keys.forEach((key) => {
+        console.log('query url value:', urlParams.get(key));
+    });
+}
+
+init();
+
+export function useRuntimeConfig() {
 
     const getRuntimeState = () => {
-        const storedConfig = localStorage.getItem("runtimeConfig");
-        if (storedConfig) {
-            runtimeState.value = JSON.parse(storedConfig);
-        } else {
-            runtimeState.value = runtimeConfig || {};
-        }
         return runtimeState.value;
     }
 

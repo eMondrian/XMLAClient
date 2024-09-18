@@ -29,9 +29,8 @@ export default {
         ok() {
             this.close(null);
         },
-        handleSave(data) {
-            console.log("saved data:", data);
-            this.close(data);
+        handleSave() {
+            this.close(null);
         },
         handleCancel() {
             this.close(null);

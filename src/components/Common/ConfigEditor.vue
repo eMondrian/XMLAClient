@@ -10,8 +10,6 @@ Contributors: Smart City Jena
 -->
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import appConfig from "@/appConfig.json";
-import runtimeConfig from "@/runtimeConfig.json";
 import { useAppConfig } from "@/composables/dashboard/appConfig";
 import { useRuntimeConfig } from "@/composables/dashboard/runtimeConfig";
 
@@ -29,13 +27,10 @@ const emit = defineEmits(["save", "cancel"]);
 const appConfigArray = ref<ConfigEntry[]>([]);
 const runtimeConfigArray = ref<ConfigEntry[]>([]);
 
-const { appConfigState, getAppConfigState, setAppConfigState } = useAppConfig(appConfig);
-const { runtimeState, getRuntimeState, setRuntimeState } = useRuntimeConfig(runtimeConfig);
+const { appConfigState, setAppConfigState } = useAppConfig();
+const { runtimeState, setRuntimeState } = useRuntimeConfig();
 
 onMounted(() => {
-    getAppConfigState();
-    getRuntimeState();
-
     appConfigArray.value = Object.entries(appConfigState.value).map(([key, value]) => ({ id: key + `${Date.now()}`, key, value: String(value) }));
     runtimeConfigArray.value = Object.entries(runtimeState.value).map(([key, value]) => ({ id: key + `${Date.now()}`, key, value: String(value) }));
 });
@@ -67,7 +62,7 @@ const saveConfig = (type: ConfigType) => {
     }, {});
 
     setState(configObject);
-    emit('save', { [type]: configObject });
+    emit('save');
 };
 
 const cancel = () => {

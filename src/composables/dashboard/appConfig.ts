@@ -9,17 +9,24 @@
 
 */
 import { ref } from "vue";
+import appConfig from "@/appConfig.json";
 
-export function useAppConfig(appConfig: Record<string, string>) {
-    const appConfigState = ref({});
+const appConfigState = ref(appConfig);
 
+const init = () => {
+    const storedConfig = localStorage.getItem("appConfig");
+    if (storedConfig) {
+        appConfigState.value = JSON.parse(storedConfig);
+    } else {
+        appConfigState.value = appConfig;
+    }
+}
+
+init();
+
+export function useAppConfig() {
+    
     const getAppConfigState = () => {
-        const storedConfig = localStorage.getItem("appConfig");
-        if (storedConfig) {
-            appConfigState.value = JSON.parse(storedConfig);
-        } else {
-            appConfigState.value = appConfig;
-        }
         return appConfigState.value;
     }
 
