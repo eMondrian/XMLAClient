@@ -17,7 +17,8 @@
     "storeList": "Store List",
     "appSettings": "App settings",
     "addWidgetButton": "Add",
-    "dataSourceList": "Data source list"
+    "dataSourceList": "Data Source List",
+    "configEditor": "Config Editor"
   },
 
   "AppSidebarSettings": {

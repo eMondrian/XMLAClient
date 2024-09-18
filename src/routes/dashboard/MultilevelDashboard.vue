@@ -197,6 +197,7 @@ Contributors: Smart City Jena
         <ErrorHandlingModal ref="errorHandlingModal" />
         <SaveModal ref="loadsaveModal" />
         <LoadModal ref="loadModalref" />
+        <ConfigEditorModal ref="configEditorModal" />
     </div>
 </template>
 
@@ -223,8 +224,8 @@ import WidgetWrapper from "@/components/Widgets/WidgetWrapper/WidgetWrapper.vue"
 import { useI18n } from "vue-i18n";
 import ErrorHandlingModal from "@/components/Modals/ErrorHandlingModal.vue";
 import SaveModal from "@/components/Modals/SaveModal.vue";
-import loadModal from "@/components/Modals/LoadModal.vue";
 import LoadModal from "@/components/Modals/LoadModal.vue";
+import ConfigEditorModal from "@/components/Modals/ConfigEditorModal.vue";
 
 const { t } = useI18n();
 
@@ -234,6 +235,7 @@ const { setOnClick } = useErrorHandler();
 const errorHandlingModal = ref(null) as Ref<any>;
 const loadsaveModal = ref(null) as Ref<any>;
 const loadModalref = ref(null) as Ref<any>;
+const configEditorModal = ref(null) as Ref<any>;
 
 const editEnabled = ref(false);
 const showSidebar = ref(false);
@@ -261,6 +263,10 @@ const openLaodSaveModal = (data) => {
 };
 const openLaodModal = async () => {
     return await loadModalref.value?.run();
+};
+
+const openConfigEditorModal = () => {
+    configEditorModal.value?.run();
 };
 
 setOnClick(openErrorModal);
@@ -340,6 +346,10 @@ const toggleEdit = () => {
     editEnabled.value = !editEnabled.value;
 };
 
+const configEditor = () => {
+    openConfigEditorModal();
+};
+
 const saveLayout = () => {
     const state = getSerializedState();
     openLaodSaveModal(state);
@@ -402,6 +412,12 @@ layoutSettingsButtons.value.push(
         preset: "primary",
         action: openAppSettings,
         icon: "settings",
+    },
+    {
+        label: t("MultilevelDashboardNavigation.configEditor"),
+        preset: "primary",
+        action: configEditor,
+        icon: `build`,
     },
 );
 
