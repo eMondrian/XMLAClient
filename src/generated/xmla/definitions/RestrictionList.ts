@@ -1,2 +1,0 @@
-/** RestrictionList */
-export interface RestrictionList {}

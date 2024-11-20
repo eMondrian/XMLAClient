@@ -1,2 +1,0 @@
-/** target */
-export interface Target {}
