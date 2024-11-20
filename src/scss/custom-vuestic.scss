@@ -1,0 +1,16 @@
+.va-tabs {
+  width: 100%;
+  height: 100%;
+  color: var(--app-font-color);
+
+  &__content {
+    width: 100%;
+    height: 100%;
+    color: var(--app-font-color);
+  }
+
+  &__wrapper {
+    margin-bottom: 15px;
+    flex: none;
+  }
+}
