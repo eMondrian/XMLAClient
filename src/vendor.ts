@@ -1,5 +1,7 @@
 import router from './router'
 import type { App } from "vue";
+import { createI18n } from "vue-i18n";
+import { languages, defaultLocale } from "./i18n";
 
 import {
   createVuesticEssential,
@@ -134,4 +136,13 @@ export function initVendors(app: App) {
         },
     }),
   );
+
+  const i18n = createI18n({
+    legacy: false,
+    locale: localStorage.getItem("language") || defaultLocale,
+    fallbackLocale: "en",
+    messages: Object.assign({}, languages),
+  });
+
+  app.use(i18n);
 }

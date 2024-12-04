@@ -1,5 +1,5 @@
 interface IDataRetrieveable {
-  getData(): Promise<any>;
+  getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]>;
   getOriginalData(): any;
 }
 

@@ -1,4 +1,4 @@
-import { extractDataByPath } from "@/utils/herlpers";
+import { extractDataByPath, parseToDataTable } from "@/utils/herlpers";
 
 export interface IRestStoreConfiguration {
   resourceUrl: string;
@@ -17,7 +17,8 @@ export default class RestStore implements IDataRetrieveable {
     this.selectedJSONValue = configuration.selectedJSONValue;
   }
 
-  async getData() {
+  async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
+    let response = null;
     const connectionRepository = (this as any).connectionRepository;
     if (!connectionRepository) {
       throw new Error('ConnectionRepository is not provided to Store Classes');
@@ -28,13 +29,22 @@ export default class RestStore implements IDataRetrieveable {
       const data = await req.json();
 
       if (this.selectedJSONValue) {
-        return extractDataByPath(data, this.selectedJSONValue);
+        response = extractDataByPath(data, this.selectedJSONValue);
       }
 
-      return data;
+      if (type === 'DataTable') {
+        response = parseToDataTable(response);
+      } else if (type === 'object') {
+        // Do nothing
+      } else if (type === 'string') {
+        response = JSON.stringify(response);
+      }
+
+      return response;
     } catch(e: any) {
       console.warn("Invalid resource URL", e.name);
     }
+    return response as unknown as DataMap[T];
   }
 
   async getOriginalData() {

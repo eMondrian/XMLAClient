@@ -21,3 +21,22 @@ export function extractDataByPath(data: any, path: string) {
 
   return currentValue;
 };
+
+export function parseToDataTable(data: any): IDataTable {
+  if (!Array.isArray(data)) return { items: [] };
+
+  const items = data.map((item: any) => {
+    if (typeof item !== 'object') return {};
+
+    const row: IDataTableRow = {};
+
+    for (const key in item) {
+      if (typeof item[key] === 'object' || Array.isArray(item[key])) continue;
+      row[key] = item[key];
+    }
+
+    return row;
+  });
+
+  return { items };
+}

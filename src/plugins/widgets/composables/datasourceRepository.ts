@@ -1,15 +1,17 @@
 import {  getCurrentInstance, onMounted, type Ref } from 'vue';
 import { watch, ref } from 'vue';
 
-export function useDatasourceRepository(dataSourceId: Ref<string>) {
+export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: Ref<string>, type: T): { data: Ref<DataMap[T]> } {
   const instance = getCurrentInstance();
   const datasourceRepository: IDatasourceRepository = (instance?.appContext.config as any).datasourceRepository;
 
-  const data = ref(null as unknown as any);
+  const data = ref(null as unknown as Ref<DataMap[T]>);
+
+  console.log();
 
   const getData = async () => {
     const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
-    data.value = await dataSource.getData();
+    data.value = await dataSource.getData(type);
   };
 
   watch(() => dataSourceId.value, () => {

@@ -1,14 +1,10 @@
-import { useLayoutStore } from '@/plugins/data/LayoutsPinia';
+import { type ILayoutItem } from '@/plugins/data/LayoutsPinia';
+import { type Ref } from 'vue';
 
-export function useMoveableLayout() {
-  const {
-    getLayoutItemById,
-    updateZIndexForItem,
-    getZIndexStats,
-  } = useLayoutStore();
+export function useMoveableLayout(localLayoutItems: Ref<ILayoutItem[]>) {
 
   const getInitialStyle = (id: string) => {
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return {};
 
     return {
@@ -20,7 +16,7 @@ export function useMoveableLayout() {
   };
 
   const getMovableControlStyles = (id: string) => {
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return {};
 
     return {
@@ -29,7 +25,7 @@ export function useMoveableLayout() {
   };
 
   const drag = (id: string, e) => {
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
     item.x = e.translate[0];
@@ -39,7 +35,7 @@ export function useMoveableLayout() {
   };
 
   const resize = (id: string, e) => {
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
     item.width = e.width;
@@ -53,39 +49,33 @@ export function useMoveableLayout() {
   };
 
   const moveUp = (id: string) => {
-    const { zIndexMax, countMaxZValues } = getZIndexStats();
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
-    if (item.z === zIndexMax && countMaxZValues === 1) return;
-
-    updateZIndexForItem(id, item.z + 1);
+    item.z += 1;
   };
 
   const moveToTop = (id: string) => {
-    const { zIndexMax } = getZIndexStats();
-    const item = getLayoutItemById(id);
+    const zIndexMax = Math.max(...localLayoutItems.value.map((item: ILayoutItem) => item.z));
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
-    updateZIndexForItem(id, zIndexMax + 1);
+    item.z = zIndexMax + 1;
   };
 
   const moveDown = (id: string) => {
-    const { zIndexMin, countMinZValues } = getZIndexStats();
-    const item = getLayoutItemById(id);
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
-    if (item.z === zIndexMin && countMinZValues === 1) return;
-
-    updateZIndexForItem(id, item.z - 1);
+    item.z -= 1;
   };
 
   const moveToBottom = (id: string) => {
-    const { zIndexMin } = getZIndexStats();
-    const item = getLayoutItemById(id);
+    const zIndexMin = Math.min(...localLayoutItems.value.map((item: ILayoutItem) => item.z));
+    const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
-    updateZIndexForItem(id, zIndexMin - 1);
+    item.z = zIndexMin - 1;
   };
 
   return {
@@ -96,6 +86,6 @@ export function useMoveableLayout() {
     moveUp,
     moveDown,
     moveToTop,
-    moveToBottom,
+    moveToBottom
   };
 }
