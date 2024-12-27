@@ -27,9 +27,9 @@ const saveDataSource = () => {
 };
 
 const previewComponent = computed(() => {
-  if (datasourceProxy.value.type === null || datasourceProxy.value.type === undefined) {
-    return datasourceConfig.previewComponents["XMLA"];
-  }
+  // if (datasourceProxy.value.type === null || datasourceProxy.value.type === undefined) {
+  //   return datasourceConfig.previewComponents["XMLA"];
+  // }
   return datasourceConfig.previewComponents[datasourceProxy.value.type];
 });
 
@@ -37,6 +37,10 @@ const settingsComponent = computed(() => {
   return datasourceConfig.settingsComponents[datasourceProxy.value.type];
 });
 
+const updateConfig = (config: any) => {
+  console.log(config);
+  datasourceProxy.value.config = config;
+};
 
 const emit = defineEmits(['close']);
 </script>
@@ -70,6 +74,7 @@ const emit = defineEmits(['close']);
         :is="previewComponent"
         :data-source="datasourceProxy"
         :key="datasourceProxy.uid"
+        @updateConfig="updateConfig"
       />
     </div>
   </div>
@@ -122,7 +127,6 @@ const emit = defineEmits(['close']);
 }
 
 .data-preview {
-  overflow: auto;
   border-radius: 8px;
 }
 </style>

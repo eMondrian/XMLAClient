@@ -55,7 +55,7 @@ watch(() => props.dataSource, async () => {
       />
     </div>
     <div v-if="!selectedData" class="selected-json-preview selected-json-preview--without-data container-border"></div>
-    <div v-else="selectedData && selectedValue" class="selected-json-preview container-border">
+    <div v-else class="selected-json-preview container-border">
       <VueJsonPretty
         :data="selectedData"
       />

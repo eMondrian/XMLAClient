@@ -94,9 +94,11 @@ export function initData(app: App) {
   (RestStore.prototype as any).connectionRepository = connectionRepository;
   (CsvStore.prototype as any).connectionRepository = connectionRepository;
   (DataTableComposer.prototype as any).connectionRepository = connectionRepository;
+  (XmlaStore.prototype as any).connectionRepository = connectionRepository;
   
   (RestStore.prototype as any).datasourceRepository = datasourceRepository;
   (CsvStore.prototype as any).datasourceRepository = datasourceRepository;
+  (XmlaStore.prototype as any).datasourceRepository = datasourceRepository;
   (DataTableComposer.prototype as any).datasourceRepository = datasourceRepository;
 
 

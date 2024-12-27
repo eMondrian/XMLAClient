@@ -9,7 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 export interface ITextSettings {
@@ -31,11 +31,6 @@ const opened = ref({
 const widgetSettings = defineModel<ITextSettings>({ required: true });
 
 const { t } = useI18n();
-const isDarkTheme = ref(false);
-
-const fontColor = computed(() => {
-  return isDarkTheme.value ? "#ffffff" : "";
-});
 </script>
 
 <template>
@@ -82,8 +77,6 @@ const fontColor = computed(() => {
         </div>
       </div>
     </div>
-  </va-collapse>
-  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
   </va-collapse>
 </template>
 <style lang="scss" scoped>

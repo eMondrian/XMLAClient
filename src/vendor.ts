@@ -57,7 +57,7 @@ import {
   VaFileUpload,
   type IconConfiguration,
 } from "vuestic-ui";
-import "vuestic-ui/css";
+// import "vuestic-ui/css";
 
 export function initVendors(app: App) {
   app.use(router)

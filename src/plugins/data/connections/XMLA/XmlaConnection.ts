@@ -11,11 +11,11 @@ export interface IXmlaConnectionConfiguration {
 export default class XmlaConnection implements IConnection {
   private url: any;
   private catalogName: string;
-  private cubeName: string;
+  public cubeName: string;
+  public metadata: MetadataStore = null as unknown as MetadataStore;
 
   private api: any;
   private apiPromise: Promise<XMLAApi>;
-  private metadata: any;
   private metadataPromise: Promise<MetadataStore>;
 
   constructor(configuration: IXmlaConnectionConfiguration) {
@@ -31,6 +31,7 @@ export default class XmlaConnection implements IConnection {
     this.metadataPromise = this.initMetadata();
     this.metadataPromise.then((metadataStore) => {
       this.metadata = metadataStore;
+      console.log("Metadata loaded", metadataStore);
     });
   }
 
@@ -53,7 +54,7 @@ export default class XmlaConnection implements IConnection {
   }
 
   async fetch(config: IRequestParams): Promise<any> {
-    const api = await this.api;
+    const api = await this.apiPromise;
     const mdxResponce = await api.getMDX(config.data.mdx);
     return mdxResponce;
   }
@@ -98,5 +99,15 @@ export default class XmlaConnection implements IConnection {
 
     const { catalogs } = await api.getCatalogs();
     return catalogs;
+  }
+
+  async getProperties(): Promise<any[]> {
+    await this.metadataPromise;
+    return this.metadata.getProperties();
+  }
+
+  async getLevels(): Promise<any[]> {  
+    await this.metadataPromise;
+    return this.metadata.getLevels();
   }
 }

@@ -8,8 +8,6 @@
   Contributors: Smart City Jena
 
 */
-import { useMetadataStorage } from "@/composables/metadataStorage";
-import { useAppSettingsStore } from "@/stores/AppSettings";
 import { v4 } from "uuid";
 
 export async function getRowsDrilldownRequestString(

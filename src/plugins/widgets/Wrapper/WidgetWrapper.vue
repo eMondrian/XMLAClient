@@ -62,10 +62,19 @@ const borderRadius = computed(() => {
 const transparency = computed(() => {
   return widget.wrapperConfig.backgroundColorTransparence ? widget.wrapperConfig.backgroundColorTransparence / 255 : 1;
 });
+
+const titleFontSize = computed(() => {
+  return widget.wrapperConfig.titleFontSize || 16;
+});
+
+const titleColor = computed(() => {
+  return widget.wrapperConfig.titleColor || '#000000';
+});
 </script>
 
 <template>
   <div class="wrapper-container">
+    <div v-if="widget.wrapperConfig.title" class="wrapper-title">{{ widget.wrapperConfig.title }}</div>
     <div class="wrapper" v-if="isWidgetRegistered">
       <VaScrollContainer color="#133370" vertical horizontal>
         <component :is="widget.type" :config="widget.config" :datasourceId="widget.config.datasourceId"
@@ -125,5 +134,13 @@ const transparency = computed(() => {
   justify-content: flex-end;
   background-color: white;
   z-index: 10;
+}
+
+.wrapper-title {
+  padding: 8px;
+  font-size: v-bind(titleFontSize + "px");
+  font-weight: 600;
+  text-transform: capitalize;
+  color: v-bind(titleColor);
 }
 </style>

@@ -26,8 +26,6 @@ const props = withDefaults(defineProps<IMonacoEditorProps>(), {
   // supportedThemes: () => ['vs-dark', 'vs-light', 'hc-black'],
 });
 
-const tabs = ["Code Editor", "Visual Editor"];
-const currentTab = ref(0);
 const selectedLanguage = ref(props.language);
 // const selectedTheme = ref(props.theme);
 
@@ -70,13 +68,6 @@ onMounted(() => {
 });
 
 
-watch(currentTab, async (newTab) => {
-  if (newTab === 0) {
-    await nextTick();
-    initEditor();
-  }
-});
-
 onBeforeUnmount(() => {
   disposeEditor();
 });
@@ -102,25 +93,13 @@ watch(() => props.modelValue, (newValue) => {
 </script>
 
 <template>
-  <va-tabs v-model="currentTab" hidePagination color="info">
-    <template #tabs>
-      <va-tab v-for="tab in tabs" :key="tab">
-        {{ tab }}
-      </va-tab>
-    </template>
-    <template v-if="currentTab === 0">
-      <div class="editor-page">
-        <div class="toolbar">
-          <va-select v-model="selectedLanguage" label="Language:" :options="supportedLanguages" />
-          <!-- <va-select class="ml-3" v-model="selectedTheme" label="Theme:" :options="supportedThemes" /> -->
-        </div>
-        <div ref="editorContainer" class="monaco-editor mt-2"></div>
-      </div>
-    </template>
-    <template v-else-if="currentTab === 1">
-      <div class="visual-editor-container">Visual Editor</div>
-    </template>
-  </va-tabs>
+  <div class="editor-page">
+    <div class="toolbar">
+      <va-select v-model="selectedLanguage" label="Language:" :options="supportedLanguages" />
+      <!-- <va-select class="ml-3" v-model="selectedTheme" label="Theme:" :options="supportedThemes" /> -->
+    </div>
+    <div ref="editorContainer" class="monaco-editor mt-2"></div>
+  </div>
 </template>
 
 <style scoped>

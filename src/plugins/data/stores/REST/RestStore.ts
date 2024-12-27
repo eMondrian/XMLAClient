@@ -1,4 +1,4 @@
-import { extractDataByPath, parseToDataTable } from "@/utils/herlpers";
+import { extractDataByPath } from "@/utils/helpers";
 
 export interface IRestStoreConfiguration {
   resourceUrl: string;
@@ -33,7 +33,7 @@ export default class RestStore implements IDataRetrieveable {
       }
 
       if (type === 'DataTable') {
-        response = parseToDataTable(response);
+        response = this.parseToDataTable(response);
       } else if (type === 'object') {
         // Do nothing
       } else if (type === 'string') {
@@ -41,7 +41,7 @@ export default class RestStore implements IDataRetrieveable {
       }
 
       return response;
-    } catch(e: any) {
+    } catch (e: any) {
       console.warn("Invalid resource URL", e.name);
     }
     return response as unknown as DataMap[T];
@@ -56,11 +56,30 @@ export default class RestStore implements IDataRetrieveable {
       const connection = connectionRepository.getConnection(this.connection);
       const req = await connection.fetch(this.resourceUrl);
       const data = await req.json();
-      
+
       return data;
-    } catch(e: any) {
+    } catch (e: any) {
       console.warn("Invalid resource URL", e.name)
     }
+  }
+
+  parseToDataTable(data: any): IDataTable {
+    if (!Array.isArray(data)) return { items: [] };
+
+    const items = data.map((item: any) => {
+      if (typeof item !== 'object') return {};
+
+      const row: IDataTableRow = {};
+
+      for (const key in item) {
+        if (typeof item[key] === 'object' || Array.isArray(item[key])) continue;
+        row[key] = item[key];
+      }
+
+      return row;
+    });
+
+    return { items };
   }
 
   static validateConfiguration(configuration: IRestStoreConfiguration) {

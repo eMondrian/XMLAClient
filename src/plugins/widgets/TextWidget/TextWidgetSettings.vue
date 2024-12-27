@@ -80,8 +80,6 @@ const { t } = useI18n();
       </div>
     </div>
   </va-collapse>
-  <va-collapse v-model="opened.storeSection" :header="t('Widgets.storeSettingsTitle')">
-  </va-collapse>
 </template>
 <style lang="scss" scoped>
 .settings-container {

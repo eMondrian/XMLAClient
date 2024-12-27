@@ -7,9 +7,12 @@ export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: R
 
   const data = ref(null as unknown as Ref<DataMap[T]>);
 
-  console.log();
-
   const getData = async () => {
+    if (!dataSourceId.value) {
+      data.value = null as unknown as DataMap[T];
+      return;
+    }
+
     const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
     data.value = await dataSource.getData(type);
   };

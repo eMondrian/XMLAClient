@@ -101,3 +101,97 @@ declare interface MDSchemaMember {
     HAS_CHILDREN: boolean;
     PARENT_UNIQUE_NAME: string;
 }
+
+declare interface MetadataStorage {
+    hierarchies: MDSchemaHierarchy[];
+    dimensions: MDSchemaDimension[];
+    levels: MDSchemaLevel[];
+    measureGroups: MDSchemaMeasureGroup[];
+    measures: MDSchemaMeasure[];
+    sets: MDSchemaSet[];
+    properties: MDSchemaProperty[];
+}
+
+
+declare interface TreeItem {
+    caption: string;
+    id: string;
+    type: number;
+    children?: TreeItem[] | undefined;
+}
+
+declare interface DimensionTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Dimension;
+    isMeasureDimension: boolean;
+    children: TreeItem[];
+}
+
+declare interface HierarchyTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Hierarchy;
+    children: TreeItem[];
+    originalItem: MDSchemaHierarchy;
+    filters: {
+        enabled: boolean;
+    };
+}
+
+declare interface FolderTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Folder;
+    name: string;
+    children: TreeItem[];
+}
+
+declare interface LevelTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Level;
+    children: TreeItem[];
+    originalItem: MDSchemaLevel;
+}
+
+declare interface SetsFolderTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.SetsFolder;
+    children: SetTreeItem[];
+}
+
+declare interface SetTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Set;
+}
+
+declare interface MeasureGroupTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.MeasureGroup;
+    children: MeasureTreeItem[];
+}
+
+declare interface MeasureTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Measure;
+    originalItem: MDSchemaMeasure;
+}
+
+declare interface PropertyTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Property;
+}
+
+declare interface LoadingTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Loading;
+    caption: "";
+}
+
+declare interface LoadMoreTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.LoadMore;
+    caption: "";
+    parentId: string;
+}
+
+declare interface MemberTreeItem extends TreeItem {
+    type: TreeItemTypesEnum.Member;
+    children: any[];
+    hasChildren: boolean;
+    __MDSchemaMember: MDSchemaMember;
+}
+
+declare interface PivotTableData {
+    rows: any[][];
+    columns: any[];
+    cells: any[];
+    propertiesCols: any[];
+    propertiesRows: any[];
+  }

@@ -80,7 +80,6 @@ const addWidget = (type: string, datasourceId: string) => {
 
 const openWidgetSettings = (id: string) => {
   widgetSettingsOpenedId.value = id;
-  console.log(id);
 };
 
 

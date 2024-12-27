@@ -12,7 +12,6 @@ import {
     getRowsDrilldownRequestString,
     getColsDrilldownRequestString,
 } from "./Drilldown";
-import { useAppSettingsStore } from "@/stores/AppSettings";
 import { v4 } from "uuid";
 
 export async function getMdxRequest(
@@ -150,8 +149,8 @@ async function getSingleColumnRequest(
     e: any,
     columnsDrilldownMembers: any[],
     colsExpandedMembers: any[],
-    measures,
-    levels,
+    measures: any[],
+    levels: any[],
 ) {
     if (e.type === "Values") {
         const selectRequest = measures

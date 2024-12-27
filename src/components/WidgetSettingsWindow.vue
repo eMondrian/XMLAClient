@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import WidgetWrapperSettings from '@/plugins/widgets/Wrapper/WidgetWrapperSettings.vue';
-import { getCurrentInstance } from 'vue';
+import { useDataSourcesStore } from '@/plugins/data/DatasourcePinia';
+import { getCurrentInstance, ref } from 'vue';
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits(['saveWidgetSettings', 'close']);
 const widget = defineModel<IWidget>();
-
-console.log(widget.value);
+const storeSection = ref(false);
+const { dataSources } = useDataSourcesStore();
 
 const instance = getCurrentInstance();
 const availableWidgetsSettings = instance?.appContext.config.globalProperties.availableWidgetsSettings;
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -21,6 +25,9 @@ const availableWidgetsSettings = instance?.appContext.config.globalProperties.av
         v-model="widget.config"
         :key="widget.uid"
       />
+      <va-collapse v-model="storeSection" :header="t('Widgets.storeSettingsTitle')">
+          <VaSelect label="Datasource ID" class="mx-3 my-3" v-model="widget.config.datasourceId" :options="dataSources" text-by="name" value-by="uid" teleport=".add_widget_window"/>
+      </va-collapse>
     </div>
     <div class="buttons">
       <va-button @click="emit('close')">Close</va-button>

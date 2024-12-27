@@ -23,7 +23,7 @@ const isSidebarHovered = ref();
                 <va-sidebar-item-content>
                     <va-icon name="preview" />
                     <va-sidebar-item-title>
-                        View
+                        View dashboard
                     </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>
@@ -32,16 +32,16 @@ const isSidebarHovered = ref();
                 <va-sidebar-item-content>
                     <va-icon name="draw" />
                     <va-sidebar-item-title>
-                        Edit
+                        Edit dashboard
                     </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>
             <va-sidebar-item :active="$route.name === 'dashboard'" @click="$router.push('/qweqwe/data')"
                 class="pointer">
                 <va-sidebar-item-content>
-                    <va-icon name="draw" />
+                    <va-icon name="dataset" />
                     <va-sidebar-item-title>
-                        Edit
+                        Data configuration
                     </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>
@@ -49,13 +49,13 @@ const isSidebarHovered = ref();
                 <va-sidebar-item-content>
                     <va-icon name="settings" />
                     <va-sidebar-item-title>
-                        Configuration
+                        Environment variables
                     </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>
             <va-sidebar-item :active="$route.name === 'test'" @click="$router.push('/test')" class="pointer">
                 <va-sidebar-item-content>
-                    <va-icon name="settings" />
+                    <va-icon name="bug_report" />
                     <va-sidebar-item-title>
                         Test
                     </va-sidebar-item-title>
