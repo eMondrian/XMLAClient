@@ -3,6 +3,7 @@ type DataMap = {
   PivotTable: IPivotTable;
   object: object;
   string: string;
+  ChartData: IChartData;
 }
 
 interface IDataTableRow {
@@ -11,6 +12,8 @@ interface IDataTableRow {
 
 interface IDataTable {
   items: IDataTableRow[];
+  headers: string[];
+  rows: any[];
 }
 
 interface IPivotTable {
@@ -19,4 +22,9 @@ interface IPivotTable {
   cells: any[][];
 
   tableState: any;
+}
+
+interface IChartData {
+  labels: string[];
+  datasets: any[];
 }

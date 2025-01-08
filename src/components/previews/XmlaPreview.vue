@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, shallowRef, getCurrentInstance, watch, ref } from 'vue';
+
 import MonacoEditor from '../common/monacoEditor/MonacoEditor.vue';
 import MetadataTree from '../XMLA/MetadataTree.vue';
 import QueryDesigner from '../XMLA/QueryDesigner.vue';
@@ -17,6 +18,10 @@ const connection = ref(null as unknown as XmlaConnection);
 
 const emit = defineEmits(['updateConfig']);
 
+const query = ref(props.dataSource.config.mdx || '');
+const tabs = ["Code Editor", "Visual Editor"];
+const currentTab = ref(0);
+
 const queryConfig = ref({
   filters: props.dataSource.config.requestParams?.filters || [],
   rows: props.dataSource.config.requestParams?.rows || [],
@@ -24,14 +29,20 @@ const queryConfig = ref({
   measures: props.dataSource.config.requestParams?.measures || [],
 });
 
+const drilldownState = ref(props.dataSource.config.drilldownState || {});
+
 const updateData = async () => {
   if (constructor.validateConfiguration(props.dataSource.config)) {
-    const config = { ...props.dataSource.config, requestParams: queryConfig.value, mdx: query.value };
+    const config = {
+      ...props.dataSource.config,
+      requestParams: queryConfig.value,
+      mdx: query.value,
+      drilldownState: drilldownState.value,
+    };
 
     tempStore.value = new constructor(config) as XmlaStore;
     const req = await tempStore.value.getData('PivotTable');
 
-    
     data.value = req;
 
     if (props.dataSource.config.useVisualEditor) {
@@ -41,10 +52,6 @@ const updateData = async () => {
     connection.value = tempStore.value.getConnection();
   }
 }
-
-const query = ref(props.dataSource.config.mdx || '');
-const tabs = ["Code Editor", "Visual Editor"];
-const currentTab = ref(0);
 
 onMounted(async () => {
   updateData();
@@ -72,6 +79,28 @@ watch(() => query, async () => {
   updateData();
 }, { deep: true });
 
+const onExpand = async (e: any) => {
+  drilldownState.value = tempStore.value.expand(e);
+
+  emit('updateConfig', {
+    ...props.dataSource.config,
+    drilldownState: drilldownState.value,
+  });
+
+  updateData();
+}
+
+const onCollapse = async (e) => {
+  drilldownState.value = tempStore.value.collapse(e);
+
+  emit('updateConfig', {
+    ...props.dataSource.config,
+    drilldownState: drilldownState.value,
+  });
+
+  updateData();
+}
+
 </script>
 <template>
   <div class="flex w-full h-full rounded gap-4">
@@ -80,16 +109,14 @@ watch(() => query, async () => {
         <template #tabs>
           <div class="flex justify-between w-full">
             <div>
-              <va-tab v-for="tab in tabs" :key="tab" :disabled="tab === 'Visual Editor' && !props.dataSource.config.useVisualEditor">
+              <va-tab v-for="tab in tabs" :key="tab"
+                :disabled="tab === 'Visual Editor' && !props.dataSource.config.useVisualEditor">
                 {{ tab }}
               </va-tab>
             </div>
 
             <!-- eslint-disable-next-line vue/no-mutating-props -->
-            <VaCheckbox v-model="props.dataSource.config.useVisualEditor"
-              class="mt-2"
-              label="Use query designer"
-            />
+            <VaCheckbox v-model="props.dataSource.config.useVisualEditor" class="mt-2" label="Use query designer" />
           </div>
         </template>
         <template v-if="currentTab === 0">
@@ -106,7 +133,14 @@ watch(() => query, async () => {
           Data Preview
         </h4>
         <div class="w-full h-full">
-          <PivotTable v-model="data" />
+          <PivotTable
+            v-if="data"
+            v-model="data"
+            @onExpand="onExpand"
+            @onCollapse="onCollapse"
+            :rowsExpandedMembers="data.tableState.rowsExpandedMembers"
+            :columnsExpandedMembers="data.tableState.columnsExpandedMembers"
+          />
         </div>
       </div>
     </div>

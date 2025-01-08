@@ -1,16 +1,17 @@
 import BaseDatasource from "../../BaseDatasource";
 
-export interface IDataTableComposerConfiguration {
+export interface IChartComposerConfiguration {
   connectedDatasources: string[];
   composeBy: string;
+  usedSets: string[];
 }
 
-export default class DataTableComposer extends BaseDatasource {
+export default class ChartComposer extends BaseDatasource {
   private connectedDatasources: string[];
   private composeBy: string;
-  public static availableTypes = ['REST', "CSV", "XMLA"];
+  private usedSets: string[];
 
-  constructor(configuration: IDataTableComposerConfiguration) {
+  constructor(configuration: IChartComposerConfiguration) {
     super();
 
     this.connectedDatasources = configuration.connectedDatasources;
@@ -28,13 +29,14 @@ export default class DataTableComposer extends BaseDatasource {
     });
 
     this.composeBy = configuration.composeBy;
+    this.usedSets = configuration.usedSets;
   }
-  
+
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
     if (!this.composeBy) return null as unknown as DataMap[T];
 
     const datasourceRepository = (this as any).datasourceRepository;
-    
+
     const data = await Promise.all(this.connectedDatasources.map(async (datasourceId) => {
       console.log(datasourceId);
       if (!datasourceRepository) {
@@ -47,6 +49,9 @@ export default class DataTableComposer extends BaseDatasource {
 
     if (type === "DataTable") {
       return this.composeArrays(data) as DataMap[T];
+    } else if (type === "ChartData") {
+      const composedData = this.composeArrays(data);
+      return this.parseToChartData(composedData) as DataMap[T];
     } else {
       console.warn("Invalid data type");
       return null as unknown as DataMap[T];
@@ -54,7 +59,7 @@ export default class DataTableComposer extends BaseDatasource {
   }
 
   async getOriginalData() {
-      return [];
+    return [];
   }
 
   callEvent(event: string, params: any) {
@@ -128,6 +133,21 @@ export default class DataTableComposer extends BaseDatasource {
 
     resultingDataTable.rows = rows;
     return resultingDataTable
+  }
+
+  private parseToChartData(data: IDataTable): IChartData {
+    const chartData = {} as IChartData;
+
+    chartData.labels = data.items.map((e: any) => e['Caption']);
+    chartData.datasets = this.usedSets.map((set) => {
+      return {
+        label: set,
+        data: data.items.map((e: any) => --e[set]),
+        backgroundColor: 'red',
+      }
+    });
+
+    return chartData;
   }
 
   static validateConfiguration(config: any): boolean {

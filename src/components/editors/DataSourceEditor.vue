@@ -47,7 +47,7 @@ const emit = defineEmits(['close']);
 
 <template>
   <div class="connection_editor-container">
-    <div class="connection_editor-main">
+    <div class="connection_editor-main h-full">
       <div class="connection_editor-header">
         <h4>
           DataSource Editor
@@ -69,7 +69,7 @@ const emit = defineEmits(['close']);
         <VaButton color="secondary" @click="$emit('close')">Cancel</VaButton>
       </div>
     </div>
-    <div class="data-preview">
+    <div class="data-preview h-full overflow-hidden">
       <component
         :is="previewComponent"
         :data-source="datasourceProxy"

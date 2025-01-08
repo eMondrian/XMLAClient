@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DataTableComposer from "./DataTableComposer";
-import { watch, ref, computed, getCurrentInstance } from "vue";
+import ChartComposer from "./ChartComposer";
+import { watch, ref, computed, getCurrentInstance, onMounted } from "vue";
 
 const instance = getCurrentInstance();
 const datasourceRepository = instance?.appContext.config.globalProperties.datasourceRepository;
@@ -12,12 +12,17 @@ const { config, dataSources } = defineProps<{
 }>();
 
 const datasourcesFiltered = computed(() => {
-  return dataSources.filter((ds: any) => DataTableComposer.availableTypes.includes(ds.type));
+  return dataSources.filter((ds: any) => ds.type === 'CSV' || ds.type === 'XMLA');
 });
 
 const composeByOptions = ref([] as string[]);
+
+onMounted(async () => {
+  composeByOptions.value = await ChartComposer.getHeaders(config.connectedDatasources, datasourceRepository);
+});
+
 watch(() => config.connectedDatasources, async (newValue) => {
-  composeByOptions.value = await DataTableComposer.getHeaders(newValue, datasourceRepository);
+  composeByOptions.value = await ChartComposer.getHeaders(newValue, datasourceRepository);
 });
 </script>
 <template>
@@ -27,4 +32,8 @@ watch(() => config.connectedDatasources, async (newValue) => {
 
   <!-- eslint-disable-next-line vue/no-mutating-props -->
   <VaSelect v-model="config.composeBy" label="Compose By" :options="composeByOptions" />
+
+
+  <!-- eslint-disable-next-line vue/no-mutating-props -->
+  <VaSelect v-model="config.usedSets" label="Series" :options="composeByOptions" multiple />
 </template>

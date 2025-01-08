@@ -14,7 +14,7 @@ export default class XmlaConnection implements IConnection {
   public cubeName: string;
   public metadata: MetadataStore = null as unknown as MetadataStore;
 
-  private api: any;
+  private api: XMLAApi | null = null;
   private apiPromise: Promise<XMLAApi>;
   private metadataPromise: Promise<MetadataStore>;
 
@@ -109,5 +109,16 @@ export default class XmlaConnection implements IConnection {
   async getLevels(): Promise<any[]> {  
     await this.metadataPromise;
     return this.metadata.getLevels();
+  }
+
+  async getMember(parentLevel: MDSchemaLevel, parentName: string): Promise<any> {
+    await this.metadataPromise;
+    await this.apiPromise;
+
+    if (this.api) {
+       return await this.api.getMember(parentLevel, parentName);
+    } else {
+      throw new Error("API is not initialized");
+    }
   }
 }

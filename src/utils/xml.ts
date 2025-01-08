@@ -577,7 +577,7 @@ class XMLAApi {
             mdxResponce.Body.ExecuteResponse.return.root.CellData?.Cell,
         );
 
-        return {
+    return {
             axis0,
             axis1,
             cells,

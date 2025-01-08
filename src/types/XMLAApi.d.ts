@@ -194,4 +194,10 @@ declare interface PivotTableData {
     cells: any[];
     propertiesCols: any[];
     propertiesRows: any[];
-  }
+}
+
+declare interface DrilldownPayload {
+    area: string;
+    value: string;
+}
+  

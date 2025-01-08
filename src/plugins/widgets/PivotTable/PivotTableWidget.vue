@@ -16,13 +16,28 @@ import PivotTable from "@/components/XMLA/PivotTable/PivotTable.vue";
 const props = defineProps<{ datasourceId: string, config: ITextSettings }>();
 const { datasourceId } = toRefs(props);
 
-const { data } = useDatasourceRepository(datasourceId, "PivotTable");
+const { data, callEvent } = useDatasourceRepository(datasourceId, "PivotTable");
+
+const onExpand = (e: any) => {
+  callEvent('expand', e, true);
+};
+
+const onCollapse = (e: any) => {
+  callEvent('collapse', e, true);
+};
 </script>
 
 <template>
   <div class="text-container">
     <div class="component">
-      <PivotTable :model-value="data" />
+      <PivotTable
+        v-if="data"
+        :model-value="data"
+        @onExpand="onExpand"
+        @onCollapse="onCollapse"
+        :rowsExpandedMembers="data.tableState.rowsExpandedMembers"
+        :columnsExpandedMembers="data.tableState.columnsExpandedMembers"
+      />
     </div>
   </div>
 </template>

@@ -15,6 +15,7 @@ import { useElementSize } from "@vueuse/core";
 import RowsArea from "./Areas/RowsArea.vue";
 import ColumnsArea from "./Areas/ColumnsArea.vue";
 import CellsArea from "./Areas/CellsArea.vue";
+import { required } from "vuestic-ui/dist/types/utils/validators.js";
 
 const DEFAULT_COLUMN_WIDTH = 150;
 const DEFAULT_ROW_HEIGHT = 30;
@@ -22,10 +23,33 @@ const DEFAULT_ROW_HEIGHT_CSS = `${DEFAULT_ROW_HEIGHT}px`;
 
 const data = defineModel<IPivotTable>({ required: true })
 
-const propertiesRows = ref([] as any[]);
-const propertiesCols = ref([] as any[]);
-const rowsExpandedMembers = ref([] as any[]);
-const columnsExpandedMembers = ref([] as any[]);
+// const propertiesRows = ref([] as any[]);
+// const propertiesCols = ref([] as any[]);
+// const rowsExpandedMembers = ref([] as any[]);
+// const columnsExpandedMembers = ref([] as any[]);
+
+const props = defineProps({
+  "propertiesRows": {
+    required: false,
+    type: Array,
+    default: () => [],
+  },
+  "propertiesCols": {
+    required: false,
+    type: Array,
+    default: () => [],
+  },
+  "rowsExpandedMembers": {
+    required: false,
+    type: Array,
+    default: () => [],
+  },
+  "columnsExpandedMembers": {
+    required: false,
+    type: Array,
+    default: () => [],
+  },
+})
 
 const colStyles = ref([] as number[]);
 const rowsStyles = ref([] as number[]);
@@ -60,25 +84,34 @@ const setColumnsStyles = (i: number, value: number) => {
   colStyles.value[i] = value;
 };
 
+const emit = defineEmits([
+  'onExpand',
+  'onCollapse',
+  'onDrilldown',
+  'onDrillup',
+])
+
 provide("setRowsStyles", setRowsStyles);
 provide("setColumnsStyles", setColumnsStyles);
 
-provide("drilldown", (value, area) => {
+provide("drilldown", (value: any, area: string) => {
   // EventBus.emit(`DRILLDOWN:${store.value.id}`, { value, area });
 });
-provide("drillup", (value, area) => {
+provide("drillup", (value: any, area: string) => {
   // EventBus.emit(`DRILLUP:${store.value.id}`, { value, area });
 });
-provide("expand", (value, area) => {
+provide("expand", (value: any, area: string) => {
+  emit('onExpand', { value, area })
   // EventBus.emit(`EXPAND:${store.value.id}`, { value, area });
 });
-provide("collapse", (value, area) => {
+provide("collapse", (value: any, area: string) => {
+  emit('onCollapse', { value, area })
   // EventBus.emit(`COLLAPSE:${store.value.id}`, { value, area });
 });
 
 const totalContentSize = computed(() => {
   const columnsDesc = [
-    ...propertiesCols.value,
+    ...props.propertiesCols,
     ...(data.value.columns.length ? data.value.columns : [{}]),
   ];
   const xAxisDesc = columnsDesc.reduce(
@@ -102,7 +135,7 @@ const totalContentSize = computed(() => {
   );
 
   const rowsDesc = [
-    ...propertiesRows.value,
+    ...props.propertiesRows,
     ...(data.value.rows.length ? data.value.rows : [{}]),
   ];
   const yAxisDesc = rowsDesc.reduce(
@@ -138,10 +171,10 @@ const totalContentSize = computed(() => {
       @contextmenu.stop.prevent="">
       <ColumnsArea :columnsStyles="colStyles" :columnsOffset="columnsOffset"
         :columns="[...propertiesCols, ...data.columns]" :totalContentSize="totalContentSize" :leftPadding="rowsWidth"
-        :columns-expanded-members="columnsExpandedMembers"></ColumnsArea>
+        :columns-expanded-members="props.columnsExpandedMembers"></ColumnsArea>
       <div class="flex flex-row overflow-hidden vertical-scroll">
         <RowsArea ref="rowsContainer" :rows="[...propertiesRows, ...data.rows]" :rowsStyles="rowsStyles"
-          :totalContentSize="totalContentSize" :rows-expanded-members="rowsExpandedMembers"></RowsArea>
+          :totalContentSize="totalContentSize" :rows-expanded-members="props.rowsExpandedMembers"></RowsArea>
         <CellsArea :rowsStyles="rowsStyles" :colsStyles="colStyles" :totalContentSize="totalContentSize"
           :cells="data.cells" @drillthrough="drillthrough"></CellsArea>
       </div>

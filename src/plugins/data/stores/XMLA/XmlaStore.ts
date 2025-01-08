@@ -1,12 +1,15 @@
 import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
 import type XmlaConnection from "../../connections/XMLA/XmlaConnection";
-import { parseMdxRequest } from "@/utils/MdxRequests/MdxRequestHelper";
+import { parseMdxRequest, parseRequestToTable } from "@/utils/MdxRequests/MdxRequestHelper";
+import DrilldownHandler from "./DrilldownHandler";
+import BaseDatasource from "../../BaseDatasource";
 
 export interface IXmlaStoreConfiguration {
   connection: string;
   requestParams: XMLARequestParams;
   useVisualEditor: boolean;
   mdx: string;
+  drilldownState?: any;
 }
 
 interface XMLARequestParams {
@@ -16,16 +19,29 @@ interface XMLARequestParams {
   filters: any[];
 }
 
-
-
-export default class XmlaStore implements IDataRetrieveable {
+export default class XmlaStore extends BaseDatasource {
   private connection: any;
-  private requestParams: XMLARequestParams;
-  private useVisualEditor: boolean;
-  private mdx: string;
+  private requestParams: XMLARequestParams = {
+    rows: [],
+    columns: [],
+    measures: [],
+    filters: [],
+  };
+  private useVisualEditor: boolean = false;
+  private mdx: string = '';
+  private drilldownHandler: DrilldownHandler | null = null;
 
   constructor(configuration: IXmlaStoreConfiguration) {
+    super();
+
     this.connection = configuration.connection;
+
+    if (this.connection) {
+      const connectionRepository = (this as any).connectionRepository;
+      const connection = connectionRepository.getConnection(this.connection);
+
+      this.drilldownHandler = new DrilldownHandler(connection, configuration.drilldownState);
+    }
 
     if (configuration.useVisualEditor) {
       this.useVisualEditor = configuration.useVisualEditor;
@@ -38,8 +54,10 @@ export default class XmlaStore implements IDataRetrieveable {
     if (configuration.requestParams) {
       this.requestParams = configuration.requestParams;
     }
+  }
 
-    // throw new Error("Method not implemented.");
+  async getOriginalData() {
+      throw new Error("Not Implemented");
   }
 
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
@@ -59,9 +77,18 @@ export default class XmlaStore implements IDataRetrieveable {
         mdx: request
       }
     });
-
+    console.log(type);
     if (type === 'PivotTable') {
       response = this.parseToPivotTable(mdxResponse);
+
+      response.tableState = {
+        rowsExpandedMembers: this.drilldownHandler?.rowsExpandedMembers || [],
+        rowsDrilldownMembers: this.drilldownHandler?.rowsDrilldownMembers || [],
+        columnsExpandedMembers: this.drilldownHandler?.columnsExpandedMembers || [],
+        columnsDrilldownMembers: this.drilldownHandler?.columnsDrilldownMembers || [],
+      }
+    } else if (type === 'DataTable') {
+      response = this.parseToDataTable(mdxResponse);
     } else {
       throw new Error("Invalid data type");
     }
@@ -77,14 +104,10 @@ export default class XmlaStore implements IDataRetrieveable {
 
     const mdxRequest = await getMdxRequest(
       connection.cubeName,
-      [],
-      [],
-      [],
-      [],
-      // rowsDrilldownMembers,
-      // columnsDrilldownMembers,
-      // rowsExpandedMembers,
-      // columnsExpandedMembers,
+      this.drilldownHandler?.columnsDrilldownMembers || [],
+      this.drilldownHandler?.rowsDrilldownMembers || [],
+      this.drilldownHandler?.rowsExpandedMembers || [],
+      this.drilldownHandler?.columnsExpandedMembers || [],
       this.requestParams.rows,
       this.requestParams.columns,
       this.requestParams.measures,
@@ -97,13 +120,44 @@ export default class XmlaStore implements IDataRetrieveable {
     return mdxRequest;
   }
 
+  expand(e: DrilldownPayload): any {
+    this.drilldownHandler?.handleExpand(e);
+
+    return this.drilldownHandler?.getDrilldownState();
+  }
+
+  collapse(e: DrilldownPayload): any {
+    this.drilldownHandler?.handleCollapse(e);
+
+    return this.drilldownHandler?.getDrilldownState();
+  }
+
   getConnection(): XmlaConnection {
     const connectionRepository = (this as any).connectionRepository;
     return connectionRepository.getConnection(this.connection);
   }
 
+  callEvent(event: string, params: any) {
+    switch (event) {
+      case "expand":
+        this.expand(params);
+        break;
+      case "collapse":
+        this.collapse(params);
+        break;
+      default:
+        console.warn('Event is not available for this type of store');
+    }
+
+    this.notify();
+  };
+
   parseToPivotTable(mdxResponse: any): IPivotTable {
     return parseMdxRequest(mdxResponse) as unknown as IPivotTable;
+  }
+
+  parseToDataTable(mdxResponce: any): IDataTable {
+    return parseRequestToTable(mdxResponce, 0);
   }
 
   static validateConfiguration(configuration: IXmlaStoreConfiguration) {

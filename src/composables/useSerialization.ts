@@ -14,8 +14,8 @@ export function useSerialization(states: any) {
 
   const updateMethods = {
     configurations: configurationStore.updateConfigurations,
-    datasources: datasourcesStore.updateDataSources,
     connections: connectionsStore.updateConnections,
+    datasources: datasourcesStore.updateDataSources,
     widgets: widgetsStore.updateWidgets,
     layout: layoutStore.updateLayout,
   };
@@ -30,11 +30,21 @@ export function useSerialization(states: any) {
 
   const loadState = (state: any) => {
     const parsedState = JSON.parse(state);
-    Object.entries(parsedState)
-      .filter(([, value]) => value !== null && value !== undefined)
-      .forEach(([key, value]) => {
-        updateMethods[key]?.(value);
-      });
+    console.log(state);
+
+    // Order of calls here matters
+    updateMethods.configurations(parsedState.configurations);
+    updateMethods.connections(parsedState.connections);
+    updateMethods.datasources(parsedState.datasources);
+    updateMethods.widgets(parsedState.widgets);
+    updateMethods.layout(parsedState.layout);
+
+
+      // Object.entries(parsedState)
+      //   .filter(([, value]) => value !== null && value !== undefined)
+      //   .forEach(([key, value]) => {
+      //     updateMethods[key]?.(value);
+      //   });
   };
 
   return {

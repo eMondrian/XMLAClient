@@ -1,4 +1,5 @@
 import { optionalArrayToArray } from "@/utils/helpers";
+import type { DataTableRow } from "vuestic-ui";
 
 const parseMdxRequest = (mdxResponce) => {
     let columns = [] as any[];
@@ -237,7 +238,7 @@ const parseCells = (cells: any[], columns: any[], rows: any[]) => {
     return columnsArray;
 };
 
-const parseRequestToTable = (mdxResponce, mainAxis) => {
+const parseRequestToTable = (mdxResponce: any, mainAxis = 0) => {
     const axis0 = optionalArrayToArray(
         optionalArrayToArray(
             mdxResponce.Body.ExecuteResponse.return.root.Axes?.Axis,
@@ -258,38 +259,82 @@ const parseRequestToTable = (mdxResponce, mainAxis) => {
         mdxResponce.Body.ExecuteResponse.return.root.CellData?.Cell,
     );
 
-    const table = {} as any;
+    const table = {
+        rows: [],
+        items: [],
+        headers: ['Caption'],
+    } as IDataTable;
+
     if (mainAxis === 0) {
-        table["Headers"] = [];
         axis1.forEach((item, index) => {
             const newItem = item.Member.Caption;
-            table["Headers"].push(newItem);
+            table.headers.push(newItem);
         });
 
         axis0.forEach((item, i) => {
-            table[item.Member.Caption] = [];
+            console.log(i);
+            table.rows[i] = [item.Member.Caption];
             axis1.forEach((subItem, j) => {
-                table[item.Member.Caption].push(
+                table.rows[i].push(
                     cellsArray[j * axis0.length + i].Value,
                 );
             });
         });
     } else if (mainAxis === 1) {
-        table["Headers"] = [];
         axis0.forEach((item, index) => {
             const newItem = item.Member.Caption;
-            table["Headers"].push(newItem);
+            table.headers.push(newItem);
         });
 
         axis1.forEach((item, i) => {
-            table[item.Member.Caption] = [];
+            table.items[i] = [item.Member.Caption];
             axis0.forEach((subItem, j) => {
-                table[item.Member.Caption].push(
+                table.items[i].push(
                     cellsArray[i * axis0.length + j].Value,
                 );
             });
         });
     }
+
+    table.items = table.rows.map((row, i) => {
+        const mappedItem = {} as IDataTableRow;
+
+        row.forEach((value: any, i: number) => {
+            mappedItem[table.headers[i]] = value;
+        })
+
+        return mappedItem;
+    })
+    
+    // if (mainAxis === 0) {
+    //     axis1.forEach((item, index) => {
+    //         const newItem = item.Member.Caption;
+    //         table.headers.push(newItem);
+    //     });
+
+    //     axis0.forEach((item, i) => {
+    //         table.items[item.Member.Caption] = [];
+    //         axis1.forEach((subItem, j) => {
+    //             table.items[item.Member.Caption].push(
+    //                 cellsArray[j * axis0.length + i].Value,
+    //             );
+    //         });
+    //     });
+    // } else if (mainAxis === 1) {
+    //     axis0.forEach((item, index) => {
+    //         const newItem = item.Member.Caption;
+    //         table.headers.push(newItem);
+    //     });
+
+    //     axis1.forEach((item, i) => {
+    //         table.items[item.Member.Caption] = [];
+    //         axis0.forEach((subItem, j) => {
+    //             table.items[item.Member.Caption].push(
+    //                 cellsArray[i * axis0.length + j].Value,
+    //             );
+    //         });
+    //     });
+    // }
 
     return table;
 };

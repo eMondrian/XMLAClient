@@ -1,4 +1,5 @@
 import { extractDataByPath } from "@/utils/helpers";
+import BaseDatasource from "../../BaseDatasource";
 
 export interface IRestStoreConfiguration {
   resourceUrl: string;
@@ -6,12 +7,14 @@ export interface IRestStoreConfiguration {
   selectedJSONValue?: string;
 }
 
-export default class RestStore implements IDataRetrieveable {
+export default class RestStore extends BaseDatasource {
   private connection: any;
   private resourceUrl: string;
   private selectedJSONValue?: string;
 
   constructor(configuration: IRestStoreConfiguration) {
+    super();
+    
     this.connection = configuration.connection;
     this.resourceUrl = configuration.resourceUrl;
     this.selectedJSONValue = configuration.selectedJSONValue;
@@ -64,23 +67,45 @@ export default class RestStore implements IDataRetrieveable {
   }
 
   parseToDataTable(data: any): IDataTable {
-    if (!Array.isArray(data)) return { items: [] };
+    if (!Array.isArray(data)) return { items: [], headers: [], rows: [] };
 
-    const items = data.map((item: any) => {
+    const headers: string[] = ['index'];
+    const rows: any[] = [];
+
+    const items = data.map((item: any, index: number) => {
       if (typeof item !== 'object') return {};
 
-      const row: IDataTableRow = {};
+      const row: IDataTableRow = {
+        index
+      };
 
       for (const key in item) {
         if (typeof item[key] === 'object' || Array.isArray(item[key])) continue;
+
+        if (!headers.includes(key)) {
+          headers.push(key);
+        }
+
         row[key] = item[key];
       }
 
       return row;
     });
 
-    return { items };
+    items.forEach((item: IDataTableRow, index:number) => {
+      rows[index] = [];
+
+      headers.forEach((header: string) => {
+        rows[index].push(item[header]);
+      })
+    })
+
+    return { items, headers, rows };
   }
+
+  callEvent(event: string, params: any) {
+    console.warn(`Event "${event}" is not available for this type of store`, params)
+  };
 
   static validateConfiguration(configuration: IRestStoreConfiguration) {
     if (!configuration.connection) {
