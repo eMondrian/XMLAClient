@@ -36,4 +36,7 @@ watch(() => config.connectedDatasources, async (newValue) => {
 
   <!-- eslint-disable-next-line vue/no-mutating-props -->
   <VaSelect v-model="config.usedSets" label="Series" :options="composeByOptions" multiple />
+
+  <!-- eslint-disable-next-line vue/no-mutating-props -->
+  <VaSelect v-model="config.labelColumn" label="Label Column" :options="composeByOptions" />
 </template>

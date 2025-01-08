@@ -4,12 +4,14 @@ export interface IChartComposerConfiguration {
   connectedDatasources: string[];
   composeBy: string;
   usedSets: string[];
+  labelColumn: string;
 }
 
 export default class ChartComposer extends BaseDatasource {
   private connectedDatasources: string[];
   private composeBy: string;
   private usedSets: string[];
+  private labelColumn: string;
 
   constructor(configuration: IChartComposerConfiguration) {
     super();
@@ -30,6 +32,7 @@ export default class ChartComposer extends BaseDatasource {
 
     this.composeBy = configuration.composeBy;
     this.usedSets = configuration.usedSets;
+    this.labelColumn = configuration.labelColumn;
   }
 
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
@@ -137,8 +140,7 @@ export default class ChartComposer extends BaseDatasource {
 
   private parseToChartData(data: IDataTable): IChartData {
     const chartData = {} as IChartData;
-
-    chartData.labels = data.items.map((e: any) => e['Caption']);
+    chartData.labels = data.items.map((e: any) => e[this.labelColumn]);
     chartData.datasets = this.usedSets.map((set) => {
       return {
         label: set,
@@ -150,8 +152,8 @@ export default class ChartComposer extends BaseDatasource {
     return chartData;
   }
 
-  static validateConfiguration(config: any): boolean {
-    if (!config.connectedDatasources) return false;
+  static validateConfiguration(config: IChartComposerConfiguration): boolean {
+    if (!config.connectedDatasources || !config.labelColumn || !config.usedSets || !config.composeBy) return false;
     return true;
   }
 }
