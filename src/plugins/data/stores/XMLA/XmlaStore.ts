@@ -77,7 +77,6 @@ export default class XmlaStore extends BaseDatasource {
         mdx: request
       }
     });
-    console.log(type);
     if (type === 'PivotTable') {
       response = this.parseToPivotTable(mdxResponse);
 

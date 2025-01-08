@@ -15,8 +15,6 @@ import { toRefs } from 'vue';
 const props = defineProps<{ datasourceId: string }>();
 const { datasourceId } = toRefs(props);
 const { data } = useDatasourceRepository(datasourceId, "DataTable");
-
-console.log(data);
 </script>
 <template> 
   <va-data-table

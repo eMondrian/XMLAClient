@@ -31,7 +31,6 @@ export default class XmlaConnection implements IConnection {
     this.metadataPromise = this.initMetadata();
     this.metadataPromise.then((metadataStore) => {
       this.metadata = metadataStore;
-      console.log("Metadata loaded", metadataStore);
     });
   }
 

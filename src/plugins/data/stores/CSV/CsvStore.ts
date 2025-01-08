@@ -45,7 +45,6 @@ export default class CsvStore extends BaseDatasource {
       throw new Error('ConnectionRepository is not provided to Store Classes');
     }
 
-    console.log(this);
     const connection = connectionRepository.getConnection(this.connection);
     const req = await connection.fetch({ url: this.resourceUrl });
 

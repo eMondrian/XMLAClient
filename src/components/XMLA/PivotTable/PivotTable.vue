@@ -69,7 +69,6 @@ const onStopResize = () => {
 };
 
 const drillthrough = () => {
-  console.log(drillthrough);
 };
 
 const columnsOffset = computed(() => {

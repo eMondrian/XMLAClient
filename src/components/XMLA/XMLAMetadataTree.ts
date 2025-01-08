@@ -8,7 +8,6 @@ export function getTreeViewNodes(storage: MetadataStorage) {
 export function getSets(storage: MetadataStorage) {
   const setsFolder = TreeViewItems.getSetsFolderDesc();
 
-  console.log(storage);
   const sets = storage.sets.map((s: MDSchemaSet) => {
     return TreeViewItems.getSetDesc(s);
   });

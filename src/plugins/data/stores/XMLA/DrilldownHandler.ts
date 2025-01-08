@@ -340,13 +340,11 @@ export default class DrilldownHandler {
     }
 
     handleExpand({ value, area }: DrilldownPayload) {
-        console.log(area, value);
         if (area === "rows") {
             this.expandOnRows(value);
         } else if (area === "columns") {
             this.expandOnColumns(value);
         }
-        console.log(this);
     }
 
     handleCollapse({ value, area }: DrilldownPayload) {

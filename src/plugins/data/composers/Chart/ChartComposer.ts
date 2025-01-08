@@ -41,7 +41,6 @@ export default class ChartComposer extends BaseDatasource {
     const datasourceRepository = (this as any).datasourceRepository;
 
     const data = await Promise.all(this.connectedDatasources.map(async (datasourceId) => {
-      console.log(datasourceId);
       if (!datasourceRepository) {
         throw new Error('DatasourceRepository is not provided to DataSource Classes');
       }

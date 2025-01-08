@@ -24,8 +24,6 @@ const { data } = useDatasourceRepository(datasourceId, "ChartData");
 const chartOptions = ref({
   responsive: true,
 })
-
-console.log(data);
 </script>
 <template> 
   <Bar
