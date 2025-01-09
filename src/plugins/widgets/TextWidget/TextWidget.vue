@@ -11,6 +11,7 @@ Contributors: Smart City Jena
 <script lang="ts" setup>
 import { computed, toRefs } from "vue";
 import { useDatasourceRepository } from '@/plugins/widgets/composables/datasourceRepository';
+import type { ITextSettings } from "@/types/Widgets";
 
 const props = defineProps<{ datasourceId: string, config: ITextSettings }>();
 const { datasourceId, config } = toRefs(props);

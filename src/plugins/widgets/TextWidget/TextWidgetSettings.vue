@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import type { ITextSettings } from "@/types/Widgets";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 

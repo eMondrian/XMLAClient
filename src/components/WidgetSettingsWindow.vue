@@ -3,6 +3,7 @@ import WidgetWrapperSettings from '@/plugins/widgets/Wrapper/WidgetWrapperSettin
 import { useDataSourcesStore } from '@/plugins/data/DatasourcePinia';
 import { getCurrentInstance, ref } from 'vue';
 import { useI18n } from "vue-i18n";
+import type { IWidget } from '@/types/Widgets';
 
 const emit = defineEmits(['saveWidgetSettings', 'close']);
 const widget = defineModel<IWidget>();

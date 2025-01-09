@@ -1,4 +1,4 @@
-interface IWidget {
+export interface IWidget {
   uid: string,
   type: string,
   wrapperConfig: IWrapperSettings,
@@ -8,7 +8,7 @@ interface IWidget {
   }
 }
 
-interface IWrapperSettings {
+export interface IWrapperSettings {
   title?: string;
   backgroundColor?: string;
   backgroundColorTransparence?: number;
@@ -26,7 +26,7 @@ interface IWrapperSettings {
   transparency?: number;
 }
 
-interface ITextSettings {
+export interface ITextSettings {
   text: string;
   fontSize: number;
   fontColor: string;
@@ -35,4 +35,14 @@ interface ITextSettings {
   textDecoration: string;
   horizontalAlign: string;
   verticalAlign: string;
+}
+
+export interface IProgressSettings {
+  progress: string;
+  fillColor: string;
+  gradientColor: string;
+  backgroundColor: string;
+  isGradient: boolean;
+  isVertical: boolean;
+  rotation: number;
 }

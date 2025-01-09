@@ -127,6 +127,7 @@ const emit = defineEmits(['close']);
 }
 
 .data-preview {
+  overflow: auto;
   border-radius: 8px;
 }
 </style>
