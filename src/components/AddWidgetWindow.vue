@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDataSourcesStore } from '@/plugins/data/DatasourcePinia';
-import { ref, getCurrentInstance } from 'vue';
+import { ref, getCurrentInstance, computed } from 'vue';
+import Draggable from 'vuedraggable';
 
 const selectedDatasource = ref("");
 const { dataSources } = useDataSourcesStore();
@@ -8,24 +9,44 @@ const { dataSources } = useDataSourcesStore();
 const instance = getCurrentInstance();
 const availableWidgets = Object.keys(instance?.appContext.config.globalProperties.availableWidgets);
 
-const emit = defineEmits(['addWidget']);
+const onDragStart = (event: DragEvent) => {
+  const dragElement = document.createElement('div');
+  document.body.appendChild(dragElement);
+  event.dataTransfer?.setDragImage(dragElement, 0, 0);
+  setTimeout(() => {
+    document.body.removeChild(dragElement)
+  }, 0);
+};
 
-const addWidget = (type: string): void => {
-  emit('addWidget', type, selectedDatasource.value);
-}
+const computedWidgets = computed(() => {
+  return availableWidgets.map(type => ({ type })).map((e) => ({
+    ...e,
+    ds: selectedDatasource.value
+  }));
+});
 </script>
 
 <template>
   <div class="add_widget_window">
     <h1>Add Widget</h1>
-
     <VaSelect label="Datasource ID" class="mx-3 my-3" v-model="selectedDatasource" :options="dataSources" text-by="name" value-by="uid" teleport=".add_widget_window"/>
-    <div class="widgets_grid">
-      <VaButton v-for="widget in availableWidgets" :key="widget" class="widgets_grid-item" @click="addWidget(widget)">
-        <div style="height: 100px; width: 100px; background-image: url(https://via.assets.so/img.jpg?w=100&h=100&tc=black&bg=silver);"></div>
-        <span>Add {{ widget }}</span>
-      </VaButton>
-    </div>
+    <draggable
+      class="widgets_grid"
+      :list="computedWidgets"
+      :group="{ name: 'widgets', pull: 'clone', put: false }"
+      itemKey="type"
+    >
+    <template #item="{ element }">
+      <div
+        class="widgets_grid-item"
+        draggable="true"
+        @dragstart="(event) => onDragStart(event)"
+      >
+      <div style="height: 100px; width: 100px; background-image: url(https://via.assets.so/img.jpg?w=100&h=100&tc=black&bg=silver);"></div>
+      <span>{{ element.type }}</span>
+      </div>
+    </template>
+    </draggable>
   </div>
 </template>
 
@@ -36,12 +57,14 @@ const addWidget = (type: string): void => {
   gap: 1rem;
 }
 
-:deep() .widgets_grid-item .va-button__content {
+:deep() .widgets_grid-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  border: 1px solid gray;
+  border-radius: 5px;
 }
 
 .add_widget_window {

@@ -1,7 +1,39 @@
 import { type ILayoutItem } from '@/plugins/data/LayoutsPinia';
-import { type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
+import type { OnDrag, OnResize } from 'vue3-moveable';
 
 export function useMoveableLayout(localLayoutItems: Ref<ILayoutItem[]>) {
+  const ghostPlaceholder = ref({
+    x: 0,
+    y: 0,
+    width: 300,
+    height: 150,
+    visible: false,
+  });
+
+  const processDropCoordinates = (event: DragEvent, container: HTMLElement) => {
+    const { clientX, clientY } = event;
+    const { left, top } = container.getBoundingClientRect();
+    const dropX = clientX - left;
+    const dropY = clientY - top;
+
+    return { dropX, dropY };
+  };
+
+  const processDragOverCoordinates = (event: DragEvent, container: HTMLElement) => {
+    const { clientX, clientY } = event;
+    const { left, top } = container.getBoundingClientRect();
+    const ghostX = clientX - left;
+    const ghostY = clientY - top;
+
+    ghostPlaceholder.value.x = ghostX - ghostPlaceholder.value.width / 2;
+    ghostPlaceholder.value.y = ghostY - ghostPlaceholder.value.height / 2;
+    ghostPlaceholder.value.visible = true;
+  };
+
+  const hidePlaceholder = () => {
+    ghostPlaceholder.value.visible = false;
+  };
 
   const getInitialStyle = (id: string) => {
     const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
@@ -24,7 +56,7 @@ export function useMoveableLayout(localLayoutItems: Ref<ILayoutItem[]>) {
     };
   };
 
-  const drag = (id: string, e) => {
+  const drag = (id: string, e: OnDrag) => {
     const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
@@ -34,7 +66,7 @@ export function useMoveableLayout(localLayoutItems: Ref<ILayoutItem[]>) {
     e.target.style.transform = e.transform;
   };
 
-  const resize = (id: string, e) => {
+  const resize = (id: string, e: OnResize) => {
     const item = localLayoutItems.value.find((item: ILayoutItem) => item.id === id);
     if (!item) return;
 
@@ -79,6 +111,10 @@ export function useMoveableLayout(localLayoutItems: Ref<ILayoutItem[]>) {
   };
 
   return {
+    ghostPlaceholder,
+    processDropCoordinates,
+    processDragOverCoordinates,
+    hidePlaceholder,
     getInitialStyle,
     getMovableControlStyles,
     drag,

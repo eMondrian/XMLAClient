@@ -6,6 +6,7 @@ import DataTable from "./plugins/widgets/DataTable";
 import TextWidget from "./plugins/widgets/TextWidget";
 import PivotTableWidgetPlugin from "./plugins/widgets/PivotTable";
 import ChartWidget from "./plugins/widgets/ChartWidget";
+import ProgressWidgetPlugin from "./plugins/widgets/ProgressWidget";
 
 interface WidgetsConfig {
   datasourceRepository: DatasourceRepository;
@@ -17,4 +18,5 @@ export function initWidgets(app: App, { datasourceRepository }: WidgetsConfig) {
   app.use(TextWidget(datasourceRepository));
   app.use(PivotTableWidgetPlugin(datasourceRepository));
   app.use(ChartWidget(datasourceRepository));
+  app.use(ProgressWidgetPlugin(datasourceRepository));
 }

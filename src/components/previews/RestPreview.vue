@@ -40,7 +40,7 @@ watch(() => props.dataSource, async () => {
       </div>
       <div class="selected-json-filters__controls">
         <VaSelect class="ml-2" v-model="selectedFilter" label="Filters" :options="['filter1', 'filter2', 'filter3']" />
-        <VaButton class="ml-2 mt-3">Add filter</VaButton>
+        <VaButton class="ml-2 mt-4">Add filter</VaButton>
       </div>
     </div>
     <div class="original-json-preview container-border">

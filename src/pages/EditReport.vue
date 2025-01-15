@@ -1,28 +1,32 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import WidgetWrapper from '@/plugins/widgets/Wrapper/WidgetWrapper.vue';
-import { useDataSourcesStore } from '@/plugins/data/DatasourcePinia';
 import { useWidgetsStore } from '@/plugins/data/WidgetsPinia';
 import { useMoveableLayout } from '@/composables/movableLayout';
 import Moveable from "vue3-moveable";
 import { useLayoutStore } from '@/plugins/data/LayoutsPinia';
 import AddWidgetWindow from '@/components/AddWidgetWindow.vue';
 import WidgetSettingsWindow from '@/components/WidgetSettingsWindow.vue';
+import Draggable from 'vuedraggable';
+import type { IWidget } from '@/types/Widgets';
 
-const selectedDatasourceName = ref("");
-const selectedDatasourceId = ref("");
+const widgetConfig = ref();
 const widgetSettingsOpenedId = ref('');
-const { dataSources } = useDataSourcesStore();
+const widgetsTmp = ref([]);
 
-const datasourceNames = ref([] as string[]);
 const { widgets, updateWidgets } = useWidgetsStore();
 
 const innerlayoutItems = ref([] as ILayoutItem[]);
 const innerWidgets = ref<IWidget[]>([]);
+const isDragging = ref(false);
 
 const widgetSelectorVisible = ref(false);
 const { updateLayout, layout } = useLayoutStore();
 const {
+  ghostPlaceholder,
+  processDropCoordinates,
+  processDragOverCoordinates,
+  hidePlaceholder,
   getInitialStyle,
   getMovableControlStyles,
   drag,
@@ -33,23 +37,6 @@ const {
   moveToTop,
 } = useMoveableLayout(innerlayoutItems);
 
-
-onMounted(() => {
-  datasourceNames.value = Object.values(dataSources).map(v => v.name);
-  const datasource = Object.values(dataSources).find(v => v.name === selectedDatasourceName.value);
-  if (datasource) {
-    selectedDatasourceId.value = datasource.uid;
-  }
-});
-
-watch(selectedDatasourceName, () => {
-  datasourceNames.value = Object.values(dataSources).map(v => v.name);
-  const datasource = Object.values(dataSources).find(v => v.name === selectedDatasourceName.value);
-  if (datasource) {
-    selectedDatasourceId.value = datasource.uid;
-  }
-});
-
 watch(
   () => ({ widgets, layout }),
   ({ widgets: newWidgets, layout: newLayout }) => {
@@ -59,19 +46,22 @@ watch(
   { deep: true, immediate: true }
 );
 
-const addWidget = (type: string, datasourceId: string) => {
+const addWidget = (type: string, datasourceId: string, dropX: number, dropY: number) => {
   const uid = `widget_${Math.random().toString(36).substring(7)}`;
   const config = { datasourceId, settings: {} };
   const newWidget: IWidget = { uid, type, config, wrapperConfig: {} };
 
   innerWidgets.value.push(newWidget);
 
+  const width = ghostPlaceholder.value.width;
+  const height = ghostPlaceholder.value.height;
+
   const newlayout = {
-    id: uid,
-    x: 0,
-    y: 700,
-    width: 300,
-    height: 150,
+    id: newWidget.uid,
+    x: dropX - width / 2,
+    y: dropY - height / 2,
+    width,
+    height,
     z: 3005,
   };
 
@@ -113,19 +103,75 @@ const removeWidget = (uid: string) => {
 const currentlyEditingWidget = computed(() => {
   return innerWidgets.value.find((widget) => widget.uid === widgetSettingsOpenedId.value);
 });
+
+const onDrop = (event: DragEvent) => {
+  hidePlaceholder();
+  const currentTarget = event.currentTarget as HTMLElement;
+
+  if (currentTarget) {
+    const { dropX, dropY } = processDropCoordinates(event, currentTarget);
+
+    widgetConfig.value = { dropX: dropX, dropY: dropY }
+  }
+};
+
+const onDragOver = (event: DragEvent) => {
+  if (event.dataTransfer?.types.includes("text/plain")) {
+    event.preventDefault();
+    isDragging.value = true;
+
+    const currentTarget = event.currentTarget as HTMLElement;
+
+    if (currentTarget) {
+      processDragOverCoordinates(event, currentTarget);
+    }
+  }
+};
+
+const onDragLeave = (event: DragEvent) => {
+  if (event.dataTransfer?.types.includes("text/plain")) {
+    isDragging.value = false;
+    hidePlaceholder();
+  }
+};
+
+const change = (e: any) => {
+  const datasource = e.added.element.ds;
+  const widgetType = e.added.element.type;
+  addWidget(widgetType, datasource, widgetConfig.value.dropX, widgetConfig.value.dropY);
+}
+
 </script>
 
 <template>
   <div class="report-container">
-    <div class="add_widget-button">
-      <VaButton icon="check" @click="saveLayout" round :disabled="isSaveResetDisabled" size="large" color="success"
-        background-opacity="0.3" />
-      <VaButton icon="history" @click="resetLayout" round :disabled="isSaveResetDisabled" size="large" color="danger"
-        background-opacity="0.3" />
-      <VaButton :icon="widgetSelectorVisible ? 'close' : 'add'" @click="widgetSelectorVisible = !widgetSelectorVisible"
-        round size="large" />
-    </div>
+    <draggable
+      :list="widgetsTmp"
+      :group="{ name: 'widgets'}"
+      ghost-class="ghost"
+      itemKey="type"
+      style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
+      @change="change"
+      @drop="onDrop"
+      @dragover="onDragOver"
+      @dragleave="onDragLeave"
+    >
+      <template #item="{ element }">
+        <div style="display: none;">{{ element.type }}</div>
+      </template>
+    </draggable>
     <div class="widget-board">
+    <div
+      v-if="ghostPlaceholder.visible"
+      class="ghost-placeholder"
+      :style="{
+        left: `${ghostPlaceholder.x}px`,
+        top: `${ghostPlaceholder.y}px`,
+        width: `${ghostPlaceholder.width}px`,
+        height: `${ghostPlaceholder.height}px`,
+      }"
+    >
+    </div>
       <template v-for="widget in innerWidgets" :key="widget.uid">
         <div :class="`${widget.uid} dashboard-item-container`" :style="getInitialStyle(widget.uid)" :ref="widget.uid">
           <va-dropdown :trigger="'right-click'" :auto-placement="false" placement="right-start" cursor>
@@ -160,8 +206,16 @@ const currentlyEditingWidget = computed(() => {
         </Moveable>
       </template>
     </div>
+    <div class="add_widget-button">
+      <VaButton icon="check" @click="saveLayout" round :disabled="isSaveResetDisabled" size="large" color="success"
+        background-opacity="0.3" />
+      <VaButton icon="history" @click="resetLayout" round :disabled="isSaveResetDisabled" size="large" color="danger"
+        background-opacity="0.3" />
+      <VaButton :icon="widgetSelectorVisible ? 'close' : 'add'" @click="widgetSelectorVisible = !widgetSelectorVisible"
+        round size="large" />
+    </div>
     <Transition :duration="150">
-      <AddWidgetWindow v-if="widgetSelectorVisible" @addWidget="addWidget"></AddWidgetWindow>
+      <AddWidgetWindow v-if="widgetSelectorVisible"></AddWidgetWindow>
     </Transition>
     <Transition :duration="150">
       <WidgetSettingsWindow v-if="widgetSettingsOpenedId" @close="widgetSettingsOpenedId = ''" v-model="currentlyEditingWidget"></WidgetSettingsWindow>
@@ -169,8 +223,22 @@ const currentlyEditingWidget = computed(() => {
   </div>
 
 </template>
+<style>
+.ghost {
+  display: none;
+}
+</style>
 
 <style scoped lang="scss">
+.ghost-placeholder {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  border: 2px dashed #ccc;
+  z-index: 1000;
+  pointer-events: none;
+}
+
 .report-container {
   display: flex;
   justify-content: flex-start;
@@ -197,7 +265,6 @@ const currentlyEditingWidget = computed(() => {
     width: 100%;
     height: 100%;
     display: flex;
-    padding: 35px 35px 0 35px;
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;

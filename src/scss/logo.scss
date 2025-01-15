@@ -8,12 +8,12 @@
   Contributors: Markus Hochstein
 
 */
-@import "helper";
-.logo{
+@use "helper" as h;
+.logo {
   z-index: 6;
 
   &.daanse{
-    background-image: url(getAssetBranding('daanse_final.svg'));
+    background-image: url(h.getAssetBranding('daanse_final.svg'));
     background-repeat: no-repeat;
     background-size: 100% 100%;
   }
