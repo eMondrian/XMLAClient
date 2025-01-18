@@ -9,13 +9,13 @@ const { data } = useDatasourceRepository(datasourceId, "string");
 </script>
 
 <template>
-  <div class="widget">
-    {{ data ?? 'Data do not created' }}
-  </div>
+    <div class="widget">
+        {{ data ?? 'Data do not created' }}
+    </div>
 </template>
 
 <style scoped>
 .widget {
-  padding: 12px;
+    padding: 12px;
 }
 </style>

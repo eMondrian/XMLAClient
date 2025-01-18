@@ -19,40 +19,35 @@ const { datasourceId } = toRefs(props);
 const { data, callEvent } = useDatasourceRepository(datasourceId, "PivotTable");
 
 const onExpand = (e: any) => {
-  callEvent('expand', e, true);
+    callEvent('expand', e, true);
 };
 
 const onCollapse = (e: any) => {
-  callEvent('collapse', e, true);
+    callEvent('collapse', e, true);
 };
 </script>
 
 <template>
-  <div class="text-container">
-    <div class="component">
-      <PivotTable
-        v-if="data"
-        :model-value="data"
-        @onExpand="onExpand"
-        @onCollapse="onCollapse"
-        :rowsExpandedMembers="data.tableState.rowsExpandedMembers"
-        :columnsExpandedMembers="data.tableState.columnsExpandedMembers"
-      />
+    <div class="text-container">
+        <div class="component">
+            <PivotTable v-if="data" :model-value="data" @onExpand="onExpand" @onCollapse="onCollapse"
+                :rowsExpandedMembers="data.tableState.rowsExpandedMembers"
+                :columnsExpandedMembers="data.tableState.columnsExpandedMembers" />
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
 .text-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  gap: 1rem;
-  align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 1rem;
+    align-items: stretch;
 }
 
 .component {
-  overflow: hidden;
+    overflow: hidden;
 }
 </style>

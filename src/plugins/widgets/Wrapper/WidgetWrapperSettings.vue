@@ -9,6 +9,7 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
+import type { IWrapperSettings } from "@/types/Widgets";
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 

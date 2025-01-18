@@ -16,49 +16,45 @@ const props = defineProps<{ datasourceId: string }>();
 const { datasourceId } = toRefs(props);
 const { data } = useDatasourceRepository(datasourceId, "DataTable");
 </script>
-<template> 
-  <va-data-table
-    class="table"
-    :items="data ? data.items : []"
-    sticky-header
-  />
+<template>
+    <va-data-table class="table" :items="data ? data.items : []" sticky-header />
 </template>
 
 <style scoped>
 .filters {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  flex-grow: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    flex-grow: 0;
 }
 
 .table_container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .table_container .pagination {
-  flex-grow: 0;
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  justify-items: center;
-  align-items: end;
+    flex-grow: 0;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: end;
 }
 
 .table_container .pagination .page_input {
-  justify-self: start;
+    justify-self: start;
 }
 
 .table_container .table {
-  flex-grow: 1;
-  flex-shrink: 1;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 .loading {
-  display: flex;
-  height: 100%;
+    display: flex;
+    height: 100%;
 }
 </style>
