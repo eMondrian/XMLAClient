@@ -5,10 +5,12 @@ import ConnectionRepository from './plugins/data/ConnectionRepository';
 import RestConnection from './plugins/data/connections/REST/RestConnection';
 import CsvConnection from './plugins/data/connections/CSV/CsvConnection';
 import XmlaConnection from './plugins/data/connections/XMLA/XmlaConnection';
+import WSConnection from "./plugins/data/connections/WebSocket/WebSocketConnection";
 
 import RestConnectionSettings from './plugins/data/connections/REST/RestConnectionSettings.vue'
 import CsvConnectionSettings from './plugins/data/connections/CSV/CsvConnectionSettings.vue'
 import XmlaConnectionSettings from './plugins/data/connections/XMLA/XmlaConnectionSettings.vue'
+import WebSocketConnectionSettings from "./plugins/data/connections/WebSocket/WebSocketConnectionSettings.vue";
 
 import RestStore from '@/plugins/data/stores/REST/RestStore';
 import CsvStore from '@/plugins/data/stores/CSV/CsvStore';
@@ -36,6 +38,9 @@ import RequestVariable from '@/components/variables/RequestVariable.vue';
 import BrowserPropertiesVariable from '@/components/variables/BrowserPropertiesVariable.vue';
 
 import { SourceType } from '@/types/enum';
+import WSStore from "./plugins/data/stores/WS/WSStore";
+import WSStoreSettings from "./plugins/data/stores/WS/WSStoreSettings.vue";
+import WSPreview from "./components/previews/WSPreview.vue";
 
 export function initData(app: App) {
   const componentMap = {
@@ -53,12 +58,14 @@ export function initData(app: App) {
       REST: RestConnection,
       CSV: CsvConnection,
       XMLA: XmlaConnection,
+      WS: WSConnection,
   }
 
   const connectionVisualConfig = {
     REST: RestConnectionSettings,
     CSV: CsvConnectionSettings,
     XMLA: XmlaConnectionSettings,
+    WS: WebSocketConnectionSettings
   }
   const connectionRepository = new ConnectionRepository(availableConnections);
   app.config.globalProperties.connectionRepository = connectionRepository;
@@ -73,6 +80,7 @@ export function initData(app: App) {
       "DataTable Composer": DataTableComposer,
       XMLA: XmlaStore,
       "Chart Composer": ChartComposer,
+      WS: WSStore,
   };
   const datasourcesVisualConfig = {
       "DataTable Composer": DataTableComposerSettings,
@@ -80,6 +88,7 @@ export function initData(app: App) {
       CSV: CsvStoreSettings,
       XMLA: XmlaStoreSettings,
       "Chart Composer": ChartComposerSettings,
+      WS: WSStoreSettings,
   }
   const datasourcesPreviewConfig = {
       "DataTable Composer": DataTablePreview,
@@ -87,6 +96,7 @@ export function initData(app: App) {
       CSV: CsvPreview,
       XMLA: XmlaPreview,
       "Chart Composer": ChartComposerPreview,
+      WS: WSPreview,
   }
 
   const datasourceRepository = new DatasourceRepository(availableDatasources);
@@ -102,14 +112,14 @@ export function initData(app: App) {
   (DataTableComposer.prototype as any).connectionRepository = connectionRepository;
   (ChartComposer.prototype as any).connectionRepository = connectionRepository;
   (XmlaStore.prototype as any).connectionRepository = connectionRepository;
+  (WSStore.prototype as any).connectionRepository = connectionRepository;
   
   (RestStore.prototype as any).datasourceRepository = datasourceRepository;
   (CsvStore.prototype as any).datasourceRepository = datasourceRepository;
   (XmlaStore.prototype as any).datasourceRepository = datasourceRepository;
   (DataTableComposer.prototype as any).datasourceRepository = datasourceRepository;
   (ChartComposer.prototype as any).datasourceRepository = datasourceRepository;
-
-
+  (WSStore.prototype as any).datasourceRepository = datasourceRepository;
 
   return {
     datasourceRepository

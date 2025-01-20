@@ -1,6 +1,7 @@
 import { XMLAApi } from "@/utils/xml";
 import { createClientAsync } from "@/utils/XMLAClient";
 import { MetadataStore } from "./MetadataStore";
+import BaseConnection from "../BaseConnection";
 
 export interface IXmlaConnectionConfiguration {
   url: string;
@@ -8,7 +9,7 @@ export interface IXmlaConnectionConfiguration {
   catalogName: string;
 }
 
-export default class XmlaConnection implements IConnection {
+export default class XmlaConnection extends BaseConnection {
   private url: any;
   private catalogName: string;
   public cubeName: string;
@@ -19,6 +20,8 @@ export default class XmlaConnection implements IConnection {
   private metadataPromise: Promise<MetadataStore>;
 
   constructor(configuration: IXmlaConnectionConfiguration) {
+    super();
+
     this.url = configuration.url;
     this.catalogName = configuration.catalogName;
     this.cubeName = configuration.cubeName;

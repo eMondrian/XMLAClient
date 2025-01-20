@@ -134,9 +134,24 @@ import draggable from "vuedraggable";
 const { metadata, cubename } = defineProps(['metadata', 'cubename'])
 
 const treeViewData = ref(null as any);
+const treeContainer = ref(null);
 
 onMounted(() => {
   treeViewData.value = getTreeViewNodes(metadata.storage);
+  // console.log(treeContainer);
+  treeContainer.value.addEventListener('dragstart', (event) => {
+    console.log(event._xmla_context)
+    if (!event._xmla_context) {
+      return;
+    }
+
+    if (event._xmla_context.type === TreeItemTypesEnum.Hierarchy) {
+      event.dataTransfer.setData('text/plain', event._xmla_context.originalItem.HIERARCHY_UNIQUE_NAME);
+    } else if (event._xmla_context.type === TreeItemTypesEnum.Measure) {
+      event.dataTransfer.setData('text/plain', event._xmla_context.originalItem.MEASURE_UNIQUE_NAME);
+    } 
+    // event.dataTransfer.setData('text/plain', 'test');
+  });
 });
 
 const filter = ref("");
@@ -149,11 +164,15 @@ const getTreeViewItemIcon = (treeViewItem: any) => {
 
   return iconDesc;
 }
+
+const populateDragEvent = (e, element) => {
+  e._xmla_context = element;
+}
 </script>
 
 <template>
   <h1 class="area-header">Metadata Tree</h1>
-  <div class="metadata_tree-container">
+  <div class="metadata_tree-container" ref="treeContainer">
     <div v-if="treeViewData">
       <div class="tree-container">
         <div class="tree-header mb-2">
@@ -166,7 +185,7 @@ const getTreeViewItemIcon = (treeViewItem: any) => {
             <draggable v-if="node.type === TreeItemTypesEnum.Hierarchy" :modelValue="[node]"
               :group="{ name: 'hierarchies', pull: 'clone', put: false }" item-key="id">
               <template #item="{ element }">
-                <div class="d-flex align-center">
+                <div class="d-flex align-center" @dragstart="populateDragEvent($event, element)">
                   <XMLAIconVue :icon="getTreeViewItemIcon(node).name"
                     :primary-color="getTreeViewItemIcon(node).primaryColor"
                     :secondary-color="getTreeViewItemIcon(node).secondaryColor" :height="24" :width="24" class="mr-1">
@@ -178,7 +197,7 @@ const getTreeViewItemIcon = (treeViewItem: any) => {
             <draggable v-else-if="node.type === TreeItemTypesEnum.Measure" :modelValue="[node]"
               :group="{ name: 'measures', pull: 'clone', put: false }" item-key="id">
               <template #item="{ element }">
-                <div class="d-flex align-center">
+                <div class="d-flex align-center" @dragstart="populateDragEvent($event, element)">
                   <XMLAIconVue :icon="getTreeViewItemIcon(node).name"
                     :primary-color="getTreeViewItemIcon(node).primaryColor"
                     :secondary-color="getTreeViewItemIcon(node).secondaryColor" :height="24" :width="24" class="mr-1">

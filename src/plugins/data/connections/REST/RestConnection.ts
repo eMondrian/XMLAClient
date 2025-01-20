@@ -1,11 +1,15 @@
+import BaseConnection from "../BaseConnection";
+
 export interface IRestConnectionConfiguration {
   url: string;
 }
 
-export default class RestConnection implements IConnection {
+export default class RestConnection extends BaseConnection {
   private url: any;
 
   constructor(configuration: IRestConnectionConfiguration) {
+    super();
+
     this.url = configuration.url;
   }
 

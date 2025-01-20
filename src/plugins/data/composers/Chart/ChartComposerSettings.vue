@@ -12,7 +12,7 @@ const { config, dataSources } = defineProps<{
 }>();
 
 const datasourcesFiltered = computed(() => {
-  return dataSources.filter((ds: any) => ds.type === 'CSV' || ds.type === 'XMLA');
+  return dataSources.filter((ds: any) => ds.type === 'CSV' || ds.type === 'XMLA' || ds.type === 'REST');
 });
 
 const composeByOptions = ref([] as string[]);

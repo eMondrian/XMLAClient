@@ -1,11 +1,15 @@
+import BaseConnection from "../BaseConnection";
+
 export interface ICsvConnectionConfiguration {
   url: string;
 }
 
-export default class CsvConnection implements IConnection {
+export default class CsvConnection extends BaseConnection {
   private url: any;
 
   constructor(configuration: ICsvConnectionConfiguration) {
+    super();
+  
     this.url = configuration.url;
   }
 

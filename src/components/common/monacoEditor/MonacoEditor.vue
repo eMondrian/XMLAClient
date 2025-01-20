@@ -39,6 +39,7 @@ const initEditor = async () => {
       language: props.language,
       // theme: props.theme,
       automaticLayout: true,
+      dropIntoEditor: true,
       suggestOnTriggerCharacters: true,
       quickSuggestions: { other: true, comments: true, strings: true },
       wordBasedSuggestions: 'currentDocument',
@@ -53,6 +54,10 @@ const initEditor = async () => {
         emit('update:modelValue', editorInstance.getValue());
       }
     });
+
+    editorInstance.onDropIntoEditor((e) => {
+      console.log(e);
+    })
   }
 };
 

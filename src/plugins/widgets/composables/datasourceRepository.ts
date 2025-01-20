@@ -1,4 +1,4 @@
-import {  getCurrentInstance, onMounted, type Ref } from 'vue';
+import {  getCurrentInstance, onMounted, onUnmounted, type Ref } from 'vue';
 import { watch, ref } from 'vue';
 
 export interface IVueDatasourceRepository<T extends keyof DataMap> {
@@ -45,6 +45,11 @@ export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: R
 
     const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
     dataSource.subscribe(getData);
+  });
+
+  onUnmounted(() => {
+    const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
+    dataSource.unsubscribe(getData);
   });
 
   return {
