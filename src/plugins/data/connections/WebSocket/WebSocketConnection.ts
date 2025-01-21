@@ -1,43 +1,32 @@
-import BaseConnection from "../BaseConnection";
+import TwoWayConnection from "../TwoWayConnection";
 
 export interface IWSConnectionConfiguration {
   url: string;
 }
 
-export default class WSConnection extends BaseConnection {
-  private url: any;
+export default class WSConnection extends TwoWayConnection {
   private socket: WebSocket;
-  private ready: boolean;
-  private lastRecievedData = null as unknown as any;
 
   constructor(configuration: IWSConnectionConfiguration) {
     super();
   
-    this.url = configuration.url;
-
-    this.socket = new WebSocket(this.url);
-    this.ready = false;
+    this.socket = new WebSocket(configuration.url);
 
     this.socket.onopen = () => {
-      this.ready = true;
+      super.onConnect();
     }
 
     this.socket.onmessage = (event: any) => {
-      this.lastRecievedData = JSON.parse(event.data);
-
-      this.notify();
+      super.onMessage(event.data);
     }
 
     this.socket.onclose = () => {
-      this.ready = false;
+      super.onClose();
     }
-    this.socket.onerror = () => {
-      this.ready = false;
-    }
-  }
 
-  fetch(): Promise<any> {
-    return this.lastRecievedData;
+    this.socket.onerror = (error) => {
+      super.onError(error);
+    }
   }
 
   setConfig(): void {
@@ -50,5 +39,9 @@ export default class WSConnection extends BaseConnection {
     }
 
     return true;
+  }
+
+  hasTopics(): boolean {
+    return false;
   }
 }

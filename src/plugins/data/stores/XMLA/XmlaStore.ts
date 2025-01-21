@@ -159,6 +159,8 @@ export default class XmlaStore extends BaseDatasource {
     return parseRequestToTable(mdxResponce, 0);
   }
 
+  destroy(): void {}
+
   static validateConfiguration(configuration: IXmlaStoreConfiguration) {
     if (!configuration?.connection) {
       return false;

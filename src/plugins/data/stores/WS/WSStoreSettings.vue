@@ -8,7 +8,7 @@ const { config, connections } = defineProps<{
 }>();
 
 const connectionsFiltered = computed(() => {
-  return connections.filter((c: any) => c.type === 'WS');
+  return connections.filter((c: any) => c.type === 'WS' || c.type === 'MQTT');
 });
 
 </script>
@@ -17,5 +17,7 @@ const connectionsFiltered = computed(() => {
   <!-- eslint-disable-next-line vue/no-mutating-props -->
   <VaSelect v-model="config.connection" label="Connection" :options="connectionsFiltered" text-by="name"
     value-by="uid" />
+
+  <VaInput v-model="config.topic" label="Topic"/>
 
 </template>

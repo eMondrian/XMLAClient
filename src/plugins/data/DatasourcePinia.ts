@@ -25,6 +25,7 @@ export const useDataSourcesStore = defineStore('datasource', () => {
 
   const removeDataSource = (dataSourceId: string) => {
     const index = dataSources.value.findIndex(c => c.uid === dataSourceId);
+    datasourceRepository.removeDatasource(dataSourceId);
 
     if (index > -1) {
       dataSources.value.splice(index, 1);
