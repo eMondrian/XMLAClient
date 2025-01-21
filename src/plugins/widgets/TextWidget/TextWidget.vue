@@ -16,7 +16,7 @@ import type { ITextSettings } from "@/types/Widgets";
 const props = defineProps<{ datasourceId: string, config: ITextSettings }>();
 const { datasourceId, config } = toRefs(props);
 
-const { data } = useDatasourceRepository(datasourceId, "string");
+const { data } = useDatasourceRepository(datasourceId, "object");
 
 const fontSize = computed(() => {
     return config.value.fontSize;

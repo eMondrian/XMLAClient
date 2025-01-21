@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IWidget } from '@/types/Widgets';
 import { computed, getCurrentInstance } from 'vue';
 
 const { widget } = defineProps<{ widget: IWidget, editEnabled: boolean }>();

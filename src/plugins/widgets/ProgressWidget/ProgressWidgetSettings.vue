@@ -48,15 +48,15 @@ watch(
 );
 
 watch(
-  () => widgetSettings.value.isGradient,
-  (newValue) => {
-    newValue === true
-      ? gradientFields.value.push(
-          { color: `${widgetSettings.value.fillColor}`, location: 0 },
-          { color: "#FAFAFA", location: 85 },
-        )
-      : (gradientFields.value = []);
-  },
+    () => widgetSettings.value.isGradient,
+    (newValue) => {
+        newValue
+            ? gradientFields.value.push(
+                { color: `${widgetSettings.value.fillColor}`, location: 0 },
+                { color: "#FAFAFA", location: 85 },
+            )
+            : (gradientFields.value = []);
+    },
 );
 
 const deleteField = (id: number) => {
@@ -64,10 +64,17 @@ const deleteField = (id: number) => {
 };
 
 watch(
-  () => widgetSettings.value.progress,
-  (newValue) => {
-    widgetSettings.value.progress = newValue;
-  }
+    () => widgetSettings.value.progress,
+    (newValue) => {
+        const progressValue = parseFloat(String(newValue));
+        if (progressValue > 100) {
+            widgetSettings.value.progress = "100";
+        } else if (progressValue < 0) {
+            widgetSettings.value.progress = "0";
+        } else {
+            widgetSettings.value.progress = newValue;
+        }
+    }
 );
 </script>
 

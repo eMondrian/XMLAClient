@@ -34,50 +34,117 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <va-collapse v-model="opened.widgetSection" :header="t('TextWidget.title')">
-    <div class="settings-container">
-      <div class="settings-block">
-        <va-input class="text-title" :label="t('TextWidget.label')" v-model="widgetSettings.text" />
-        <va-input class="text-size" :label="t('TextWidget.fontSize')" v-model="widgetSettings.fontSize" />
-      </div>
-      <div class="settings-block">
-        <va-color-input class="text-color" :label="t('TextWidget.fontColor')" v-model="widgetSettings.fontColor" />
-        <div class="align-buttons-group align-buttons-group__format">
-          <VaButton color="#fafafa" class="align-button" icon="format_bold" size="small" icon-color="#000000"
-            v-model="widgetSettings.fontWeight" />
-          <VaButton color="#fafafa" class="align-button" icon="format_italic" size="small" icon-color="#000000"
-            v-model="widgetSettings.fontStyle" />
-          <VaButton color="#fafafa" class="align-button" icon="format_underline" size="small" icon-color="#000000"
-            v-model="widgetSettings.textDecoration" />
+    <va-collapse v-model="opened.widgetSection" :header="t('TextWidget.title')">
+        <div class="settings-container">
+            <div class="settings-block">
+                <va-input
+                    class="text-title"
+                    :label="t('TextWidget.label')"
+                    v-model="widgetSettings.text"
+                />
+                <va-input
+                    class="text-size"
+                    :label="t('TextWidget.fontSize')"
+                    v-model="widgetSettings.fontSize"
+                />
+            </div>
+            <div class="settings-block">
+                <va-color-input
+                    class="text-color"
+                    :label="t('TextWidget.fontColor')"
+                    v-model="widgetSettings.fontColor"
+                />
+                <div class="align-buttons-group align-buttons-group__format">
+                    <VaButton
+                        color="#fafafa"
+                        class="align-button"
+                        icon="format_bold"
+                        size="small"
+                        icon-color="#000000"
+                        v-model="widgetSettings.fontWeight"
+                    />
+                    <VaButton
+                        color="#fafafa"
+                        class="align-button"
+                        icon="format_italic"
+                        size="small"
+                        icon-color="#000000"
+                        v-model="widgetSettings.fontStyle"
+                    />
+                    <VaButton
+                        color="#fafafa"
+                        class="align-button"
+                        icon="format_underline"
+                        size="small"
+                        icon-color="#000000"
+                        v-model="widgetSettings.textDecoration"
+                    />
+                </div>
+            </div>
+            <div class="settings-block">
+                <div class="align-buttons-group">
+                    <div class="align-horizontal-buttons">
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_horizontal_left"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.horizontalAlign"
+                            @click="widgetSettings.horizontalAlign = 'Left'"
+                        />
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_horizontal_center"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.horizontalAlign"
+                            @click="widgetSettings.horizontalAlign = 'Center'"
+                        />
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_horizontal_right"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.horizontalAlign"
+                            @click="widgetSettings.horizontalAlign = 'Right'"
+                        />
+                    </div>
+                    <div class="align-vertical-buttons ml-2">
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_vertical_top"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.verticalAlign"
+                            @click="widgetSettings.verticalAlign = 'Top'"
+                        />
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_vertical_center"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.verticalAlign"
+                            @click="widgetSettings.verticalAlign = 'Center'"
+                        />
+                        <VaButton
+                            color="#fafafa"
+                            class="align-button"
+                            icon="align_vertical_bottom"
+                            size="small"
+                            icon-color="#000000"
+                            v-model="widgetSettings.verticalAlign"
+                            @click="widgetSettings.verticalAlign = 'Bottom'"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="settings-block">
-        <div class="align-buttons-group">
-          <div class="align-horizontal-buttons">
-            <VaButton color="#fafafa" class="align-button" icon="align_horizontal_left" size="small"
-              icon-color="#000000" v-model="widgetSettings.horizontalAlign"
-              @click="widgetSettings.horizontalAlign = 'Left'" />
-            <VaButton color="#fafafa" class="align-button" icon="align_horizontal_center" size="small"
-              icon-color="#000000" v-model="widgetSettings.horizontalAlign"
-              @click="widgetSettings.horizontalAlign = 'Center'" />
-            <VaButton color="#fafafa" class="align-button" icon="align_horizontal_right" size="small"
-              icon-color="#000000" v-model="widgetSettings.horizontalAlign"
-              @click="widgetSettings.horizontalAlign = 'Right'" />
-          </div>
-          <div class="align-vertical-buttons ml-2">
-            <VaButton color="#fafafa" class="align-button" icon="align_vertical_top" size="small" icon-color="#000000"
-              v-model="widgetSettings.verticalAlign" @click="widgetSettings.verticalAlign = 'Top'" />
-            <VaButton color="#fafafa" class="align-button" icon="align_vertical_center" size="small"
-              icon-color="#000000" v-model="widgetSettings.verticalAlign"
-              @click="widgetSettings.verticalAlign = 'Center'" />
-            <VaButton color="#fafafa" class="align-button" icon="align_vertical_bottom" size="small"
-              icon-color="#000000" v-model="widgetSettings.verticalAlign"
-              @click="widgetSettings.verticalAlign = 'Bottom'" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </va-collapse>
+    </va-collapse>
 </template>
 <style lang="scss" scoped>
 .settings-container {
