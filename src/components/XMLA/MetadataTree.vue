@@ -1,3 +1,13 @@
+/*
+Copyright (c) 2023 Contributors to the  Eclipse Foundation.
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0
+which is available at https://www.eclipse.org/legal/epl-2.0/
+SPDX-License-Identifier: EPL-2.0
+
+Contributors: Smart City Jena
+
+*/
 <!-- <script lang="ts">
 import { TreeItemTypesEnum } from "../../stores/TreeViewItems";
 import { onMounted, ref } from "vue";
@@ -149,7 +159,7 @@ onMounted(() => {
       event.dataTransfer.setData('text/plain', event._xmla_context.originalItem.HIERARCHY_UNIQUE_NAME);
     } else if (event._xmla_context.type === TreeItemTypesEnum.Measure) {
       event.dataTransfer.setData('text/plain', event._xmla_context.originalItem.MEASURE_UNIQUE_NAME);
-    } 
+    }
     // event.dataTransfer.setData('text/plain', 'test');
   });
 });
@@ -185,7 +195,7 @@ const populateDragEvent = (e, element) => {
             <draggable v-if="node.type === TreeItemTypesEnum.Hierarchy" :modelValue="[node]"
               :group="{ name: 'hierarchies', pull: 'clone', put: false }" item-key="id">
               <template #item="{ element }">
-                <div class="d-flex align-center" @dragstart="populateDragEvent($event, element)">
+                <div class="d-flex align-center cursor-pointer" @dragstart="populateDragEvent($event, element)">
                   <XMLAIconVue :icon="getTreeViewItemIcon(node).name"
                     :primary-color="getTreeViewItemIcon(node).primaryColor"
                     :secondary-color="getTreeViewItemIcon(node).secondaryColor" :height="24" :width="24" class="mr-1">
@@ -197,7 +207,7 @@ const populateDragEvent = (e, element) => {
             <draggable v-else-if="node.type === TreeItemTypesEnum.Measure" :modelValue="[node]"
               :group="{ name: 'measures', pull: 'clone', put: false }" item-key="id">
               <template #item="{ element }">
-                <div class="d-flex align-center" @dragstart="populateDragEvent($event, element)">
+                <div class="d-flex align-center cursor-pointer" @dragstart="populateDragEvent($event, element)">
                   <XMLAIconVue :icon="getTreeViewItemIcon(node).name"
                     :primary-color="getTreeViewItemIcon(node).primaryColor"
                     :secondary-color="getTreeViewItemIcon(node).secondaryColor" :height="24" :width="24" class="mr-1">
@@ -206,7 +216,7 @@ const populateDragEvent = (e, element) => {
                 </div>
               </template>
             </draggable>
-            <div v-else class="d-flex align-center">
+            <div v-else class="d-flex align-center cursor-pointer">
               <XMLAIconVue :icon="getTreeViewItemIcon(node).name"
                 :primary-color="getTreeViewItemIcon(node).primaryColor"
                 :secondary-color="getTreeViewItemIcon(node).secondaryColor" :height="24" :width="24" class="mr-1">

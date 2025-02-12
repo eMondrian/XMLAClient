@@ -11,33 +11,32 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import { useDatasourceRepository } from '@/plugins/widgets/composables/datasourceRepository';
 import type { IProgressSettings } from '@/types/Widgets';
-import { computed, toRefs, watch } from 'vue';
+import { computed, onMounted, toRefs } from 'vue';
 
-const props = withDefaults(defineProps<{ datasourceId: string, config: IProgressSettings }>(),{
-  // config: () => {
-  //   return {
-  //     fillColor: "#00FF00",
-  //     backgroundColor: "#D3D3D3",
-  //     rotation: 90
-  //   }
-  // }
-});
+const props = defineProps<{ datasourceId: string, config: IProgressSettings }>();
 const { datasourceId, config } = toRefs(props);
 
-const { data } = useDatasourceRepository(datasourceId, "string");
-if(!config.value.fillColor && !config.value.rotation && !config.value.backgroundColor) {
-  config.value.fillColor = "#00FF00";
-  config.value.backgroundColor = "#D3D3D3";
-  config.value.rotation = 90;
-}
+const { data } = useDatasourceRepository(datasourceId, "object");
 
-watch(
-  () => data.value,
-  (newData) => {
-    config.value.progress = newData;
-  },
-  { immediate: true }
-);
+const defaultConfig: IProgressSettings = {
+    progress: "",
+    fillColor: "#00FF00",
+    gradientColor: "",
+    backgroundColor: "#D3D3D3",
+    isGradient: false,
+    isVertical: false,
+    rotation: 90,
+};
+
+onMounted(() => {
+    if (config.value) {
+        Object.assign(config.value, { ...defaultConfig, ...config.value });
+    };
+});
+
+const backgroundColor = computed(() => {
+    return config.value.backgroundColor;
+});
 
 const backgroundProgressColor = computed(() => {
   return config.value.isGradient
@@ -50,15 +49,19 @@ const transition = computed(() => {
 });
 
 const verticalPositionFiller = computed(() => {
-  return config.value.isVertical
-    ? `${parseFloat(config.value.progress ?? data.value)}%`
-    : "35px";
+    if (parsedProgress.value) {
+        return config.value.isVertical
+            ? `${parseFloat(parsedProgress.value)}%`
+            : "35px";
+    }
 });
 
 const horizontalPositionFiller = computed(() => {
-  return !config.value.isVertical
-    ? `${parseFloat(config.value.progress ?? data.value)}%`
-    : "35px";
+    if (parsedProgress.value) {
+        return !config.value.isVertical
+            ? `${parseFloat(parsedProgress.value)}%`
+            : "35px";
+    }
 });
 
 const verticalPositionBackground = computed(() => {
@@ -68,15 +71,50 @@ const verticalPositionBackground = computed(() => {
 const horizontalPositionBackground = computed(() => {
   return !config.value.isVertical ? "35px" : "100%";
 });
+
+const parsedProgress = computed((): string => {
+    if (!config.value.progress) return "";
+    if (!isNaN(parseFloat(config.value.progress)))
+        return `${(parseFloat(config.value.progress)).toFixed(2)}`;
+
+    let processedString = config.value.progress;
+    if (!processedString) return "";
+    const regex = /{(.*?)}/g;
+    const parts = processedString.match(regex);
+
+    if (!parts || !data.value) return processedString;
+
+    parts.forEach((element: string) => {
+        const trimmedString = element.replace("{", "").replace("}", "");
+        const dataField = trimmedString.split(".");
+
+        const res = dataField.reduce((acc: any, field) => {
+            if(!acc[field]){
+                return ""
+            }
+            return acc[field];
+        }, data.value);
+
+        processedString = processedString?.replace(element, res);
+    });
+
+    return !isNaN(parseFloat(processedString))
+        ? parseFloat(processedString) > 100
+            ? "100%"
+            : `${processedString}`
+        : `${processedString}`;
+});
 </script>
 
 <template>
-  <div class="container">
-    <div class="progress">
-      <span>{{ config.progress ?? data }}%</span>
-      <div class="progress-percent"></div>
+    <div class="container">
+        <div class="progress">
+            <span>
+                {{ parsedProgress }}%
+            </span>
+            <div class="progress-percent"></div>
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
@@ -89,13 +127,13 @@ const horizontalPositionBackground = computed(() => {
 }
 
 .progress {
-  width: v-bind(verticalPositionBackground);
-  height: v-bind(horizontalPositionBackground);
-  background: v-bind(config.backgroundColor);
-  border-radius: 10px;
-  display: flex;
-  align-items: end;
-  position: relative;
+    width: v-bind(verticalPositionBackground);
+    height: v-bind(horizontalPositionBackground);
+    background: v-bind(backgroundColor);
+    border-radius: 10px;
+    display: flex;
+    align-items: end;
+    position: relative;
 }
 
 .progress-percent {

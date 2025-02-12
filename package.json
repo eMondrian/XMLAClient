@@ -13,11 +13,15 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@tiptap/extension-underline": "^2.11.2",
+    "@tiptap/pm": "^2.11.2",
+    "@tiptap/starter-kit": "^2.11.2",
+    "@tiptap/vue-3": "^2.11.2",
     "@vuestic/tailwind": "^0.1.5",
     "@vueuse/core": "^12.3.0",
     "chart.js": "^4.4.7",
     "lodash": "^4.17.21",
-    "monaco-editor": "^0.52.0",
+    "monaco-editor": "^0.52.2",
     "mqtt": "^5.10.3",
     "pinia": "^2.1.7",
     "tiny-emitter": "^2.1.0",

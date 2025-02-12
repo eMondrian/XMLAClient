@@ -363,8 +363,11 @@
     "openColorPicker": "color",
     "noOptions": "No options",
     "selectRowByIndex": "select",
-      "uploadFile": "File Upload",
-      "ok": "ok",
-      "cancel": "abbrechen"
+    "uploadFile": "File Upload",
+    "ok": "ok",
+    "cancel": "abbrechen",
+    "decreaseCounter": "Decrease",
+    "increaseCounter": "Increase",
+    "counterValue": "Value"
   }
 }
