@@ -9,6 +9,10 @@ export default class DatasourceRepository implements IDatasourceRepository {
 
   removeDatasource(datasourceId: string): void {
     if (datasources.has(datasourceId)) {
+      const datasource = datasources.get(datasourceId);
+      console.log(datasource);
+      datasource?.destroy();
+
       datasources.delete(datasourceId);
     }
   }

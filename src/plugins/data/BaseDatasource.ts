@@ -18,4 +18,6 @@ export  default abstract class BaseDatasource implements IDataRetrieveable {
   abstract getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]>;
   abstract getOriginalData(): any;
   abstract callEvent(event: string, params: any): void;
+
+  abstract destroy(): void;
 }

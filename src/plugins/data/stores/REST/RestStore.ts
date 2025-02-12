@@ -107,6 +107,8 @@ export default class RestStore extends BaseDatasource {
     console.warn(`Event "${event}" is not available for this type of store`, params)
   };
 
+  destroy(): void {}
+
   static validateConfiguration(configuration: IRestStoreConfiguration) {
     if (!configuration.connection) {
       return false;

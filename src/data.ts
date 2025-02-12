@@ -41,6 +41,8 @@ import { SourceType } from '@/types/enum';
 import WSStore from "./plugins/data/stores/WS/WSStore";
 import WSStoreSettings from "./plugins/data/stores/WS/WSStoreSettings.vue";
 import WSPreview from "./components/previews/WSPreview.vue";
+import MQTTConnection from "./plugins/data/connections/MQTT/MQTTConnection";
+import MQTTConnectionSettings from "./plugins/data/connections/MQTT/MqttConnectionSettings.vue";
 
 export function initData(app: App) {
   const componentMap = {
@@ -59,14 +61,17 @@ export function initData(app: App) {
       CSV: CsvConnection,
       XMLA: XmlaConnection,
       WS: WSConnection,
+      MQTT: MQTTConnection,
   }
 
   const connectionVisualConfig = {
     REST: RestConnectionSettings,
     CSV: CsvConnectionSettings,
     XMLA: XmlaConnectionSettings,
-    WS: WebSocketConnectionSettings
+    WS: WebSocketConnectionSettings,
+    MQTT: MQTTConnectionSettings,
   }
+
   const connectionRepository = new ConnectionRepository(availableConnections);
   app.config.globalProperties.connectionRepository = connectionRepository;
   app.config.globalProperties.connectionsConfig = {

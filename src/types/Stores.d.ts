@@ -4,6 +4,7 @@ interface IDataRetrieveable {
   callEvent: (event: string, params: any) => void;
   subscribe: (subscriber: () => any) => void;
   unsubscribe: (subscriber: () => any) => void;
+  destroy: () => void;
 }
 
 interface IDatasourceRepository {
