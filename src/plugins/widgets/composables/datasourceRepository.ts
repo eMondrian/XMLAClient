@@ -1,4 +1,7 @@
+import container from '@/config/inversify';
+import type DatasourceRepository from '@/plugins/data/DatasourceRepository';
 import {  getCurrentInstance, onMounted, onUnmounted, type Ref } from 'vue';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
 import { watch, ref } from 'vue';
 
 export interface IVueDatasourceRepository<T extends keyof DataMap> {
@@ -7,9 +10,7 @@ export interface IVueDatasourceRepository<T extends keyof DataMap> {
 }
 
 export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: Ref<string>, type: T): IVueDatasourceRepository<T> {
-  const instance = getCurrentInstance();
-  const datasourceRepository: IDatasourceRepository = (instance?.appContext.config as any).datasourceRepository;
-
+  const datasourceRepository = container.get<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository);
   const data = ref(null as unknown as Ref<DataMap[T]>);
 
   const getData = async () => {
@@ -18,38 +19,59 @@ export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: R
       return;
     }
 
-    const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
-    data.value = await dataSource.getData(type);
+    try {
+      const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
+      data.value = await dataSource.getData(type);
+    } catch (e) {
+      data.value = null as unknown as DataMap[T];
+      console.warn(e);
+    }
   };
 
   const callEvent = async (event: string, params: any) => {
     if (dataSourceId.value) {
-      const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
 
-      await dataSource.callEvent(event, params);
+      try {
+        const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
+        await dataSource.callEvent(event, params);
+      } catch (e) {
+        console.warn(e);
+      }
     }
   }
 
   watch(() => dataSourceId.value, (newVal, oldVal) => {
     getData();
-    const oldDataSource = datasourceRepository.getDatasource(oldVal);
-    oldDataSource.unsubscribe(getData);
+    try {
+      const oldDataSource = datasourceRepository.getDatasource(oldVal);
+      oldDataSource.unsubscribe(getData);
 
-    const dataSource = datasourceRepository.getDatasource(newVal);
-    dataSource.subscribe(getData);
+      const dataSource = datasourceRepository.getDatasource(newVal);
+      dataSource.subscribe(getData);
+    } catch (e) {
+      console.warn(e);
+    }
   });
   
   
   onMounted(() => {
     getData();
 
-    const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
-    dataSource.subscribe(getData);
+    try {
+      const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
+      dataSource.subscribe(getData);
+    } catch (e) {
+      console.warn(e);
+    }
   });
 
   onUnmounted(() => {
-    const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
-    dataSource.unsubscribe(getData);
+    try {
+      const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
+      dataSource.unsubscribe(getData);
+    } catch (e) {
+      console.warn(e);
+    }
   });
 
   return {

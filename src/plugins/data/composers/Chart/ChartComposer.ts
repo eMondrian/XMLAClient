@@ -1,6 +1,6 @@
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
 
-export interface IChartComposerConfiguration {
+export interface IChartComposerConfiguration extends IBaseConnectionConfiguration {
   connectedDatasources: string[];
   composeBy: string;
   usedSets: string[];
@@ -8,13 +8,17 @@ export interface IChartComposerConfiguration {
 }
 
 export default class ChartComposer extends BaseDatasource {
+  destroy(): void {
+    throw new Error("Method not implemented.");
+  }
+
   private connectedDatasources: string[];
   private composeBy: string;
   private usedSets: string[];
   private labelColumn: string;
 
   constructor(configuration: IChartComposerConfiguration) {
-    super();
+    super(configuration);
 
     this.connectedDatasources = configuration.connectedDatasources;
 

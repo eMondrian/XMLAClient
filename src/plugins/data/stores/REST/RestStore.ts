@@ -1,7 +1,8 @@
 import { extractDataByPath } from "@/utils/helpers";
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
+import type { ComputedString } from "@/plugins/variables/ComputedString";
 
-export interface IRestStoreConfiguration {
+export interface IRestStoreConfiguration extends IBaseConnectionConfiguration {
   resourceUrl: string;
   connection: string;
   selectedJSONValue?: string;
@@ -9,26 +10,30 @@ export interface IRestStoreConfiguration {
 
 export default class RestStore extends BaseDatasource {
   private connection: any;
-  private resourceUrl: string;
+  private resourceUrl: ComputedString;
   private selectedJSONValue?: string;
+  // private computedUrl: ComputedVariable;
 
   constructor(configuration: IRestStoreConfiguration) {
-    super();
+    super(configuration);
     
     this.connection = configuration.connection;
-    this.resourceUrl = configuration.resourceUrl;
+    // this.resourceUrl = configuration.resourceUrl;
+
+    this.resourceUrl = super.initVariable(configuration.resourceUrl);
+
     this.selectedJSONValue = configuration.selectedJSONValue;
   }
 
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
     let response = null;
-    const connectionRepository = (this as any).connectionRepository;
+    const connectionRepository = this.connectionRepository;
     if (!connectionRepository) {
       throw new Error('ConnectionRepository is not provided to Store Classes');
     }
     try {
-      const connection = connectionRepository.getConnection(this.connection);
-      const req = await connection.fetch(this.resourceUrl);
+      const connection = connectionRepository.getConnection(this.connection) as IConnection;
+      const req = await connection.fetch({ url: this.resourceUrl.value });
       const data = await req.json();
 
       if (this.selectedJSONValue) {
@@ -45,19 +50,20 @@ export default class RestStore extends BaseDatasource {
 
       return response;
     } catch (e: any) {
+      console.log(e);
       console.warn("Invalid resource URL", e.name);
     }
     return response as unknown as DataMap[T];
   }
 
   async getOriginalData() {
-    const connectionRepository = (this as any).connectionRepository;
+    const connectionRepository = this.connectionRepository;
     if (!connectionRepository) {
       throw new Error('ConnectionRepository is not provided to Store Classes');
     }
     try {
-      const connection = connectionRepository.getConnection(this.connection);
-      const req = await connection.fetch(this.resourceUrl);
+      const connection = connectionRepository.getConnection(this.connection) as IConnection;
+      const req = await connection.fetch({ url: this.resourceUrl.value });
       const data = await req.json();
 
       return data;

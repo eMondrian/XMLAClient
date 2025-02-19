@@ -2,9 +2,9 @@ import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
 import type XmlaConnection from "../../connections/XMLA/XmlaConnection";
 import { parseMdxRequest, parseRequestToTable } from "@/utils/MdxRequests/MdxRequestHelper";
 import DrilldownHandler from "./DrilldownHandler";
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
 
-export interface IXmlaStoreConfiguration {
+export interface IXmlaStoreConfiguration extends IBaseConnectionConfiguration {
   connection: string;
   requestParams: XMLARequestParams;
   useVisualEditor: boolean;
@@ -32,7 +32,7 @@ export default class XmlaStore extends BaseDatasource {
   private drilldownHandler: DrilldownHandler | null = null;
 
   constructor(configuration: IXmlaStoreConfiguration) {
-    super();
+    super(configuration);
 
     this.connection = configuration.connection;
 

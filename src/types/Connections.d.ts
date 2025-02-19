@@ -17,12 +17,38 @@ interface PubSubConnection {
   notify(event: PubSubEvents, data?: any): void;
 }
 
+interface ConnectionDTO {
+  uid: string;
+  name: string;
+  type: string;
+  config: {
+    [key: string]: any;
+  },
+}
+
 interface IConnectionConfig {
   [key: string]: any;
 }
 
 interface IConnectionRepository {
-  getConnection(connectionId: string): IConnection;
+  getConnection(connectionId: string): IConnection | PubSubConnection;
   registerConnection(connectionId: string, type: string, connectionConfig: IConnectionConfig): void;
   removeConnection(connectionId: string): void;
+}
+
+interface ConnectionIdentifiers {
+  Connection: symbol;
+  Settings: symbol;
+}
+
+interface ConnectionConstructor<T> {
+  new (config: IConnectionConfig): T;
+  validateConfiguration: (config: any) => boolean;
+}
+
+interface ConnectionPlugin {
+  Connection: ConnectionConstructor;
+  Settings: any;
+  Identifiers: ConnectionIdentifiers;
+  Name: string;
 }

@@ -16,12 +16,11 @@ import MetadataTree from '../XMLA/MetadataTree.vue';
 import QueryDesigner from '../XMLA/QueryDesigner.vue';
 import type XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
 import PivotTable from '../XMLA/PivotTable/PivotTable.vue';
-import type XmlaStore from '@/plugins/data/stores/XMLA/XmlaStore';
+import useTemporaryStore from '@/composables/useTemporaryStore';
+
 const props = defineProps<{ dataSource: any }>();
 
-const instance = getCurrentInstance();
-const constructor = instance?.appContext.config.globalProperties.datasourceConfig.availableDatasources['XMLA'];
-const tempStore = shallowRef(null as any);
+const { tempStore } = useTemporaryStore(props.dataSource.type, props.dataSource);
 
 const data = ref(null as unknown as IPivotTable);
 const connection = ref(null as unknown as XmlaConnection);
@@ -41,26 +40,17 @@ const queryConfig = ref({
 
 const drilldownState = ref(props.dataSource.config.drilldownState || {});
 
+watch(() => tempStore, async () => {
+  await updateData();
+}, { deep: true });
+
 const updateData = async () => {
-  if (constructor.validateConfiguration(props.dataSource.config)) {
-    const config = {
-      ...props.dataSource.config,
-      requestParams: queryConfig.value,
-      mdx: query.value,
-      drilldownState: drilldownState.value,
-    };
-
-    tempStore.value = new constructor(config) as XmlaStore;
     const req = await tempStore.value.getData('PivotTable');
-
     data.value = req;
-
     if (props.dataSource.config.useVisualEditor) {
       query.value = await tempStore.value.getMdxRequest();
     }
-
     connection.value = tempStore.value.getConnection();
-  }
 }
 
 onMounted(async () => {
@@ -100,7 +90,7 @@ const onExpand = async (e: any) => {
   updateData();
 }
 
-const onCollapse = async (e) => {
+const onCollapse = async (e: any) => {
   drilldownState.value = tempStore.value.collapse(e);
 
   emit('updateConfig', {

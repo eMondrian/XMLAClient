@@ -1,5 +1,9 @@
+import type { TinyEmitter } from 'tiny-emitter';
 import { VariableStorage } from './VariableStorage';
 import { RefreshType } from '@/types/enum';
+import container from '@/config/inversify';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import { VariableEvents } from '@/config/events';
 
 export class Variable {
   private subscribers: any[] = [];
@@ -12,11 +16,13 @@ export class Variable {
   private refreshType: RefreshType = RefreshType.None;
   private refreshIntervalId: number = 0;
   private refreshTrigger: string = null as unknown as string;
+  private eventBus: TinyEmitter;
 
   constructor(public name: string, storage: VariableStorage, config: IVariableConfig) {
     this.name = name;
     this.storage = storage;
     this.description = config.description;
+    this.eventBus = container.get<TinyEmitter>(SERVICE_IDENTIFIER.EventBus);
 
     this.refreshInterval = config.refreshInterval || 0;
     this.refreshInterval = Math.max(this.refreshInterval, 300);
@@ -27,11 +33,11 @@ export class Variable {
       if (this.refreshInterval) {
         this.refreshIntervalId = setInterval(() => {
           this.intervalFn();
-        }, this.refreshInterval);
+        }, this.refreshInterval) as unknown as number;
       }
     } else if (this.refreshType === RefreshType.Trigger) {
       if (this.refreshTrigger) {
-          storage.eventBus.on(this.refreshTrigger, () => {
+          this.eventBus.on(this.refreshTrigger, () => {
             this.intervalFn();
           })
       }
@@ -48,6 +54,8 @@ export class Variable {
 
   set value(value) {
     this.innerValue = value;
+    console.log('Value changed');
+    console.log(this.subscribers[0]);
     this.subscribers.forEach(subscriber => subscriber());
   }
 
@@ -59,6 +67,11 @@ export class Variable {
     this.subscribers = this.subscribers.filter(sub => sub !== subscriber);
   }
 
+  notyfy() {
+    this.eventBus.emit(VariableEvents.VariableUpdated);
+    this.subscribers.forEach(subscriber => subscriber());
+  }
+
   forceUpdate() {};
 
   clearInterval() {
@@ -67,7 +80,7 @@ export class Variable {
 
   clearTrigger() {
     if (this.refreshTrigger) {
-      this.storage.eventBus.off(this.refreshTrigger);
+      this.eventBus.off(this.refreshTrigger);
     }
   }
 }

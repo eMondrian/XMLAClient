@@ -8,7 +8,7 @@ const { config, connections } = defineProps<{
 }>();
 
 const connectionsFiltered = computed(() => {
-  return connections.filter((c: any) => c.type === 'WS' || c.type === 'MQTT');
+  return connections.filter((c: any) => c.type === 'WebSocket' || c.type === 'MQTT');
 });
 
 </script>

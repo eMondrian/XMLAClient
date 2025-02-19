@@ -1,6 +1,6 @@
-import BaseConnection from "../BaseConnection";
+import BaseConnection, { type BaseConnectionConfig } from "../BaseConnection";
 
-export interface ICsvConnectionConfiguration {
+export interface ICsvConnectionConfiguration extends BaseConnectionConfig {
   url: string;
 }
 
@@ -8,13 +8,13 @@ export default class CsvConnection extends BaseConnection {
   private url: any;
 
   constructor(configuration: ICsvConnectionConfiguration) {
-    super();
+    super(configuration);
   
-    this.url = configuration.url;
+    this.url = super.initVariable(configuration.url);
   }
 
   fetch(config: IRequestParams): Promise<any> {
-    return fetch(this.url + config.url);
+    return fetch(this.url.value + config.url);
   }
 
   setConfig(): void {

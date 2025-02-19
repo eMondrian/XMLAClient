@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { getCurrentInstance } from 'vue';
 import { useConnectionsStore } from "@/plugins/data/ConnectionsPinia";
 
 const { connections, createConnection, removeConnection } = useConnectionsStore();
-const instance = getCurrentInstance();
-
-const availableConnections = Object.keys(instance?.appContext.config.globalProperties.connectionsConfig.availableConnections);
 
 const addDataSource = () => {
   createConnection(null);

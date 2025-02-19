@@ -25,8 +25,6 @@ export const useConfigurationsStore = defineStore('configurations', () => {
       configurations.value.push(config);
       variableStorage.createVariable(config.name, config.config as IVariableConfig);
     });
-
-    console.log(variableStorage);
   }
 
   return {

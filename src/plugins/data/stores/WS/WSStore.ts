@@ -1,8 +1,8 @@
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
 import type TwoWayConnection from "../../connections/TwoWayConnection";
 import MQTTConnection from "../../connections/MQTT/MQTTConnection";
 
-export interface IWSStoreConfiguration {
+export interface IWSStoreConfiguration extends IBaseConnectionConfiguration {
   connection: string;
   topic?: string;
 }
@@ -13,7 +13,7 @@ export default class WSStore extends BaseDatasource {
   private topic = "";
 
   constructor(configuration: IWSStoreConfiguration) {
-    super();
+    super(configuration);
 
     this.connection = configuration.connection;
 

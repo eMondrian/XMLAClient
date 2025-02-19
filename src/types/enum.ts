@@ -12,7 +12,8 @@ export enum SourceType {
   BrowserProperties = 'Browser properties',
   Time = 'Time',
   Expression = 'Expression',
-  AsyncParameters = 'Async parameters'
+  AsyncParameters = 'Async parameters',
+  ComputedString = 'Computed String',
 }
 
 export enum RefreshType {

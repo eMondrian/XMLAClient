@@ -4,18 +4,32 @@ import { useWidgetsStore } from "@/plugins/data/WidgetsPinia";
 import { useMoveableLayout } from "@/composables/movableLayout";
 import { useLayoutStore } from "@/plugins/data/LayoutsPinia";
 import WidgetWrapper from "@/plugins/widgets/Wrapper/WidgetWrapper.vue";
+import { VariableStorage } from '@/plugins/variables/VariableStorage';
+import container from '@/config/inversify';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
 
 const { widgets } = useWidgetsStore();
 const { layout } = useLayoutStore();
+
 const {
   getInitialStyle,
 } = useMoveableLayout(ref(layout));
 
+const increment = () => {
+  const variableStorage = container.get<VariableStorage>(SERVICE_IDENTIFIER.VariablesStorage);
+  const variable = variableStorage.getVariable('id');
+  variable.value = 1 -(-variable.value);
+
+  console.log("Increment", variable);
+};
 </script>
 
 <template>
   <div style="padding: 16px;">
     Report View
+    <div>
+      <va-button @click="increment">Increment</va-button>
+    </div>
     <div class="widget-board">
       <template v-for="widget in widgets" :key="widget.uid">
         <div

@@ -7,8 +7,6 @@ const props = defineProps<{ dataSource: any }>();
 
 const { tempStore } = useTemporaryStore('WS', props.dataSource);
 
-console.log(constructor);
-
 const data = ref(null as unknown as any);
 
 watch(tempStore, async () => {

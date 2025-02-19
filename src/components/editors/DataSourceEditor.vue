@@ -12,19 +12,24 @@ Contributors: Smart City Jena
 import { useConnectionsStore } from "@/plugins/data/ConnectionsPinia";
 import { useDataSourcesStore } from "@/plugins/data/DatasourcePinia";
 import { onMounted, ref, computed, getCurrentInstance } from "vue";
+import { cloneDeep } from "lodash";
+import container from "@/config/inversify";
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import DatasourceRepository from '@/plugins/data/DatasourceRepository';
 
 const { connections } = useConnectionsStore();
 const { dataSources, updateDataSource } = useDataSourcesStore();
 
 const datasourceProxy = ref({} as any);
+const datasourceRepository = container.get<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository);
 
-const instance = getCurrentInstance();
-const datasourceConfig = instance?.appContext.config.globalProperties.datasourceConfig;
-const availableDatasources = Object.keys(datasourceConfig.availableDatasources);
+const availableDatasources = computed(() => {
+  return datasourceRepository.registeredDatasources;
+})
 
 onMounted(() => {
   const dataSource = dataSources.find((ds) => ds.uid === props.itemId);
-  datasourceProxy.value = { ...dataSource };
+  datasourceProxy.value = cloneDeep(dataSource);
 });
 
 const props = defineProps<{
@@ -37,14 +42,23 @@ const saveDataSource = () => {
 };
 
 const previewComponent = computed(() => {
-  // if (datasourceProxy.value.type === null || datasourceProxy.value.type === undefined) {
-  //   return datasourceConfig.previewComponents["XMLA"];
-  // }
-  return datasourceConfig.previewComponents[datasourceProxy.value.type];
+  const identifiers = datasourceRepository.getDatasourceIdentifiers(datasourceProxy.value.type);
+
+  if (!identifiers) {
+    return null;
+  }
+
+  return container.get(identifiers.Preview);
 });
 
 const settingsComponent = computed(() => {
-  return datasourceConfig.settingsComponents[datasourceProxy.value.type];
+  const identifiers = datasourceRepository.getDatasourceIdentifiers(datasourceProxy.value.type);
+
+  if (!identifiers) {
+    return null;
+  }
+  
+  return container.get(identifiers.Settings);
 });
 
 const updateConfig = (config: any) => {

@@ -1,20 +1,20 @@
-import BaseConnection from "../BaseConnection";
+import BaseConnection, { type BaseConnectionConfig } from "../BaseConnection";
 
-export interface IRestConnectionConfiguration {
+export interface IRestConnectionConfiguration extends BaseConnectionConfig {
   url: string;
 }
 
 export default class RestConnection extends BaseConnection {
-  private url: any;
+  private url;
 
   constructor(configuration: IRestConnectionConfiguration) {
-    super();
+    super(configuration);
 
-    this.url = configuration.url;
+    this.url = super.initVariable(configuration.url);
   }
 
   fetch(config: IRequestParams): Promise<any> {
-    return fetch(this.url + config);
+    return fetch(this.url.value + config.url);
   }
 
   setConfig(): void {

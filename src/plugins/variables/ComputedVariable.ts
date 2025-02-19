@@ -8,6 +8,8 @@ export class ComputedVariable extends Variable {
     constructor(name: string, storage: VariableStorage, config: IComputedVariableConfig) {
       super(name, storage, config);
       this.expression = config.expression;
+
+      this.initSubscriptions();
     }
 
     get expression(): string {
@@ -16,6 +18,8 @@ export class ComputedVariable extends Variable {
 
     set expression(expression) {
       this.innerExpression = expression;
+
+      this.initSubscriptions();
     }
 
     // TODO: Think if the inner value is necessary
@@ -48,5 +52,19 @@ export class ComputedVariable extends Variable {
 
       const execFn = new Function(`return ${result}`);
       return execFn();
+    }
+
+    initSubscriptions() {
+      const dependencies = this.getDependencies();
+      dependencies.forEach(dep => {
+        console.log(dep);
+        const depencencyVariable = this.storage.getVariable(dep);
+        console.log(depencencyVariable);
+        depencencyVariable.subscribe(() => {
+          console.log('dep changed', dep);
+          this.notyfy();
+          console.log('Variable changed');
+        });
+      });
     }
 }

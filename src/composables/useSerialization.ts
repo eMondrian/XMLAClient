@@ -24,13 +24,11 @@ export function useSerialization(states: any) {
     for (const key in states) {
       state[key] = states[key];
     }
-    console.log(JSON.stringify(state));
     return JSON.stringify(state);
   };
 
   const loadState = (state: any) => {
     const parsedState = JSON.parse(state);
-    console.log(state);
 
     // Order of calls here matters
     updateMethods.configurations(parsedState.configurations);

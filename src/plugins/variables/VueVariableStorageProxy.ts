@@ -14,11 +14,10 @@ export class VueVariableStorageProxy {
 
     const updateFn = () => {
       // Forces vue to update the value
-      reactiveVariable.value = variable.value;
+      // reactiveVariable.value = variable.value;
     };
 
     variable.subscribe(updateFn);
-    console.log(reactiveVariable)
     return reactiveVariable;
   }
 

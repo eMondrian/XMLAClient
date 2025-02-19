@@ -1,5 +1,8 @@
 import { ref, computed, getCurrentInstance } from 'vue'
 import { defineStore } from 'pinia'
+import container from '@/config/inversify';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import DatasourceRepository from './DatasourceRepository';
 
 export interface DataSourceDTO {
   uid: string;
@@ -12,8 +15,7 @@ export interface DataSourceDTO {
 
 export const useDataSourcesStore = defineStore('datasource', () => {
   const dataSources = ref([] as DataSourceDTO[]);
-  const instance = getCurrentInstance();
-  const datasourceRepository = instance?.appContext.config.globalProperties.datasourceRepository;
+  const datasourceRepository = container.get<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository);
 
   const createDataSource = (type: any, config: any = {}) => {
     const uid = Math.random().toString(36).substring(7);
