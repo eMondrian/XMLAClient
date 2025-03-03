@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import RichTextWidget from './RichTextWidget.vue';
-import RichTextWidgetSettings from './RichTextWidgetSettings.vue';
+import RichTextWidget from "./RichTextWidget.vue";
+import RichTextWidgetSettings from "./RichTextWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import rich_text from "./rich_text.svg";
 
-const RichTextWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('RichTextWidget', RichTextWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const RichTextWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['RichTextWidget'] = RichTextWidget;
-      availableWidgetsSettings['RichTextWidget'] = RichTextWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        RichTextWidget: RichTextWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        RichTextWidget: RichTextWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("RichTextWidget", {
+            component: RichTextWidget,
+            settingsComponent: RichTextWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: rich_text,
+        });
+    },
 });
 
 export default RichTextWidgetPlugin;

@@ -9,14 +9,11 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { useDatasourceRepository } from '@/plugins/widgets/composables/datasourceRepository';
-import { computed, onMounted, toRefs } from 'vue';
-import type { IIconSettings } from '@/types/Widgets';
+import { computed, onMounted, toRefs } from "vue";
+import type { IIconSettings } from "@/types/Widgets";
 
-const props = defineProps<{ datasourceId: string, config: IIconSettings }>();
-const { datasourceId, config } = toRefs(props);
-
-const { data } = useDatasourceRepository(datasourceId, "object");
+const props = defineProps<{ config: IIconSettings }>();
+const { config } = toRefs(props);
 
 const defaultConfig: IIconSettings = {
     iconColor: "#000",
@@ -25,14 +22,13 @@ const defaultConfig: IIconSettings = {
     strokeWeight: 100,
     opticSize: 48,
     grade: 48,
-    currentIcon: '',
+    currentIcon: "",
 };
 
 onMounted(() => {
-    console.log(typeof data.value)
     if (config.value) {
         Object.assign(config.value, { ...defaultConfig, ...config.value });
-    };
+    }
 });
 
 const iconColor = computed(() => {
@@ -61,11 +57,7 @@ const iconStyle = computed(() => {
         rel="stylesheet"
     />
     <div class="icon">
-        <span
-            v-bind="$attrs"
-            :style="iconStyle"
-            class="material-symbols-outlined"
-        >
+        <span v-bind="$attrs" :style="iconStyle" class="material-symbols-outlined">
             {{ config.currentIcon }}
         </span>
     </div>
