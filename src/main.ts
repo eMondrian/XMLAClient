@@ -9,7 +9,7 @@ import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import './scss/main.scss';
 import { createPinia } from 'pinia';
-
+import './persistence/persistence';
 import App from './App.vue'
 
 const app = createApp(App)

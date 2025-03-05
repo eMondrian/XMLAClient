@@ -8,6 +8,7 @@ import RestConnection from "./plugins/data/connections/REST";
 import WebSocketConnection from "./plugins/data/connections/WebSocket";
 import MQTTConnection from "./plugins/data/connections/MQTT";
 import XMLAConnection from "./plugins/data/connections/XMLA";
+import RSSConnection from './plugins/data/connections/RSS';
 
 import ComputedVariable from '@/components/variables/ComputedVariable.vue';
 import ConstantVariable from '@/components/variables/ConstantVariable.vue';
@@ -27,6 +28,7 @@ import SERVICE_IDENTIFIER from '@/config/identifiers/services';
 import GraphQL from "./plugins/data/stores/GraphQL";
 import WS from "./plugins/data/stores/WS";
 import XMLA from "./plugins/data/stores/XMLA";
+import RSS from "./plugins/data/stores/RSS";
 import { ConnectionFactory } from "./plugins/data/ConnectionFactory";
 
 export function initData(app: App, variableStorage: VariableStorage) {
@@ -48,6 +50,7 @@ export function initData(app: App, variableStorage: VariableStorage) {
   initConnection(connectionRepository, WebSocketConnection);
   initConnection(connectionRepository, MQTTConnection);
   initConnection(connectionRepository, XMLAConnection);
+  initConnection(connectionRepository, RSSConnection);
   
 
   const datasourceRepository = new DatasourceRepository();
@@ -59,6 +62,7 @@ export function initData(app: App, variableStorage: VariableStorage) {
   initDataSource(datasourceRepository, GraphQL);
   initDataSource(datasourceRepository, WS);
   initDataSource(datasourceRepository, XMLA);
+  initDataSource(datasourceRepository, RSS);
 
   const connectionFactory = new ConnectionFactory();
   const datasourceFactory = new DatasourceFactory();
