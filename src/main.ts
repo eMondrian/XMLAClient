@@ -20,7 +20,7 @@ initEventBus(app);
 initVendors(app);
 
 const variableStorage = initVariables(app);
-// const { datasourceRepository } = initData(app, variableStorage);
+initData(app, variableStorage);
 initWidgets(app);
 
 app.use(createPinia());
