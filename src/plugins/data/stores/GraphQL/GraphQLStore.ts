@@ -13,9 +13,13 @@ export default class GraphQLStore extends BaseDatasource {
 
   constructor(configuration: IGraphQLStoreConfiguration) {
     super(configuration);
-    
+
     this.connection = configuration.connection;
     this.query = configuration.query;
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
+    }
   }
 
   get fetcher() {
@@ -84,7 +88,9 @@ export default class GraphQLStore extends BaseDatasource {
     console.warn(`Event "${event}" is not available for this type of store`, params)
   };
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: IGraphQLStoreConfiguration) {
     if (!configuration.connection) {

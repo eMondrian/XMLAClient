@@ -38,7 +38,7 @@ export const useDataSourcesStore = defineStore('datasource', () => {
     const dataSource = dataSources.value.find(c => c.uid === dataSourceId);
 
     if (!dataSource) return;
-
+    datasourceRepository.removeDatasource(dataSourceId);
     dataSource.uid = dataSourceProxy.uid;
     dataSource.type = dataSourceProxy.type;
     dataSource.name = dataSourceProxy.name;
@@ -49,12 +49,12 @@ export const useDataSourcesStore = defineStore('datasource', () => {
   }
 
   const updateDataSources = (dataSourceProxies: DataSourceDTO[]) => {
-    
+
     dataSources.value.splice(0);
     dataSourceProxies.forEach((dataSourceProxy) => {
 
       dataSources.value.push(dataSourceProxy);
-      
+
       datasourceRepository.registerDatasource(dataSourceProxy.uid, dataSourceProxy.type, dataSourceProxy.config);
     });
   }

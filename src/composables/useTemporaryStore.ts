@@ -14,7 +14,7 @@ export default function useTemporaryStore(type: string, settings: any) {
 
     onMounted(async () => {
         tempStore.value = datasourceFactory.createDatasource(identifiers.Store, settings.config);
-    });    
+    });
 
     watch(() => settings, async () => {
         tempStore.value?.destroy();
@@ -24,7 +24,7 @@ export default function useTemporaryStore(type: string, settings: any) {
     onBeforeUnmount(() => {
         tempStore.value?.destroy();
     });
-    
+
     return {
         tempStore,
     }

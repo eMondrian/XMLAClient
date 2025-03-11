@@ -5,25 +5,27 @@ import { debounce } from 'lodash';
 const { config } = defineProps<{
   config: any;
 }>();
+
 const available = ref(false);
 const url = ref(config.url);
 const isUrlValid = ref(true);
 const statusCode = ref<string | null>(null);
 
+const statusCircleClass = computed(() => {
+  if (!url.value) return 'bg-gray-400';
+  return available.value ? 'bg-green-500' : 'bg-red-500';
+});
+
+const statusTextClass = computed(() => {
+  if (!url.value) return 'text-gray-500';
+  if (!statusCode.value) return 'text-black';
+  return statusCode.value.toString()[0] === '2' ? 'text-green-500' : 'text-red-500';
+});
+
 const updateUrl = debounce((newUrl: string) => {
   config.url = newUrl;
   validateAndCheckUrl(newUrl);
 }, 700);
-
-watch(url, (newUrl) =>  updateUrl(newUrl));
-
-onMounted(async () => {
-  if (url.value) {
-    const resp = await ifUrlExist(url.value);
-    available.value = resp.available;
-    statusCode.value = resp.statusCode;
-  }
-});
 
 function isValidUrl(url: string): boolean {
   try {
@@ -45,57 +47,41 @@ async function ifUrlExist(url: string) {
 };
 
 async function validateAndCheckUrl(newUrl: string) {
-  isUrlValid.value = isValidUrl(newUrl);
-
-  if (isUrlValid.value) {
-    const result = await ifUrlExist(newUrl);
-    available.value = result.available;
-    statusCode.value = result.statusCode;
-  } else {
+  if (!isValidUrl(newUrl)) {
     available.value = false;
     statusCode.value = null;
+    return;
   }
-};
-const statusCircleClass = computed(() => (available.value ? 'circle-green' : 'circle-red'));
-const statusTextClass = computed(() => {
-  return statusCode.value && statusCode.value.toString()[0] === '2' ? 'status-green' : 'status-red';
+
+  isUrlValid.value = true;
+  const result = await ifUrlExist(newUrl);
+  available.value = result.available;
+  statusCode.value = result.statusCode;
+}
+
+watch(url, (newUrl) =>  {
+  if (newUrl !== config.url) {
+    updateUrl(newUrl);
+  }
+});
+
+onMounted(async () => {
+  if (config.url) {
+    url.value = config.url;
+    const resp = await ifUrlExist(config.url);
+    available.value = resp.available;
+    statusCode.value = resp.statusCode;
+  }
 });
 </script>
 
 <template>
   <!-- eslint-disable-next-line vue/no-mutating-props -->
   <VaInput v-model="url" label="URL" :rules="[() => !url || isUrlValid || `Invalid URL`]" />
-      
-  <div v-if="isUrlValid && url" class="ml-2 request-status">
-    <div :class="statusCircleClass" class="status-circle"></div>
-    <span class="error-text" :class="statusTextClass">Status: {{ statusCode }}</span>
+
+  <div v-if="isUrlValid && url" class="ml-2 flex items-center space-x-2">
+    <div :class="`w-3 h-3 rounded-full ${statusCircleClass}`"></div>
+    <span class="text-sm font-medium" :class="statusTextClass">Status: {{ statusCode  }}</span>
   </div>
 </template>
 
-<style scoped>
-.status-circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  align-self: center;
-}
-.circle-green {
-  background-color: green;
-}
-.circle-red {
-  background-color: red;
-}
-.status-green {
-  color: green;
-}
-.status-red {
-  color: red;
-}
-.error-text {
-  font-size: 0.9em;
-  margin-left: 8px;
-}
-.request-status {
-  display: flex;
-}
-</style>

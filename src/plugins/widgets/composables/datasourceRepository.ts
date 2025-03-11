@@ -1,6 +1,6 @@
 import container from '@/config/inversify';
 import type DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import {  getCurrentInstance, onMounted, onUnmounted, type Ref } from 'vue';
+import {  onMounted, onUnmounted, type Ref } from 'vue';
 import SERVICE_IDENTIFIER from '@/config/identifiers/services';
 import { watch, ref } from 'vue';
 
@@ -52,8 +52,7 @@ export function useDatasourceRepository<T extends keyof DataMap>(dataSourceId: R
       console.warn(e);
     }
   });
-  
-  
+
   onMounted(() => {
     getData();
 

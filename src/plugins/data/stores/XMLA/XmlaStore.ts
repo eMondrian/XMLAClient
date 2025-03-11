@@ -54,6 +54,10 @@ export default class XmlaStore extends BaseDatasource {
     if (configuration.requestParams) {
       this.requestParams = configuration.requestParams;
     }
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
+    }
   }
 
   async getOriginalData() {
@@ -159,7 +163,9 @@ export default class XmlaStore extends BaseDatasource {
     return parseRequestToTable(mdxResponce, 0);
   }
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: IXmlaStoreConfiguration) {
     if (!configuration?.connection) {
