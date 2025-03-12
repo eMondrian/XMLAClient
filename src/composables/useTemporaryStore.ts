@@ -10,6 +10,8 @@ export default function useTemporaryStore(type: string, settings: any) {
     const datasourceRepository = container.get<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository);
     const identifiers = datasourceRepository.getDatasourceIdentifiers(type);
 
+    console.log(identifiers);
+
     const datasourceFactory = container.get<DatasourceFactory>(SERVICE_IDENTIFIER.DatasourceFactory);
 
     onMounted(async () => {

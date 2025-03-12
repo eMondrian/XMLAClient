@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 interface IMonacoEditorProps {
     modelValue?: string;
-    language?: 'sql' | 'msdax';
+    language?: 'sql' | 'msdax' | 'mdx';
     theme?: 'vs-dark' | 'vs-light' | 'hc-black';
     supportedLanguages?: string[];
     // supportedThemes?: string[];
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<IMonacoEditorProps>(), {
     modelValue: '',
     language: 'sql',
     theme: 'vs-dark',
-    supportedLanguages: () => ['sql', 'msdax'],
+    supportedLanguages: () => ['sql', 'msdax', 'mdx'],
     // supportedThemes: () => ['vs-dark', 'vs-light', 'hc-black'],
 });
 
@@ -43,6 +43,119 @@ const initEditor = async () => {
     try {
         if (editorContainer.value && !editorInstance) {
             const container = editorContainer.value;
+
+            console.log(monaco.languages.getLanguages());
+
+            monaco.languages.setMonarchTokensProvider('mdx', {
+                // (1) Ignore case when matching tokens
+                ignoreCase: true,
+
+                // (2) Suffix for token CSS classes (optional)
+                tokenPostfix: '.mdx',
+
+                // (3) Keywords taken from your JavaCC grammar
+                //     Feel free to remove or add more as needed
+                keywords: [
+                    'ALL','ALLMEMBERS','ANCESTOR','ANCESTORS','AND','AS','ASC','AXIS','CASE',
+                    'CALCULATION','CAST','CELL','CHAPTERS','COLUMNS','CUBE','CURRENTCUBE','DIMENSION',
+                    'DRILLTHROUGH','ELSE','EMPTY','END','EXISTING','EXPLAIN','FIRSTROWSET','FOR','FROM',
+                    'IN','IS','MATCHES','MAXROWS','MEASURE','MEMBER','NON','NOT','NULL','ON','OR','PAGES',
+                    'PLAN','PROPERTIES','REFRESH','UPDATE','RETURN','ROWS','SECTIONS','SELECT','SET','THEN',
+                    'WHEN','WHERE','XOR','WITH','USE_EQUAL_ALLOCATION','USE_EQUAL_INCREMENT',
+                    'USE_WEIGHTED_ALLOCATION','USE_WEIGHTED_INCREMENT','BY','$SYSTEM'
+                ],
+
+                // (4) Operators extracted from the grammar (including "<>", "||", etc.)
+                operators: [
+                    '=', '<>', '<', '>', '<=', '>=', '+', '-', '*', '/', '||', ':', '!'
+                ],
+
+                // (5) Brackets
+                brackets: [
+                    ['{', '}', 'delimiter.curly'],
+                    ['[', ']', 'delimiter.square'],
+                    ['(', ')', 'delimiter.parenthesis']
+                ],
+
+                // (6) Symbols used to match operators
+                symbols: /[=><!~?:&|+\-*/^%]+/,
+
+                // (7) The main tokenizer definition
+                tokenizer: {
+                    // --- root state ---
+                    root: [
+                    // (a) Comments
+                    //     Single-line: //..., --...
+                    //     Multi-line:  /* ... */
+                    //     We use additional states for multi-line.
+
+                    // Single-line comments:
+                    [/(\/\/|--).*$/, 'comment'],
+
+                    // Multi-line comment start: enter @commentBlock
+                    [/(\/\*)/, { token: 'comment', next: '@commentBlock' }],
+
+                    // (b) Whitespace
+                    { include: '@whitespace' },
+
+                    // (c) Numeric literals
+                    //     Covers integer, decimal, or exponent notation
+                    [/\d+(\.\d+)?([eE][+\-]?\d+)?/, 'number'],
+
+                    // (d) Strings
+                    //     Single-quoted and double-quoted, allowing escaped quotes
+                    [/'([^']|'')*'/, 'string'],  
+                    [/\"([^"]|\"\")*\"/, 'string'],
+
+                    // (e) Bracketed (quoted) identifiers
+                    //     Including "[&something]" or "[something]"
+                    [/\[&[^\]]*\]/, 'identifier.amp-quoted'], // e.g., &[xyz]
+                    [/\[[^\]]*\]/,  'identifier.quoted'],     // e.g., [xyz]
+
+                    // (f) Operators and special symbols
+                    [
+                        /@symbols/,
+                        {
+                        cases: {
+                            '@operators': 'operator',
+                            '@default': ''
+                        }
+                        }
+                    ],
+
+                    // (g) Brackets (parentheses, curly, square)
+                    [/[{}()\[\]]/, '@brackets'],
+
+                    // (h) Punctuation (comma, semicolon, period, etc.)
+                    [/[;,.:]/, 'delimiter'],
+
+                    // (i) Identifiers or Keywords
+                    //     This includes things like @ID, &ID, etc.
+                    [
+                        /[a-zA-Z_@$&][\w$]*/,
+                        {
+                        cases: {
+                            '@keywords': 'keyword',
+                            '@default': 'identifier'
+                        }
+                        }
+                    ]
+                    ],
+
+                    // --- commentBlock state for multi-line comments ---
+                    commentBlock: [
+                    // End of multi-line comment
+                    [/\*\//, { token: 'comment', next: '@pop' }],
+                    // Everything else remains in comment
+                    [/./, 'comment']
+                    ],
+
+                    // --- Whitespace ---
+                    whitespace: [
+                    [/[ \t\r\n\f]+/, 'white']
+                ]
+                }
+            });
 
             editorInstance = monaco?.editor?.create(container, {
                 // ...props.editorOptions,

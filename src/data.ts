@@ -29,6 +29,7 @@ import GraphQL from "./plugins/data/stores/GraphQL";
 import WS from "./plugins/data/stores/WS";
 import XMLA from "./plugins/data/stores/XMLA";
 import RSS from "./plugins/data/stores/RSS";
+import SQL_XMLA from "./plugins/data/stores/SQL_XMLA";
 import { ConnectionFactory } from "./plugins/data/ConnectionFactory";
 
 export function initData(app: App, variableStorage: VariableStorage) {
@@ -63,6 +64,7 @@ export function initData(app: App, variableStorage: VariableStorage) {
   initDataSource(datasourceRepository, WS);
   initDataSource(datasourceRepository, XMLA);
   initDataSource(datasourceRepository, RSS);
+  initDataSource(datasourceRepository, SQL_XMLA);
 
   const connectionFactory = new ConnectionFactory();
   const datasourceFactory = new DatasourceFactory();
