@@ -5,11 +5,18 @@ import { RequestVariable } from "@/plugins/variables/RequestVariable";
 import { TimeVariable } from "./TimeVariable";
 import { SourceType }  from '@/types/enum';
 import type { TinyEmitter } from "tiny-emitter";
+import { VariableEvents } from '@/config/events';
+import container from '@/config/inversify';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+
 
 export class VariableStorage {
   private variables: { [key: string]: any } = {};
+  private eventBus: TinyEmitter;
 
-  constructor(public eventBus: TinyEmitter) {}
+  constructor() {
+    this.eventBus = container.get<TinyEmitter>(SERVICE_IDENTIFIER.EventBus);
+  }
 
   createVariable(name: string, config: INewVariableConfig) {
 
@@ -33,6 +40,7 @@ export class VariableStorage {
         throw new Error('variable type not implemented yet');
     }
 
+    this.eventBus.emit(VariableEvents.VariableCreated)
     return this.variables[name];
   }
 
@@ -42,6 +50,7 @@ export class VariableStorage {
       this.variables[name].clearTrigger();
     }
     delete this.variables[name];
+    this.eventBus.emit(VariableEvents.VariableRemoved);
   }
 
   getVariable(name: string) {
@@ -50,5 +59,6 @@ export class VariableStorage {
 
   clearStorage() {
     this.variables = {};
+    this.eventBus.emit(VariableEvents.VariablesCleared);
   }
 }

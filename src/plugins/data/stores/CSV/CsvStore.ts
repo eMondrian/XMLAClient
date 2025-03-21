@@ -1,7 +1,9 @@
 import CSV from "@/utils/csv-parser";
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
+import type { ComputedString } from "@/plugins/variables/ComputedString";
+import type CsvConnection from "../../connections/CSV/CsvConnection";
 
-export interface ICsvStoreConfiguration {
+export interface ICsvStoreConfiguration extends IBaseConnectionConfiguration {
   resourceUrl: string;
   connection: string;
 }
@@ -14,23 +16,28 @@ export interface ICsvParseResult {
 
 export default class CsvStore extends BaseDatasource {
   private connection: any;
-  private resourceUrl: string;
+  private resourceUrl: ComputedString;
 
   constructor(configuration: ICsvStoreConfiguration) {
-    super();
-    
+    super(configuration);
+
     this.connection = configuration.connection;
-    this.resourceUrl = configuration.resourceUrl;
+
+    this.resourceUrl = super.initVariable(configuration.resourceUrl);
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
+    }
   }
 
   async getOriginalData() {
-    const connectionRepository = (this as any).connectionRepository;
+    const connectionRepository = this.connectionRepository;
     if (!connectionRepository) {
       throw new Error('ConnectionRepository is not provided to Store Classes');
     }
 
-    const connection = connectionRepository.getConnection(this.connection);
-    const req = await connection.fetch({ url: this.resourceUrl });
+    const connection = connectionRepository.getConnection(this.connection) as CsvConnection;
+    const req = await connection.fetch({ url: this.resourceUrl.value });
 
     if (!req.ok) return [];
 
@@ -40,13 +47,13 @@ export default class CsvStore extends BaseDatasource {
   }
 
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
-    const connectionRepository = (this as any).connectionRepository;
+    const connectionRepository = this.connectionRepository;;
     if (!connectionRepository) {
       throw new Error('ConnectionRepository is not provided to Store Classes');
     }
 
-    const connection = connectionRepository.getConnection(this.connection);
-    const req = await connection.fetch({ url: this.resourceUrl });
+    const connection = connectionRepository.getConnection(this.connection) as CsvConnection;
+    const req = await connection.fetch({ url: this.resourceUrl.value });
 
     if (!req.ok) return null as unknown as DataMap[T];
 
@@ -69,7 +76,9 @@ export default class CsvStore extends BaseDatasource {
     console.warn(`Event "${event}" is not available for this type of store`, params)
   };
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: ICsvStoreConfiguration) {
     if (!configuration.connection) {

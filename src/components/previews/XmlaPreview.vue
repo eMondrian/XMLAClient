@@ -9,19 +9,18 @@ Contributors: Smart City Jena
 
 */
 <script setup lang="ts">
-import { onMounted, shallowRef, getCurrentInstance, watch, ref } from 'vue';
+import { onMounted, shallowRef, getCurrentInstance, watch, ref, computed } from 'vue';
 
 import MonacoEditor from '../common/monacoEditor/MonacoEditor.vue';
 import MetadataTree from '../XMLA/MetadataTree.vue';
 import QueryDesigner from '../XMLA/QueryDesigner.vue';
-import type XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
+import XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
 import PivotTable from '../XMLA/PivotTable/PivotTable.vue';
-import type XmlaStore from '@/plugins/data/stores/XMLA/XmlaStore';
+import useTemporaryStore from '@/composables/useTemporaryStore';
+
 const props = defineProps<{ dataSource: any }>();
 
-const instance = getCurrentInstance();
-const constructor = instance?.appContext.config.globalProperties.datasourceConfig.availableDatasources['XMLA'];
-const tempStore = shallowRef(null as any);
+const { tempStore } = useTemporaryStore(props.dataSource.type, props.dataSource);
 
 const data = ref(null as unknown as IPivotTable);
 const connection = ref(null as unknown as XmlaConnection);
@@ -39,28 +38,26 @@ const queryConfig = ref({
   measures: props.dataSource.config.requestParams?.measures || [],
 });
 
+const metadataStore = computed(() => {
+  return {
+    connection: connection.value,
+    metadataStore: connection.value.metadata,
+  }
+});
+
 const drilldownState = ref(props.dataSource.config.drilldownState || {});
 
+watch(() => tempStore, async () => {
+  await updateData();
+}, { deep: true });
+
 const updateData = async () => {
-  if (constructor.validateConfiguration(props.dataSource.config)) {
-    const config = {
-      ...props.dataSource.config,
-      requestParams: queryConfig.value,
-      mdx: query.value,
-      drilldownState: drilldownState.value,
-    };
-
-    tempStore.value = new constructor(config) as XmlaStore;
     const req = await tempStore.value.getData('PivotTable');
-
     data.value = req;
-
     if (props.dataSource.config.useVisualEditor) {
       query.value = await tempStore.value.getMdxRequest();
     }
-
     connection.value = tempStore.value.getConnection();
-  }
 }
 
 onMounted(async () => {
@@ -100,7 +97,7 @@ const onExpand = async (e: any) => {
   updateData();
 }
 
-const onCollapse = async (e) => {
+const onCollapse = async (e: any) => {
   drilldownState.value = tempStore.value.collapse(e);
 
   emit('updateConfig', {
@@ -129,8 +126,8 @@ const onCollapse = async (e) => {
             <VaCheckbox v-model="props.dataSource.config.useVisualEditor" class="mt-2" label="Use query designer" />
           </div>
         </template>
-        <template v-if="currentTab === 0">
-          <MonacoEditor v-model="query" height="100%" width="100%" />
+        <template v-if="currentTab === 0 && connection">
+          <MonacoEditor v-model="query" height="100%" width="100%" language="mdx" :supported-languages="[ 'mdx' ]" :metadata="metadataStore" />
         </template>
         <template v-else-if="currentTab === 1">
           <div class="w-full h-full">

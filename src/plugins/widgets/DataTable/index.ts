@@ -1,20 +1,21 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import DataTable from './DataTable.vue';
+import DataTable from "./DataTable.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import data_table from "./data_table.svg";
 
-const DataTablePlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('DataTable', DataTable);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
+const DataTablePlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['DataTable'] = DataTable;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        DataTable: DataTable
-      };
-    }
-  }
+        widgetRepository.registerWidget("DataTable", {
+            component: DataTable,
+            supportedDSTypes: ["DataTable"],
+            icon: data_table,
+        });
+    },
 });
 
 export default DataTablePlugin;

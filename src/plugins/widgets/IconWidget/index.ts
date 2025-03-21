@@ -1,29 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import IconWidget from './IconWidget.vue';
-import IconWidgetSettings from './IconWidgetSettings.vue';
+import IconWidget from "./IconWidget.vue";
+import IconWidgetSettings from "./IconWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import icon from "./icon.svg";
 
+const IconWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-
-const IconWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('IconWidget', IconWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
-
-    if (availableWidgets) {
-      availableWidgets['IconWidget'] = IconWidget;
-      availableWidgetsSettings['IconWidget'] = IconWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        IconWidget: IconWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        IconWidget: IconWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("IconWidget", {
+            component: IconWidget,
+            settingsComponent: IconWidgetSettings,
+            supportedDSTypes: ["None"],
+            icon: icon,
+        });
+    },
 });
 
 export default IconWidgetPlugin;

@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { useDataSourcesStore } from '@/plugins/data/DatasourcePinia';
-import { computed } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useSerialization } from '@/composables/useSerialization';
 import { useConfigurationsStore } from '@/plugins/data/ConfigurationPinia';
 import { useConnectionsStore } from '@/plugins/data/ConnectionsPinia';
 import { useWidgetsStore } from '@/plugins/data/WidgetsPinia';
 import { useLayoutStore } from '@/plugins/data/LayoutsPinia';
+
+import LoadModal from "@/components/modals/LoadSave/LoadModal.vue";
 
 const { dataSources } = useDataSourcesStore();
 const { configurations } = useConfigurationsStore();
@@ -21,6 +23,7 @@ const { getState, loadState } = useSerialization({
   layout: layout,
 })
 const route = useRoute();
+const loadModalRef = ref(null as unknown as Ref<any>);
 
 const headerTitle = computed(() => {
   switch(route.name) {
@@ -41,13 +44,14 @@ const headerTitle = computed(() => {
 
 const saveStateToStorage = () => {
   const serState = getState();
-  localStorage.setItem("APP_STATE", serState);
+  loadModalRef.value?.run({ context: 'SAVE', state: serState });
 };
 
-const loadStateFromStorage = () => {
-  const state = localStorage.getItem("APP_STATE");
-
-  loadState(state);
+const loadStateFromStorage = async () => {
+  const state = await loadModalRef.value?.run({ context: 'LOAD', state: null });
+  if (state) {
+    loadState(state);
+  }
 }
 </script>
 
@@ -67,6 +71,10 @@ const loadStateFromStorage = () => {
       </va-navbar-item>
     </template>
   </va-navbar>
+  <Teleport to="body">
+      <!-- <SaveModal ref="loadsaveModal" /> -->
+      <LoadModal ref="loadModalRef" />
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>

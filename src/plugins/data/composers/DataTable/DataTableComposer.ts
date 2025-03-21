@@ -1,17 +1,21 @@
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
 
-export interface IDataTableComposerConfiguration {
+export interface IDataTableComposerConfiguration extends IBaseConnectionConfiguration {
   connectedDatasources: string[];
   composeBy: string;
 }
 
 export default class DataTableComposer extends BaseDatasource {
+  destroy(): void {
+    throw new Error("Method not implemented.");
+  }
+
   private connectedDatasources: string[];
   private composeBy: string;
   public static availableTypes = ['REST', "CSV", "XMLA"];
 
   constructor(configuration: IDataTableComposerConfiguration) {
-    super();
+    super(configuration);
 
     this.connectedDatasources = configuration.connectedDatasources;
 

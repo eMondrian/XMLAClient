@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { getCurrentInstance } from 'vue';
 import { useDataSourcesStore } from "@/plugins/data/DatasourcePinia";
 
 const { dataSources, createDataSource, removeDataSource } = useDataSourcesStore();
-const instance = getCurrentInstance();
-
-const availableDatasources = Object.keys(instance?.appContext.config.globalProperties.connectionsConfig.availableConnections);
 
 const addDataSource = () => {
     createDataSource(null);

@@ -1,29 +1,32 @@
-import { shallowRef, getCurrentInstance, onMounted, watch, onBeforeUnmount } from 'vue';
+import type { DatasourceFactory } from '@/plugins/data/DataSourceFactory';
+import { shallowRef, onMounted, watch, onBeforeUnmount } from 'vue';
+import container from "@/config/inversify";
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import DatasourceRepository from '@/plugins/data/DatasourceRepository';
 
 export default function useTemporaryStore(type: string, settings: any) {
     const tempStore = shallowRef(null as any);
-    const instance = getCurrentInstance();
 
-    const constructor = instance?.appContext.config.globalProperties.datasourceConfig.availableDatasources[type];
+    const datasourceRepository = container.get<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository);
+    const identifiers = datasourceRepository.getDatasourceIdentifiers(type);
+
+    console.log(identifiers);
+
+    const datasourceFactory = container.get<DatasourceFactory>(SERVICE_IDENTIFIER.DatasourceFactory);
 
     onMounted(async () => {
-        if (constructor.validateConfiguration(settings.config)) {
-            tempStore.value = new constructor(settings.config);
-        }
-    });    
+        tempStore.value = datasourceFactory.createDatasource(identifiers.Store, settings.config);
+    });
 
     watch(() => settings, async () => {
         tempStore.value?.destroy();
-
-        if (constructor.validateConfiguration(settings.config)) {
-            tempStore.value = new constructor(settings.config);
-        }
+        tempStore.value = datasourceFactory.createDatasource(identifiers.Store, settings.config);
     }, { deep: true });
 
     onBeforeUnmount(() => {
         tempStore.value?.destroy();
     });
-    
+
     return {
         tempStore,
     }

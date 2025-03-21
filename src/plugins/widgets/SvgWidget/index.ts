@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import SvgWidgetSettings from './SvgWidgetSettings.vue';
-import SvgWidget from './SvgWidget.vue';
+import SvgWidgetSettings from "./SvgWidgetSettings.vue";
+import SvgWidget from "./SvgWidget.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import svg_icon from "./svg_icon.svg";
 
-const SvgWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('SvgWidget', SvgWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const SvgWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['SvgWidget'] = SvgWidget;
-      availableWidgetsSettings['SvgWidget'] = SvgWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        SvgWidget: SvgWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        SvgWidget: SvgWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("SvgWidget", {
+            component: SvgWidget,
+            settingsComponent: SvgWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: svg_icon,
+        });
+    },
 });
 
 export default SvgWidgetPlugin;

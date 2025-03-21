@@ -1,19 +1,12 @@
 import { ref, getCurrentInstance } from 'vue'
 import { defineStore } from 'pinia'
-
-export interface ConnectionDTO {
-  uid: string;
-  name: string;
-  type: string;
-  config?: {
-    [key: string]: any;
-  },
-}
+import container from '@/config/inversify';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import ConnectionRepository from './ConnectionRepository';
 
 export const useConnectionsStore = defineStore('connections', () => {
   const connections = ref([] as ConnectionDTO[]);
-  const instance = getCurrentInstance();
-  const connectionRepository = instance?.appContext.config.globalProperties.connectionRepository;
+  const connectionRepository = container.get<ConnectionRepository>(SERVICE_IDENTIFIER.ConnectionRepository);
 
   const createConnection = (type: any, config: any = {}) => {
     const uid = Math.random().toString(36).substring(7);

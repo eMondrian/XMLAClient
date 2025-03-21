@@ -13,22 +13,26 @@ import SvgWidgetPlugin from "./plugins/widgets/SvgWidget";
 import IconWidgetPlugin from "./plugins/widgets/IconWidget";
 import ImageWidgetPlugin from "./plugins/widgets/ImageWidget";
 import VideoWidgetPlugin from "./plugins/widgets/VideoWidget";
+import container from "./config/inversify";
+import { WidgetRepository } from "./plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
 
-interface WidgetsConfig {
-  datasourceRepository: DatasourceRepository;
-}
+const widgetRepository = new WidgetRepository();
+container
+    .bind<WidgetRepository>(SERVICE_IDENTIFIER.WidgetRepository)
+    .toConstantValue(widgetRepository);
 
-export function initWidgets(app: App, { datasourceRepository }: WidgetsConfig) {
-  app.use(SampleWidget(datasourceRepository));
-  app.use(DataTable(datasourceRepository));
-  app.use(TextWidget(datasourceRepository));
-  app.use(PivotTableWidgetPlugin(datasourceRepository));
-  app.use(ChartWidget(datasourceRepository));
-  app.use(ProgressWidgetPlugin(datasourceRepository));
-  app.use(RepeatableSvgWidgetPlugin(datasourceRepository));
-  app.use(RichTextWidgetPlugin(datasourceRepository));
-  app.use(SvgWidgetPlugin(datasourceRepository));
-  app.use(IconWidgetPlugin(datasourceRepository));
-  app.use(ImageWidgetPlugin(datasourceRepository));
-  app.use(VideoWidgetPlugin(datasourceRepository));
+export function initWidgets(app: App) {
+    app.use(SampleWidget());
+    app.use(DataTable());
+    app.use(TextWidget());
+    app.use(PivotTableWidgetPlugin());
+    app.use(ChartWidget());
+    app.use(ProgressWidgetPlugin());
+    app.use(RepeatableSvgWidgetPlugin());
+    app.use(RichTextWidgetPlugin());
+    app.use(SvgWidgetPlugin());
+    app.use(IconWidgetPlugin());
+    app.use(ImageWidgetPlugin());
+    app.use(VideoWidgetPlugin());
 }

@@ -2,9 +2,9 @@ import { getMdxRequest } from "@/utils/MdxRequests/MdxRequestConstructor";
 import type XmlaConnection from "../../connections/XMLA/XmlaConnection";
 import { parseMdxRequest, parseRequestToTable } from "@/utils/MdxRequests/MdxRequestHelper";
 import DrilldownHandler from "./DrilldownHandler";
-import BaseDatasource from "../../BaseDatasource";
+import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
 
-export interface IXmlaStoreConfiguration {
+export interface IXmlaStoreConfiguration extends IBaseConnectionConfiguration {
   connection: string;
   requestParams: XMLARequestParams;
   useVisualEditor: boolean;
@@ -32,7 +32,7 @@ export default class XmlaStore extends BaseDatasource {
   private drilldownHandler: DrilldownHandler | null = null;
 
   constructor(configuration: IXmlaStoreConfiguration) {
-    super();
+    super(configuration);
 
     this.connection = configuration.connection;
 
@@ -53,6 +53,10 @@ export default class XmlaStore extends BaseDatasource {
 
     if (configuration.requestParams) {
       this.requestParams = configuration.requestParams;
+    }
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
     }
   }
 
@@ -77,8 +81,10 @@ export default class XmlaStore extends BaseDatasource {
         mdx: request
       }
     });
+
     if (type === 'PivotTable') {
       response = this.parseToPivotTable(mdxResponse);
+      if (!response) return null as unknown as DataMap[T];
 
       response.tableState = {
         rowsExpandedMembers: this.drilldownHandler?.rowsExpandedMembers || [],
@@ -159,7 +165,9 @@ export default class XmlaStore extends BaseDatasource {
     return parseRequestToTable(mdxResponce, 0);
   }
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: IXmlaStoreConfiguration) {
     if (!configuration?.connection) {

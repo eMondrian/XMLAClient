@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useConnectionsStore } from "@/plugins/data/ConnectionsPinia";
-import { onMounted, ref, computed, watch, getCurrentInstance } from "vue";
+import { onMounted, ref, computed } from "vue";
+import ConnectionRepository from "@/plugins/data/ConnectionRepository";
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import container from "@/config/inversify";
 
 const props = defineProps<{
   itemId: string;
@@ -11,10 +14,11 @@ const emit = defineEmits(['close']);
 const { connections, updateConnection } = useConnectionsStore();
 const connectionProxy = ref({} as any);
 
-const instance = getCurrentInstance();
-const connectionConfig = instance?.appContext.config.globalProperties.connectionsConfig;
-const availableConnections = Object.keys(instance?.appContext.config.globalProperties.connectionsConfig.availableConnections);
+const connectionRepository = container.get<ConnectionRepository>(SERVICE_IDENTIFIER.ConnectionRepository);
 
+const availableConnections = computed(() => {
+  return connectionRepository.registeredConnections;
+});
 
 onMounted(() => {
   const connection = connections.find((c) => c.uid === props.itemId);
@@ -22,7 +26,13 @@ onMounted(() => {
 });
 
 const settingsComponent = computed(() => {
-  return connectionConfig.settingsComponents[connectionProxy.value.type];
+  const identifiers = connectionRepository.getConnectionIdentifiers(connectionProxy.value.type);
+
+  if (!identifiers) {
+    return null;
+  }
+
+  return container.get(identifiers.Settings);
 });
 
 const saveConnection = () => {

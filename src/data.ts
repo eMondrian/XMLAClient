@@ -1,50 +1,38 @@
 import type { App } from "vue";
-import DatasourceRepository from './plugins/data/DatasourceRepository'
-import ConnectionRepository from './plugins/data/ConnectionRepository';
+import DatasourceRepository from "./plugins/data/DatasourceRepository";
+import ConnectionRepository from "./plugins/data/ConnectionRepository";
 
-import RestConnection from './plugins/data/connections/REST/RestConnection';
-import CsvConnection from './plugins/data/connections/CSV/CsvConnection';
-import XmlaConnection from './plugins/data/connections/XMLA/XmlaConnection';
-import WSConnection from "./plugins/data/connections/WebSocket/WebSocketConnection";
+import CsvConnection from "./plugins/data/connections/CSV";
+import GraphQLConnection from "./plugins/data/connections/GraphQL";
+import RestConnection from "./plugins/data/connections/REST";
+import WebSocketConnection from "./plugins/data/connections/WebSocket";
+import MQTTConnection from "./plugins/data/connections/MQTT";
+import XMLAConnection from "./plugins/data/connections/XMLA";
+import RSSConnection from './plugins/data/connections/RSS';
 
-import RestConnectionSettings from './plugins/data/connections/REST/RestConnectionSettings.vue'
-import CsvConnectionSettings from './plugins/data/connections/CSV/CsvConnectionSettings.vue'
-import XmlaConnectionSettings from './plugins/data/connections/XMLA/XmlaConnectionSettings.vue'
-import WebSocketConnectionSettings from "./plugins/data/connections/WebSocket/WebSocketConnectionSettings.vue";
+import ComputedVariable from "@/components/variables/ComputedVariable.vue";
+import ConstantVariable from "@/components/variables/ConstantVariable.vue";
+import QueryVariable from "@/components/variables/QueryVariable.vue";
+import TimeVariable from "@/components/variables/TimeVariable.vue";
+import RequestVariable from "@/components/variables/RequestVariable.vue";
+import BrowserPropertiesVariable from "@/components/variables/BrowserPropertiesVariable.vue";
 
-import RestStore from '@/plugins/data/stores/REST/RestStore';
-import CsvStore from '@/plugins/data/stores/CSV/CsvStore';
-import XmlaStore from "./plugins/data/stores/XMLA/XmlaStore";
-import DataTableComposer from './plugins/data/composers/DataTable/DataTableComposer'
-import ChartComposer from "@/plugins/data/composers/Chart/ChartComposer"
+import { SourceType } from "@/types/enum";
+import { DatasourceFactory } from "./plugins/data/DataSourceFactory";
+import type { VariableStorage } from "./plugins/variables/VariableStorage";
 
-import DataTableComposerSettings from './plugins/data/composers/DataTable/DataTableComposerSettings.vue'
-import RestStoreSettings from './plugins/data/stores/REST/RestStoreSettings.vue'
-import CsvStoreSettings from './plugins/data/stores/CSV/CsvStoreSettings.vue'
-import XmlaStoreSettings from './plugins/data/stores/XMLA/XmlaStoreSettings.vue'
-import ChartComposerSettings from "./plugins/data/composers/Chart/ChartComposerSettings.vue";
+import Rest from "./plugins/data/stores/REST";
+import CSV from "./plugins/data/stores/CSV";
+import container from "./config/inversify";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import GraphQL from "./plugins/data/stores/GraphQL";
+import WS from "./plugins/data/stores/WS";
+import XMLA from "./plugins/data/stores/XMLA";
+import RSS from "./plugins/data/stores/RSS";
+import SQL_XMLA from "./plugins/data/stores/SQL_XMLA";
+import { ConnectionFactory } from "./plugins/data/ConnectionFactory";
 
-import CsvPreview from "@/components/previews/CsvPreview.vue";
-import RestPreview from "@/components/previews/RestPreview.vue";
-import XmlaPreview from "@/components/previews/XmlaPreview.vue";
-import DataTablePreview from "@/components/previews/DataTablePreview.vue";
-import ChartComposerPreview from "@/components/previews/ChartComposerPreview.vue";
-
-import ComputedVariable from '@/components/variables/ComputedVariable.vue';
-import ConstantVariable from '@/components/variables/ConstantVariable.vue';
-import QueryVariable from '@/components/variables/QueryVariable.vue';
-import TimeVariable from '@/components/variables/TimeVariable.vue';
-import RequestVariable from '@/components/variables/RequestVariable.vue';
-import BrowserPropertiesVariable from '@/components/variables/BrowserPropertiesVariable.vue';
-
-import { SourceType } from '@/types/enum';
-import WSStore from "./plugins/data/stores/WS/WSStore";
-import WSStoreSettings from "./plugins/data/stores/WS/WSStoreSettings.vue";
-import WSPreview from "./components/previews/WSPreview.vue";
-import MQTTConnection from "./plugins/data/connections/MQTT/MQTTConnection";
-import MQTTConnectionSettings from "./plugins/data/connections/MQTT/MqttConnectionSettings.vue";
-
-export function initData(app: App) {
+export function initData(app: App, variableStorage: VariableStorage) {
   const componentMap = {
     [SourceType.Constant]: ConstantVariable,
     [SourceType.Expression]: ComputedVariable,
@@ -56,77 +44,68 @@ export function initData(app: App) {
   
   app.config.globalProperties.componentMap = componentMap;
 
-  const availableConnections = {
-      REST: RestConnection,
-      CSV: CsvConnection,
-      XMLA: XmlaConnection,
-      WS: WSConnection,
-      MQTT: MQTTConnection,
-  }
-
-  const connectionVisualConfig = {
-    REST: RestConnectionSettings,
-    CSV: CsvConnectionSettings,
-    XMLA: XmlaConnectionSettings,
-    WS: WebSocketConnectionSettings,
-    MQTT: MQTTConnectionSettings,
-  }
-
-  const connectionRepository = new ConnectionRepository(availableConnections);
-  app.config.globalProperties.connectionRepository = connectionRepository;
-  app.config.globalProperties.connectionsConfig = {
-      availableConnections,
-      settingsComponents: connectionVisualConfig
-  };
+  const connectionRepository = new ConnectionRepository();
+  initConnection(connectionRepository, CsvConnection);
+  initConnection(connectionRepository, GraphQLConnection);
+  initConnection(connectionRepository, RestConnection);
+  initConnection(connectionRepository, WebSocketConnection);
+  initConnection(connectionRepository, MQTTConnection);
+  initConnection(connectionRepository, XMLAConnection);
+  initConnection(connectionRepository, RSSConnection);
   
-  const availableDatasources = {
-      REST: RestStore,
-      CSV: CsvStore,
-      "DataTable Composer": DataTableComposer,
-      XMLA: XmlaStore,
-      "Chart Composer": ChartComposer,
-      WS: WSStore,
-  };
-  const datasourcesVisualConfig = {
-      "DataTable Composer": DataTableComposerSettings,
-      REST: RestStoreSettings,
-      CSV: CsvStoreSettings,
-      XMLA: XmlaStoreSettings,
-      "Chart Composer": ChartComposerSettings,
-      WS: WSStoreSettings,
-  }
-  const datasourcesPreviewConfig = {
-      "DataTable Composer": DataTablePreview,
-      REST: RestPreview,
-      CSV: CsvPreview,
-      XMLA: XmlaPreview,
-      "Chart Composer": ChartComposerPreview,
-      WS: WSPreview,
-  }
 
-  const datasourceRepository = new DatasourceRepository(availableDatasources);
-  app.config.globalProperties.datasourceRepository = datasourceRepository;
-  app.config.globalProperties.datasourceConfig = {
-      availableDatasources,
-      settingsComponents: datasourcesVisualConfig,
-      previewComponents: datasourcesPreviewConfig
-  };
-  
-  (RestStore.prototype as any).connectionRepository = connectionRepository;
-  (CsvStore.prototype as any).connectionRepository = connectionRepository;
-  (DataTableComposer.prototype as any).connectionRepository = connectionRepository;
-  (ChartComposer.prototype as any).connectionRepository = connectionRepository;
-  (XmlaStore.prototype as any).connectionRepository = connectionRepository;
-  (WSStore.prototype as any).connectionRepository = connectionRepository;
-  
-  (RestStore.prototype as any).datasourceRepository = datasourceRepository;
-  (CsvStore.prototype as any).datasourceRepository = datasourceRepository;
-  (XmlaStore.prototype as any).datasourceRepository = datasourceRepository;
-  (DataTableComposer.prototype as any).datasourceRepository = datasourceRepository;
-  (ChartComposer.prototype as any).datasourceRepository = datasourceRepository;
-  (WSStore.prototype as any).datasourceRepository = datasourceRepository;
+  const datasourceRepository = new DatasourceRepository();
+  container.bind<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository).toConstantValue(datasourceRepository);
+  container.bind<ConnectionRepository>(SERVICE_IDENTIFIER.ConnectionRepository).toConstantValue(connectionRepository);
 
-  return {
-    datasourceRepository
-  }
+  initDataSource(datasourceRepository, Rest);
+  initDataSource(datasourceRepository, CSV);
+  initDataSource(datasourceRepository, GraphQL);
+  initDataSource(datasourceRepository, WS);
+  initDataSource(datasourceRepository, XMLA);
+  initDataSource(datasourceRepository, RSS);
+  initDataSource(datasourceRepository, SQL_XMLA);
+
+    const connectionFactory = new ConnectionFactory();
+    const datasourceFactory = new DatasourceFactory();
+
+    container
+        .bind<ConnectionFactory>(SERVICE_IDENTIFIER.ConnectionFactory)
+        .toConstantValue(connectionFactory);
+    container
+        .bind<DatasourceFactory>(SERVICE_IDENTIFIER.DatasourceFactory)
+        .toConstantValue(datasourceFactory);
+
+    return {
+        datasourceRepository,
+    };
+}
+
+function initDataSource(
+    datasourceRepository: DatasourceRepository,
+    datasourcePlugin: DataSourcePlugin,
+) {
+    container.bind(datasourcePlugin.Identifiers.Store).toConstructor(datasourcePlugin.Store);
+    container.bind(datasourcePlugin.Identifiers.Preview).toConstructor(datasourcePlugin.Preview);
+    container.bind(datasourcePlugin.Identifiers.Settings).toConstructor(datasourcePlugin.Settings);
+
+    datasourceRepository.registerDatasourceType(
+        datasourcePlugin.Name,
+        datasourcePlugin.Identifiers,
+    );
+}
+
+function initConnection(
+    connectionRepository: ConnectionRepository,
+    connectionPlugin: ConnectionPlugin,
+) {
+    container
+        .bind(connectionPlugin.Identifiers.Connection)
+        .toConstructor(connectionPlugin.Connection);
+    container.bind(connectionPlugin.Identifiers.Settings).toConstructor(connectionPlugin.Settings);
+
+    connectionRepository.registerConnectionType(
+        connectionPlugin.Name,
+        connectionPlugin.Identifiers,
+    );
 }

@@ -1,27 +1,21 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import PivotTableWidget from './PivotTableWidget.vue';
-// import TextWidgetSettings from './TextWidgetSettings.vue';
+import PivotTableWidget from "./PivotTableWidget.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import pivot_table from "./pivot_table.svg";
 
-const PivotTableWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('PivotTableWidget', PivotTableWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    // const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const PivotTableWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['PivotTableWidget'] = PivotTableWidget;
-      // availableWidgetsSettings['PivotTableWidget'] = PivotTableWidget;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        PivotTableWidget: PivotTableWidget
-      };
-
-      // app.config.globalProperties.availableWidgetsSettings = {
-      //   PivotTableWidget: PivotTableWidget
-      // }
-    }
-  }
+        widgetRepository.registerWidget("PivotTable", {
+            component: PivotTableWidget,
+            supportedDSTypes: ["PivotTable"],
+            icon: pivot_table,
+        });
+    },
 });
 
 export default PivotTableWidgetPlugin;

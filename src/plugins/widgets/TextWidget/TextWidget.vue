@@ -9,14 +9,31 @@ Contributors: Smart City Jena
 
 -->
 <script lang="ts" setup>
-import { computed, toRefs } from "vue";
-import { useDatasourceRepository } from '@/plugins/widgets/composables/datasourceRepository';
+import { computed, toRefs, onMounted } from "vue";
+import { useDatasourceRepository } from "@/plugins/widgets/composables/datasourceRepository";
 import type { ITextSettings } from "@/types/Widgets";
 
-const props = defineProps<{ datasourceId: string, config: ITextSettings }>();
+const props = defineProps<{ datasourceId: string; config: ITextSettings }>();
 const { datasourceId, config } = toRefs(props);
 
 const { data } = useDatasourceRepository(datasourceId, "object");
+
+const defaultConfig: ITextSettings = {
+    text: "",
+    fontSize: 12,
+    fontColor: "#000",
+    fontWeight: "normal",
+    fontStyle: "normal",
+    textDecoration: "none",
+    horizontalAlign: "Left",
+    verticalAlign: "Top",
+};
+
+onMounted(async () => {
+    if (config.value) {
+        Object.assign(config.value, { ...defaultConfig, ...config.value });
+    }
+});
 
 const fontSize = computed(() => {
     return config.value.fontSize;
@@ -57,7 +74,7 @@ const textDecoration = computed(() => {
     >
         <div class="component">
             <!-- {{ config.text }} -->
-              {{ data }}
+            {{ data }}
         </div>
     </div>
 </template>
