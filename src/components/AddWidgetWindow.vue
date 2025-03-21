@@ -17,6 +17,7 @@ const dataSourceTypeToDataTypes = {
     XMLA: ["DataTable", "PivotTable"],
     WS: ["String", "Object", "DataTable"],
     Chart: ["ChartData"],
+    'SQL over XMLA': ["DataTable"],
 };
 
 const onDragStart = (event: DragEvent) => {
