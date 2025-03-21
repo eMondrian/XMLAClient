@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import ProgressWidget from './ProgressWidget.vue';
-import ProgressWidgetSettings from './ProgressWidgetSettings.vue';
+import ProgressWidget from "./ProgressWidget.vue";
+import ProgressWidgetSettings from "./ProgressWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import progress from "./progress.svg";
 
-const ProgressWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('ProgressWidget', ProgressWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const ProgressWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['ProgressWidget'] = ProgressWidget;
-      availableWidgetsSettings['ProgressWidget'] = ProgressWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        ProgressWidget: ProgressWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        ProgressWidget: ProgressWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("ProgressWidget", {
+            component: ProgressWidget,
+            settingsComponent: ProgressWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: progress,
+        });
+    },
 });
 
 export default ProgressWidgetPlugin;

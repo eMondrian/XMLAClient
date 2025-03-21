@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import RepeatableSvgWidget from './RepeatableSvgWidget.vue';
-import RepeatableSvgWidgetSettings from './RepeatableSvgWidgetSettings.vue';
+import RepeatableSvgWidget from "./RepeatableSvgWidget.vue";
+import RepeatableSvgWidgetSettings from "./RepeatableSvgWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import repeatable_svg from "./repeatable_svg.svg";
 
-const RepeatableSvgWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('RepeatableSvgWidget', RepeatableSvgWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const RepeatableSvgWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['RepeatableSvgWidget'] = RepeatableSvgWidget;
-      availableWidgetsSettings['RepeatableSvgWidget'] = RepeatableSvgWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        RepeatableSvgWidget: RepeatableSvgWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        RepeatableSvgWidget: RepeatableSvgWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("RepeatableSvgWidget", {
+            component: RepeatableSvgWidget,
+            settingsComponent: RepeatableSvgWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: repeatable_svg,
+        });
+    },
 });
 
 export default RepeatableSvgWidgetPlugin;

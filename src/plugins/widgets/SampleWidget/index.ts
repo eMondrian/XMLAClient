@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import SampleWidget from './SampleWidget.vue';
-import SampleWidgetSettings from './SampleWidgetSettings.vue';
+import SampleWidget from "./SampleWidget.vue";
+import SampleWidgetSettings from "./SampleWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import sample from "./sample.svg";
 
-const SampleWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('SampleWidget', SampleWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const SampleWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['SampleWidget'] = SampleWidget;
-      availableWidgetsSettings['SampleWidget'] = SampleWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        SampleWidget: SampleWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        SampleWidget: SampleWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("SampleWidget", {
+            component: SampleWidget,
+            settingsComponent: SampleWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: sample,
+        });
+    },
 });
 
 export default SampleWidgetPlugin;

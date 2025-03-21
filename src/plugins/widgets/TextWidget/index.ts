@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import TextWidget from './TextWidget.vue';
-import TextWidgetSettings from './TextWidgetSettings.vue';
+import TextWidget from "./TextWidget.vue";
+import TextWidgetSettings from "./TextWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import text from "./text.svg";
 
-const TextWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('TextWidget', TextWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const TextWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['TextWidget'] = TextWidget;
-      availableWidgetsSettings['TextWidget'] = TextWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        TextWidget: TextWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        TextWidget: TextWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("TextWidget", {
+            component: TextWidget,
+            settingsComponent: TextWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: text,
+        });
+    },
 });
 
 export default TextWidgetPlugin;

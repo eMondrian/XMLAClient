@@ -1,27 +1,23 @@
-import DatasourceRepository from '@/plugins/data/DatasourceRepository';
-import VideoWidget from './VideoWidget.vue';
-import VideoWidgetSettings from './VideoWidgetSettings.vue';
+import VideoWidget from "./VideoWidget.vue";
+import VideoWidgetSettings from "./VideoWidgetSettings.vue";
+import container from "@/config/inversify";
+import { WidgetRepository } from "@/plugins/data/WidgetRepository";
+import SERVICE_IDENTIFIER from "@/config/identifiers/services";
+import video from "./video.svg";
 
-const VideoWidgetPlugin = (datasourceRepository: DatasourceRepository) => ({
-  install(app: any) {
-    const component = app.component('VideoWidget', VideoWidget);
-    component.config.datasourceRepository = datasourceRepository;
-    const availableWidgets = app.config.globalProperties.availableWidgets;
-    const availableWidgetsSettings = app.config.globalProperties.availableWidgetsSettings;
+const VideoWidgetPlugin = () => ({
+    install() {
+        const widgetRepository = container.get<WidgetRepository>(
+            SERVICE_IDENTIFIER.WidgetRepository,
+        );
 
-    if (availableWidgets) {
-      availableWidgets['VideoWidget'] = VideoWidget;
-      availableWidgetsSettings['VideoWidget'] = VideoWidgetSettings;
-    } else {
-      app.config.globalProperties.availableWidgets = {
-        VideoWidget: VideoWidget
-      };
-
-      app.config.globalProperties.availableWidgetsSettings = {
-        VideoWidget: VideoWidgetSettings
-      }
-    }
-  }
+        widgetRepository.registerWidget("VideoWidget", {
+            component: VideoWidget,
+            settingsComponent: VideoWidgetSettings,
+            supportedDSTypes: ["None", "String", "Object"],
+            icon: video,
+        });
+    },
 });
 
 export default VideoWidgetPlugin;
