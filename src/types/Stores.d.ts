@@ -5,6 +5,8 @@ interface IDataRetrieveable {
   subscribe: (subscriber: () => any) => void;
   unsubscribe: (subscriber: () => any) => void;
   destroy: () => void;
+  startPolling: (interval: number) => void;
+  stopPolling: () => void;
 }
 
 interface IDatasourceRepository {

@@ -11,7 +11,7 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import { useConnectionsStore } from "@/plugins/data/ConnectionsPinia";
 import { useDataSourcesStore } from "@/plugins/data/DatasourcePinia";
-import { onMounted, ref, computed, getCurrentInstance } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { cloneDeep } from "lodash";
 import container from "@/config/inversify";
 import SERVICE_IDENTIFIER from '@/config/identifiers/services';
@@ -57,7 +57,7 @@ const settingsComponent = computed(() => {
   if (!identifiers) {
     return null;
   }
-  
+
   return container.get(identifiers.Settings);
 });
 

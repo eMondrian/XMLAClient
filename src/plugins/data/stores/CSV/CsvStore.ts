@@ -20,10 +20,14 @@ export default class CsvStore extends BaseDatasource {
 
   constructor(configuration: ICsvStoreConfiguration) {
     super(configuration);
-    
+
     this.connection = configuration.connection;
 
     this.resourceUrl = super.initVariable(configuration.resourceUrl);
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
+    }
   }
 
   async getOriginalData() {
@@ -72,7 +76,9 @@ export default class CsvStore extends BaseDatasource {
     console.warn(`Event "${event}" is not available for this type of store`, params)
   };
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: ICsvStoreConfiguration) {
     if (!configuration.connection) {

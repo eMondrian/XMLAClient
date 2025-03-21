@@ -16,6 +16,11 @@ export default abstract class BaseDatasource extends UsesComputedVariable implem
   protected connectionRepository: ConnectionRepository;
   protected variableStorage: VariableStorage;
 
+  protected pollingInterval: number = 5000;
+  private pollingActive = false;
+  private pollingIntervalId: number | null = null;
+  protected pollingEnabled!: boolean;
+
   constructor(configuration: IBaseConnectionConfiguration) {
     super(configuration);
 
@@ -27,6 +32,7 @@ export default abstract class BaseDatasource extends UsesComputedVariable implem
     this.datasourceRepository = configuration.datasourceRepository;
     this.connectionRepository = configuration.connectionRepository;
     this.variableStorage = configuration.variableStorage;
+    this.pollingEnabled = configuration.pollingEnabled ?? false;
   }
 
   subscribe(subscriber: () => any) {
@@ -42,7 +48,38 @@ export default abstract class BaseDatasource extends UsesComputedVariable implem
       subscriber();
     })
   }
-  
+
+  startPolling(interval: number) {
+    this.stopPolling();
+    if (this.pollingActive) return;
+
+    this.pollingActive = true;
+    this.pollingInterval = interval;
+
+    this.pollingIntervalId = window.setInterval(async () => {
+      if (!this.pollingActive) return;
+      try {
+        const resp = await this.getOriginalData();
+        console.log(resp)
+        this.notify();
+      } catch (error) {
+        console.warn("Polling error", error);
+      }
+    }, this.pollingInterval);
+
+    console.log("Started polling", this.pollingIntervalId);
+  }
+
+  stopPolling() {
+    console.log("Stopping polling", this.pollingIntervalId);
+    this.pollingActive = false;
+
+    if (this.pollingIntervalId !== null) {
+      window.clearInterval(this.pollingIntervalId);
+      this.pollingIntervalId = null;
+    }
+  }
+
   static validateConfiguration(config: any): boolean {
     return true;
   };

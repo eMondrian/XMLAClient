@@ -16,13 +16,17 @@ export default class RestStore extends BaseDatasource {
 
   constructor(configuration: IRestStoreConfiguration) {
     super(configuration);
-    
+
     this.connection = configuration.connection;
     // this.resourceUrl = configuration.resourceUrl;
 
     this.resourceUrl = super.initVariable(configuration.resourceUrl);
 
     this.selectedJSONValue = configuration.selectedJSONValue;
+    this.pollingInterval = configuration.pollingInterval ?? 5000;
+    if (this.pollingEnabled) {
+        this.startPolling(this.pollingInterval);
+    }
   }
 
   async getData<T extends keyof DataMap>(type: T): Promise<DataMap[T]> {
@@ -113,7 +117,9 @@ export default class RestStore extends BaseDatasource {
     console.warn(`Event "${event}" is not available for this type of store`, params)
   };
 
-  destroy(): void {}
+  destroy(): void {
+    this.stopPolling();
+  }
 
   static validateConfiguration(configuration: IRestStoreConfiguration) {
     if (!configuration.connection) {

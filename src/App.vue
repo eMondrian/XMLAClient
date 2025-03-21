@@ -4,6 +4,7 @@ import HeaderBar from './components/common/HeaderBar.vue';
 import { ref } from 'vue';
 
 const isSidebarHovered = ref();
+console.log(window)
 </script>
 
 <template>

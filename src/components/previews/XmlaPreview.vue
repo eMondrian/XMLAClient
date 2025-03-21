@@ -9,12 +9,12 @@ Contributors: Smart City Jena
 
 */
 <script setup lang="ts">
-import { onMounted, shallowRef, getCurrentInstance, watch, ref } from 'vue';
+import { onMounted, shallowRef, getCurrentInstance, watch, ref, computed } from 'vue';
 
 import MonacoEditor from '../common/monacoEditor/MonacoEditor.vue';
 import MetadataTree from '../XMLA/MetadataTree.vue';
 import QueryDesigner from '../XMLA/QueryDesigner.vue';
-import type XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
+import XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
 import PivotTable from '../XMLA/PivotTable/PivotTable.vue';
 import useTemporaryStore from '@/composables/useTemporaryStore';
 
@@ -36,6 +36,13 @@ const queryConfig = ref({
   rows: props.dataSource.config.requestParams?.rows || [],
   columns: props.dataSource.config.requestParams?.columns || [],
   measures: props.dataSource.config.requestParams?.measures || [],
+});
+
+const metadataStore = computed(() => {
+  return {
+    connection: connection.value,
+    metadataStore: connection.value.metadata,
+  }
 });
 
 const drilldownState = ref(props.dataSource.config.drilldownState || {});
@@ -119,8 +126,8 @@ const onCollapse = async (e: any) => {
             <VaCheckbox v-model="props.dataSource.config.useVisualEditor" class="mt-2" label="Use query designer" />
           </div>
         </template>
-        <template v-if="currentTab === 0">
-          <MonacoEditor v-model="query" height="100%" width="100%" />
+        <template v-if="currentTab === 0 && connection">
+          <MonacoEditor v-model="query" height="100%" width="100%" language="mdx" :supported-languages="[ 'mdx' ]" :metadata="metadataStore" />
         </template>
         <template v-else-if="currentTab === 1">
           <div class="w-full h-full">

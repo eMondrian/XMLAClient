@@ -8,6 +8,7 @@ import RestConnection from "./plugins/data/connections/REST";
 import WebSocketConnection from "./plugins/data/connections/WebSocket";
 import MQTTConnection from "./plugins/data/connections/MQTT";
 import XMLAConnection from "./plugins/data/connections/XMLA";
+import RSSConnection from './plugins/data/connections/RSS';
 
 import ComputedVariable from "@/components/variables/ComputedVariable.vue";
 import ConstantVariable from "@/components/variables/ConstantVariable.vue";
@@ -27,41 +28,43 @@ import SERVICE_IDENTIFIER from "@/config/identifiers/services";
 import GraphQL from "./plugins/data/stores/GraphQL";
 import WS from "./plugins/data/stores/WS";
 import XMLA from "./plugins/data/stores/XMLA";
+import RSS from "./plugins/data/stores/RSS";
+import SQL_XMLA from "./plugins/data/stores/SQL_XMLA";
 import { ConnectionFactory } from "./plugins/data/ConnectionFactory";
 
 export function initData(app: App, variableStorage: VariableStorage) {
-    const componentMap = {
-        [SourceType.Constant]: ConstantVariable,
-        [SourceType.Expression]: ComputedVariable,
-        [SourceType.QueryParameter]: QueryVariable,
-        [SourceType.AsyncParameters]: RequestVariable,
-        [SourceType.Time]: TimeVariable,
-        [SourceType.BrowserProperties]: BrowserPropertiesVariable,
-    };
+  const componentMap = {
+    [SourceType.Constant]: ConstantVariable,
+    [SourceType.Expression]: ComputedVariable,
+    [SourceType.QueryParameter]: QueryVariable,
+    [SourceType.AsyncParameters]: RequestVariable,
+    [SourceType.Time]: TimeVariable,
+    [SourceType.BrowserProperties]: BrowserPropertiesVariable,
+  };
+  
+  app.config.globalProperties.componentMap = componentMap;
 
-    app.config.globalProperties.componentMap = componentMap;
+  const connectionRepository = new ConnectionRepository();
+  initConnection(connectionRepository, CsvConnection);
+  initConnection(connectionRepository, GraphQLConnection);
+  initConnection(connectionRepository, RestConnection);
+  initConnection(connectionRepository, WebSocketConnection);
+  initConnection(connectionRepository, MQTTConnection);
+  initConnection(connectionRepository, XMLAConnection);
+  initConnection(connectionRepository, RSSConnection);
+  
 
-    const connectionRepository = new ConnectionRepository();
-    initConnection(connectionRepository, CsvConnection);
-    initConnection(connectionRepository, GraphQLConnection);
-    initConnection(connectionRepository, RestConnection);
-    initConnection(connectionRepository, WebSocketConnection);
-    initConnection(connectionRepository, MQTTConnection);
-    initConnection(connectionRepository, XMLAConnection);
+  const datasourceRepository = new DatasourceRepository();
+  container.bind<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository).toConstantValue(datasourceRepository);
+  container.bind<ConnectionRepository>(SERVICE_IDENTIFIER.ConnectionRepository).toConstantValue(connectionRepository);
 
-    const datasourceRepository = new DatasourceRepository();
-    container
-        .bind<DatasourceRepository>(SERVICE_IDENTIFIER.DatasourceRepository)
-        .toConstantValue(datasourceRepository);
-    container
-        .bind<ConnectionRepository>(SERVICE_IDENTIFIER.ConnectionRepository)
-        .toConstantValue(connectionRepository);
-
-    initDataSource(datasourceRepository, Rest);
-    initDataSource(datasourceRepository, CSV);
-    initDataSource(datasourceRepository, GraphQL);
-    initDataSource(datasourceRepository, WS);
-    initDataSource(datasourceRepository, XMLA);
+  initDataSource(datasourceRepository, Rest);
+  initDataSource(datasourceRepository, CSV);
+  initDataSource(datasourceRepository, GraphQL);
+  initDataSource(datasourceRepository, WS);
+  initDataSource(datasourceRepository, XMLA);
+  initDataSource(datasourceRepository, RSS);
+  initDataSource(datasourceRepository, SQL_XMLA);
 
     const connectionFactory = new ConnectionFactory();
     const datasourceFactory = new DatasourceFactory();

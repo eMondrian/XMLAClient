@@ -9,11 +9,18 @@ Contributors: Smart City Jena
 
 */
 <script setup lang="ts">
+import type { MetadataStore } from '@/plugins/data/connections/XMLA/MetadataStore';
+import XmlaConnection from '@/plugins/data/connections/XMLA/XmlaConnection';
+
 interface IMonacoEditorProps {
     modelValue?: string;
-    language?: 'sql' | 'msdax';
+    language?: 'sql' | 'msdax' | 'mdx';
     theme?: 'vs-dark' | 'vs-light' | 'hc-black';
     supportedLanguages?: string[];
+    metadata: {
+        connection: XmlaConnection;
+        metadataStore: MetadataStore;
+    }
     // supportedThemes?: string[];
     // editorOptions?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
@@ -21,6 +28,7 @@ interface IMonacoEditorProps {
 import * as monaco from 'monaco-editor';
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import "@/components/common/monacoEditor/autoCompletion";
+import { initMDXCompletionProvider } from "@/components/common/monacoEditor/autoCompletion";
 
 const editorContainer = ref<HTMLDivElement | null>(null);
 let editorInstance: monaco.editor.IStandaloneCodeEditor | null = null;
@@ -32,17 +40,26 @@ const props = withDefaults(defineProps<IMonacoEditorProps>(), {
     modelValue: '',
     language: 'sql',
     theme: 'vs-dark',
-    supportedLanguages: () => ['sql', 'msdax'],
+    supportedLanguages: () => ['sql', 'msdax', 'mdx'],
     // supportedThemes: () => ['vs-dark', 'vs-light', 'hc-black'],
 });
+
+console.log(props.metadata);
 
 const selectedLanguage = ref(props.language);
 // const selectedTheme = ref(props.theme);
 
 const initEditor = async () => {
     try {
+        if (props.supportedLanguages.indexOf('mdx') !== -1) {
+            const cubes = await XmlaConnection.getCubes(props.metadata.connection.url, props.metadata.connection.catalogName);
+            initMDXCompletionProvider(cubes, props.metadata.metadataStore);
+        }
+        
         if (editorContainer.value && !editorInstance) {
             const container = editorContainer.value;
+
+            console.log(monaco.languages.getLanguages());
 
             editorInstance = monaco?.editor?.create(container, {
                 // ...props.editorOptions,

@@ -18,20 +18,22 @@ const parseMdxRequest = (mdxResponce) => {
     //     columnsDrilldownMembers: params.columnsDrilldownMembers,
     // });
 
+    if (!mdxResponce.Body.ExecuteResponse) return null;
+
     // const properties = (await metadataStorage.getMetadataStorage()).properties;
     // console.log(properties);
     const axis0 = optionalArrayToArray(
         optionalArrayToArray(
-            mdxResponce.Body.ExecuteResponse.return.root.Axes?.Axis,
+            mdxResponce.Body.ExecuteResponse.return?.root.Axes?.Axis,
         )?.[0]?.Tuples?.Tuple,
     );
     let axis1 = [] as any[];
     if (
-        mdxResponce.Body.ExecuteResponse.return.root.Axes?.Axis?.[1]?.__attrs
+        mdxResponce.Body.ExecuteResponse.return?.root?.Axes?.Axis?.[1]?.__attrs
             .name === "Axis1"
     ) {
         axis1 = optionalArrayToArray(
-            mdxResponce.Body.ExecuteResponse.return.root.Axes?.Axis?.[1]?.Tuples
+            mdxResponce.Body.ExecuteResponse.return?.root?.Axes?.Axis?.[1]?.Tuples
                 ?.Tuple,
         );
     }

@@ -1,8 +1,8 @@
-import container from "@/config/inversify";
-import type DatasourceRepository from "@/plugins/data/DatasourceRepository";
-import { onMounted, onUnmounted, type Ref } from "vue";
-import SERVICE_IDENTIFIER from "@/config/identifiers/services";
-import { watch, ref } from "vue";
+import container from '@/config/inversify';
+import type DatasourceRepository from '@/plugins/data/DatasourceRepository';
+import {  onMounted, onUnmounted, type Ref } from 'vue';
+import SERVICE_IDENTIFIER from '@/config/identifiers/services';
+import { watch, ref } from 'vue';
 
 export interface IVueDatasourceRepository<T extends keyof DataMap> {
     data: Ref<DataMap[T]>;
@@ -53,16 +53,15 @@ export function useDatasourceRepository<T extends keyof DataMap>(
                 const oldDataSource = datasourceRepository.getDatasource(oldVal);
                 oldDataSource.unsubscribe(getData);
 
-                const dataSource = datasourceRepository.getDatasource(newVal);
-                dataSource.subscribe(getData);
-            } catch (e) {
-                console.warn(e);
-            }
-        },
-    );
+      const dataSource = datasourceRepository.getDatasource(newVal);
+      dataSource.subscribe(getData);
+    } catch (e) {
+      console.warn(e);
+    }
+  });
 
-    onMounted(() => {
-        getData();
+  onMounted(() => {
+    getData();
 
         try {
             const dataSource = datasourceRepository.getDatasource(dataSourceId.value);
@@ -81,8 +80,8 @@ export function useDatasourceRepository<T extends keyof DataMap>(
         }
     });
 
-    return {
-        data,
-        callEvent,
-    };
+  return {
+    data,
+    callEvent
+  }
 }

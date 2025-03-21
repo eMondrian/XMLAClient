@@ -3,14 +3,15 @@ import { initEventBus } from "./config/eventBus";
 import { initVariables } from "./config/variables";
 import { initVendors } from "./vendor";
 import { initData } from "./data";
-import { initWidgets } from "./widgets";
-import { createApp } from "vue";
-import VueJsonPretty from "vue-json-pretty";
-import "vue-json-pretty/lib/styles.css";
-import "./scss/main.scss";
-import { createPinia } from "pinia";
 
-import App from "./App.vue";
+import { initWidgets } from './widgets';
+import { createApp } from 'vue';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
+import './scss/main.scss';
+import { createPinia } from 'pinia';
+import './persistence/persistence';
+import App from './App.vue'
 
 const app = createApp(App);
 
