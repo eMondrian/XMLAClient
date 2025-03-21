@@ -10,8 +10,8 @@ export interface IXmlaConnectionConfiguration extends BaseConnectionConfig {
 }
 
 export default class XmlaConnection extends BaseConnection {
-  private url: any;
-  private catalogName: string;
+  public readonly url: any;
+  public readonly catalogName: string;
   public cubeName: string;
   public metadata: MetadataStore = null as unknown as MetadataStore;
 

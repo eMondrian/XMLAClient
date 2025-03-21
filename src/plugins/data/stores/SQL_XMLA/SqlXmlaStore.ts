@@ -1,19 +1,21 @@
-import { extractDataByPath } from "@/utils/helpers";
 import BaseDatasource, { type IBaseConnectionConfiguration } from "../../BaseDatasource";
-import type { ComputedString } from "@/plugins/variables/ComputedString";
 
 export interface ISqlXmlaStoreConfiguration extends IBaseConnectionConfiguration {
   connection: string;
+  sql: string;
 }
 
 export default class SqlXmlaStore extends BaseDatasource {
   private connection: any;
+  private sql: string;
   // private computedUrl: ComputedVariable;
 
   constructor(configuration: ISqlXmlaStoreConfiguration) {
     super(configuration);
     
+    // console.log(configuration);
     this.connection = configuration.connection;
+    this.sql = configuration.sql;
     // this.resourceUrl = configuration.resourceUrl;
   }
 
@@ -25,26 +27,23 @@ export default class SqlXmlaStore extends BaseDatasource {
     }
     try {
       const connection = connectionRepository.getConnection(this.connection) as IConnection;
+      const mdxResponse = await connection.fetch({
+        data: {
+          mdx: this.sql
+        }
+      })
     //   const req = await connection.fetch({ url: this.resourceUrl.value });
     //   const data = await req.json();
+      
+      const rowset = mdxResponse.Body?.DiscoverResponse?.return?.[0]?.root?.row;
+      // console.log(rowset);
+      // console.log(mdxResponse);
+      if (!rowset) return null as unknown as DataMap[T];
 
-      const data = [
-        {
-            field1: 'value1',
-            field2: 'value2',
-            field3: 'value3', 
-        },
-        {
-            field1: 'value4',
-            field2: 'value5',
-            field3: 'value6',
-        }
-      ]
-
-      let response = data as any;
+      let response = null as any;
 
       if (type === 'DataTable') {
-        response = this.parseToDataTable(response);
+        response = this.parseToDataTable(rowset);
       } else if (type === 'object') {
         // Do nothing
       } else if (type === 'string') {

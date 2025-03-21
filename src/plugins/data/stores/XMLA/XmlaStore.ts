@@ -77,8 +77,10 @@ export default class XmlaStore extends BaseDatasource {
         mdx: request
       }
     });
+
     if (type === 'PivotTable') {
       response = this.parseToPivotTable(mdxResponse);
+      if (!response) return null as unknown as DataMap[T];
 
       response.tableState = {
         rowsExpandedMembers: this.drilldownHandler?.rowsExpandedMembers || [],

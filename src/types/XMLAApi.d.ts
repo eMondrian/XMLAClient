@@ -35,6 +35,7 @@ declare interface MDSchemaHierarchy {
     HIERARCHY_NAME: string;
     HIERARCHY_UNIQUE_NAME: string;
     HIERARCHY_DISPLAY_FOLDER: string;
+    DEFAULT_MEMBER: string;
 }
 
 declare interface MDSchemaLevel {
