@@ -26,4 +26,34 @@ initWidgets(app);
 
 app.use(createPinia());
 
+// if ("serviceWorker" in navigator) {
+//   window.addEventListener("load", () => {
+//     navigator.serviceWorker
+//       .register("service-worker.js")
+//       .then((registration) => {
+//         console.log("Service Worker Registered:", registration);
+//         if (registration.active) {
+//           console.log("Service Worker is active.");
+//         }
+
+//         if (registration.waiting) {
+//           registration.waiting.postMessage({ type: "SKIP_WAITING" });
+//         }
+
+//         registration.addEventListener("updatefound", () => {
+//           const newWorker = registration.installing;
+//           newWorker?.addEventListener("statechange", () => {
+//             if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+//               console.log("New Service Worker installed. Refreshing page...");
+//               window.location.reload();
+//             }
+//           });
+//         });
+//       })
+//       .catch((error) => {
+//         console.error("Service Worker Registration Error:", error);
+//       });
+//   });
+// }
+
 app.mount("#app");
