@@ -11,8 +11,8 @@ Contributors: Smart City Jena
 <script setup lang="ts">
 import {usePromisifiedModal} from "@/composables/promisifiedModal";
 import {computed, ref, watch} from "vue";
-import IconWidget from "@/components/Widgets/Icon/IconWidget.vue";
-import {controlOrMetaSymbol} from "@storybook/manager-api";
+// import IconWidget from "@/components/Widgets/Icon/IconWidget.vue";
+// import {controlOrMetaSymbol} from "@storybook/manager-api";
 import {useToast} from "vuestic-ui";
 import {useRepositoryRegistry} from "@/persistence/RepositoryRegistry/RepositoryRegistryImpl";
 import {computedAsync} from "@vueuse/core";
@@ -159,7 +159,7 @@ const nodes = computedAsync(async () => {
 })
 
 </script>
-
+<!-- eslint-disable vue/no-useless-template-attributes -->
 <template>
     <va-modal
         blur
@@ -170,6 +170,7 @@ const nodes = computedAsync(async () => {
         class="save-modal"
 
     >
+        <!-- eslint-disable vue/no-useless-template-attributes -->
         <template #footer class="footer">
             <div class="flexbox footer" id="loadSaveModalFooterLeft">
                 <VaFileUpload preset="secondary" v-model="upload" v-if="data && data.context == 'SAVE' && selectedRepo" class="marginr"/>
@@ -180,6 +181,7 @@ const nodes = computedAsync(async () => {
             </div>
 
         </template>
+        <!-- eslint-disable vue/no-unused-vars -->
         <template #default="{ ok }">
             <div class="save-modal-content">
                 <div class="m-4">
@@ -232,6 +234,7 @@ const nodes = computedAsync(async () => {
         :modelValue="isOpenedName"
         size="auto"
         hide-default-actions>
+        <!-- eslint-disable vue/no-unused-vars -->
         <template #default="{ ok }">
             <h1 class="mb-4">Save As</h1>
             <va-divider/>
@@ -242,6 +245,7 @@ const nodes = computedAsync(async () => {
                 placeholder="save as"
             />
         </template>
+        <!-- eslint-disable vue/no-useless-template-attributes -->
         <template #footer class="footer">
             <VaButton preset="secondary" @click="cancel"> cancel</VaButton>
             <VaButton color="danger" @click="()=>{save()}" v-if="sameName"> override</VaButton>
@@ -258,7 +262,7 @@ const nodes = computedAsync(async () => {
                 Upload Config {{ uploadFile }} ?
             </h5>
         </div>
-        <template #footer class="footer">
+        <template #footer class="footer"><!-- eslint-disable vue/no-useless-template-attributes -->
             <VaButton preset="secondary" @click="()=>{cancel(),sureuploadFile=false}"> cancel</VaButton>
             <VaButton @click="()=>{release(),sureuploadFile=false}"> Upload</VaButton>
         </template>
@@ -267,6 +271,7 @@ const nodes = computedAsync(async () => {
         :modelValue="urlDialog"
         size="auto"
         hide-default-actions>
+        <!-- eslint-disable vue/no-unused-vars -->
         <template #default="{ ok }">
             <h1 class="mb-4">Enter URL:</h1>
             <va-divider/>
