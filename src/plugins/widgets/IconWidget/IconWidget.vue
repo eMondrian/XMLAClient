@@ -52,10 +52,6 @@ const iconStyle = computed(() => {
 </script>
 
 <template>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        rel="stylesheet"
-    />
     <div class="icon">
         <span v-bind="$attrs" :style="iconStyle" class="material-symbols-outlined">
             {{ config.currentIcon }}
